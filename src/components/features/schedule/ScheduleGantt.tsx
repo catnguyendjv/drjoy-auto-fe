@@ -132,6 +132,7 @@ export function ScheduleGantt() {
 
     const handleTaskChange = useCallback((task: Task) => {
         const issueId = parseInt(task.id);
+        console.log("handleTaskChange called for task:", issueId);
 
         // Helper to format date as YYYY-MM-DD in local time
         const toLocalDateString = (date: Date) => {
@@ -193,6 +194,9 @@ export function ScheduleGantt() {
             </div>
         );
     }
+
+    // Generate a unique key for the Gantt component based on issue dates to force remount on updates
+    const ganttKey = issues.map(i => `${i.id}:${i.start_date}:${i.due_date}`).join('|');
 
     return (
         <div className="h-full flex flex-col">
@@ -306,7 +310,7 @@ export function ScheduleGantt() {
             <div className="flex-1 overflow-auto bg-white dark:bg-zinc-900 rounded-lg shadow">
                 {tasks.length > 0 ? (
                     <Gantt
-                        key={issues.map(i => i.updated_on).join('')}
+                        key={ganttKey}
                         tasks={tasks}
                         viewMode={viewMode}
                         onDateChange={handleTaskChange}
