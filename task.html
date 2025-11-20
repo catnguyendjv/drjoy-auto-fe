@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>New issue - ベトナム（VN） - Dr.JOY Redmine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Redmine" />
+<meta name="keywords" content="issue,bug,tracker" />
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="HZQMxwo/DvXQnDjDp6nW7g30xY4v61XpqUlvH10mqAHI3DC9ADgns8Nz+CeFowvDTxFX46NwVxyHhVhQOGnjig==" />
+<link rel='shortcut icon' href='/favicon.ico?1720076551' />
+<link rel="stylesheet" media="all" href="/stylesheets/jquery/jquery-ui-1.13.2.css?1720076554" />
+<link rel="stylesheet" media="all" href="/stylesheets/tribute-5.1.3.css?1720076554" />
+<link rel="stylesheet" media="all" href="/stylesheets/application.css?1720076554" />
+<link rel="stylesheet" media="all" href="/stylesheets/responsive.css?1720076554" />
+
+<script src="/javascripts/jquery-3.6.1-ui-1.13.2-ujs-6.1.7.6.js?1720076554"></script>
+<script src="/javascripts/tribute-5.1.3.min.js?1720076554"></script>
+<script src="/javascripts/tablesort-5.2.1.min.js?1720076554"></script>
+<script src="/javascripts/tablesort-5.2.1.number.min.js?1720076554"></script>
+<script src="/javascripts/application.js?1720076554"></script>
+<script src="/javascripts/responsive.js?1720076554"></script>
+<script>
+//<![CDATA[
+$(window).on('load', function(){ warnLeavingUnsaved('The current page contains unsaved text that will be lost if you leave this page.'); });
+//]]>
+</script>
+
+<script>
+//<![CDATA[
+rm = window.rm || {};rm.AutoComplete = rm.AutoComplete || {};rm.AutoComplete.dataSources = JSON.parse('{"issues":"/issues/auto_complete?project_id=drjoy_vn\u0026q=","wiki_pages":"/wiki_pages/auto_complete?project_id=drjoy_vn\u0026q="}');
+//]]>
+</script>
+<script src="/plugin_assets/select_to_select2/javascripts/select2-3.4.5/select2.js?1723183616"></script><script src="/plugin_assets/select_to_select2/javascripts/slecttoselect2main.js?1723183616"></script><link rel="stylesheet" media="screen" href="/plugin_assets/select_to_select2/stylesheets/select2-3.4.5/select2.css?1723183616" /> 
+<!-- [view customize plugin] path:/projects/drjoy_vn/issues/new -->
+<link rel="stylesheet" media="screen" href="/plugin_assets/view_customize/stylesheets/view_customize.css?1720085442" /><script type="text/javascript">
+//<![CDATA[
+ViewCustomize = { context: {"user":{"id":656,"login":"redminemcp","admin":false,"firstname":"Redmine","lastname":"MCP","mail":"redminemcp@drjoy.vn","lastLoginOn":"2025-11-20T22:54:48Z","groups":[{"id":261,"name":"【VN_BrSE】"},{"id":268,"name":"【VN_開発者】"}],"apiKey":"a8ccb9622291057ba733563f7b88dc07469f567d","customFields":[{"id":67,"name":"Note","value":""}]},"project":{"id":37,"identifier":"drjoy_vn","name":"ベトナム（VN）","roles":[{"id":6,"name":"3.一般管理者"},{"id":8,"name":"4.一般ユーザー"},{"id":7,"name":"1.プロジェクト管理者"},{"id":20,"name":"2.所属管理者"},{"id":21,"name":"Manage Time Logs"},{"id":29,"name":"mcp"}],"customFields":[]}} };
+//]]>
+</script>
+<!-- view customize id:1 -->
+<style type="text/css">
+/* Verified */
+tr.issue.status-9,
+tr.issue.status-9 a,
+tr.issue.status-9 a:link,
+tr.issue.status-9 a:visited {
+    color: limegreen;
+}
+
+/* WFR */
+tr.issue.status-11,
+tr.issue.status-11 a,
+tr.issue.status-11 a:link,
+tr.issue.status-11 a:visited {
+    color: orange;
+}
+
+/* Pending */
+tr.issue.status-13,
+tr.issue.status-13 a,
+tr.issue.status-13 a:link,
+tr.issue.status-13 a:visited {
+    color: dodgerblue;
+}
+
+/* Feedback */
+tr.issue.status-4,
+tr.issue.status-4 a,
+tr.issue.status-4 a:link,
+tr.issue.status-4 a:visited {
+    color: red;
+}
+
+tr.issue.status-2 td.status {
+    background: lightcyan;
+}
+
+tr.issue.status-3 td.status {
+    background: palegreen;
+}
+
+/* Closed/Rejected */
+tr.issue.status-5,
+tr.issue.status-5 a,
+tr.issue.status-5 a:link,
+tr.issue.status-5 a:visited {
+    color: gray;
+}
+
+.closed .status .value {
+    color: gray;
+}
+
+tr.issue.status-6,
+tr.issue.status-6 a,
+tr.issue.status-6 a:link,
+tr.issue.status-6 a:visited {
+    color: gray;
+    text-decoration: line-through;
+}
+
+/* Overdue */
+tr.overdue td.due_date {
+    color: red;
+    font-weight: bold;
+}
+
+/* Assigned to me */
+tr.assigned-to-me td.assigned_to {
+    background: lightyellow;
+    font-weight: bold;
+}
+
+tr.priority-3 td.priority,tr.priority-4 td.priority,tr.priority-5 td.priority {
+    color: red;
+}
+
+tr.priority-1 td.priority {
+    color: gray;
+}
+
+</style>
+<!-- view customize id:4 -->
+<script type="text/javascript">
+//<![CDATA[
+$(function() {
+  setTimeout(() => {
+    $('#s2id_issue_tracker_id').css({width: 80});
+  }, 500);
+});
+
+//]]>
+</script>
+<!-- view customize id:5 -->
+<script type="text/javascript">
+//<![CDATA[
+$(function() {
+  const sheetID = '1s-BM-k40jDmzJfqbogj6a7oAES1bV5m77FlCcrLA8ic';
+  const sheetGID = '0';
+  const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&gid=${sheetGID}`;
+  const title = $('h2:first').text();
+  
+  // 稼働率に応じてクラスを返す関数
+  function getUtilizationClass(percent) {
+    if (percent <= 60) {
+      return 'utilization-rate low';
+    } else if (percent <= 90) {
+      return 'utilization-rate medium';
+    } else {
+      return 'utilization-rate high';
+    }
+  }
+
+  // パーセンテージ計算の共通関数
+  function calculatePercentages(plannedValues, summaryValues) {
+    return {
+      FE: plannedValues.FE && summaryValues.FE > 0 ? Math.round((plannedValues.FE / summaryValues.FE) * 1000) / 10 : 0,
+      BE: plannedValues.BE && summaryValues.BE > 0 ? Math.round((plannedValues.BE / summaryValues.BE) * 1000) / 10 : 0,
+      iOS: plannedValues.iOS && summaryValues.iOS > 0 ? Math.round((plannedValues.iOS / summaryValues.iOS) * 1000) / 10 : 0,
+      Android: plannedValues.Android && summaryValues.Android > 0 ? Math.round((plannedValues.Android / summaryValues.Android) * 1000) / 10 : 0,
+      Te: plannedValues.Te && summaryValues.Te > 0 ? Math.round((plannedValues.Te / summaryValues.Te) * 1000) / 10 : 0
+    };
+  }
+
+  // 合計計算の共通関数
+  function calculateTotals(plannedValues, summaryValues) {
+    let responseTotal = 0;
+    let plannedTotal = 0;
+    if (plannedValues.FE) {
+      responseTotal += summaryValues.FE;
+      plannedTotal += plannedValues.FE;
+    }
+    if (plannedValues.BE) {
+      responseTotal += summaryValues.BE;
+      plannedTotal += plannedValues.BE;
+    }
+    if (plannedValues.iOS) {
+      responseTotal += summaryValues.iOS;
+      plannedTotal += plannedValues.iOS;
+    }
+    if (plannedValues.Android) {
+      responseTotal += summaryValues.Android;
+      plannedTotal += plannedValues.Android;
+    }
+    if (plannedValues.Te) {
+      responseTotal += summaryValues.Te;
+      plannedTotal += plannedValues.Te;
+    }
+    const totalPercent = plannedTotal > 0 && responseTotal > 0 ? Math.round((plannedTotal / responseTotal) * 1000) / 10 : 0;
+    return { responseTotal, plannedTotal, totalPercent };
+  }
+
+  // HTML生成の共通関数
+  function generateSummaryHtml(plannedValues, summaryValues, percentages, totals, cssClass) {
+    // データが一つもない場合は何も表示しない
+    if (totals.plannedTotal === 0) {
+      return '';
+    }
+    // 稼働可能時間の合計が0の場合は何も表示しない（すべて空白の場合）
+    if (totals.responseTotal === 0) {
+      return '';
+    }
+    return `
+      <span class="${cssClass}">
+        <strong>【稼働可】</strong>
+        ${plannedValues.FE ? `<span class="total-working-hours"><span>FE:</span> <span class="value">${summaryValues.FE}</span> (<span class="${getUtilizationClass(percentages.FE)}" title="稼働率(FE) = ${plannedValues.FE} ÷ ${summaryValues.FE} × 100 = ${percentages.FE}%">${percentages.FE}%</span>)</span>` : ''}
+        ${plannedValues.BE ? `<span class="total-working-hours"><span>BE:</span> <span class="value">${summaryValues.BE}</span> (<span class="${getUtilizationClass(percentages.BE)}" title="稼働率(BE) = ${plannedValues.BE} ÷ ${summaryValues.BE} × 100 = ${percentages.BE}%">${percentages.BE}%</span>)</span>` : ''}
+        ${plannedValues.iOS ? `<span class="total-working-hours"><span>iOS:</span> <span class="value">${summaryValues.iOS}</span> (<span class="${getUtilizationClass(percentages.iOS)}" title="稼働率(iOS) = ${plannedValues.iOS} ÷ ${summaryValues.iOS} × 100 = ${percentages.iOS}%">${percentages.iOS}%</span>)</span>` : ''}
+        ${plannedValues.Android ? `<span class="total-working-hours"><span>Android:</span> <span class="value">${summaryValues.Android}</span> (<span class="${getUtilizationClass(percentages.Android)}" title="稼働率(Android) = ${plannedValues.Android} ÷ ${summaryValues.Android} × 100 = ${percentages.Android}%">${percentages.Android}%</span>)</span>` : ''}
+        ${plannedValues.Te ? `<span class="total-working-hours"><span>Te:</span> <span class="value">${summaryValues.Te}</span> (<span class="${getUtilizationClass(percentages.Te)}" title="稼働率(Te) = ${plannedValues.Te} ÷ ${summaryValues.Te} × 100 = ${percentages.Te}%">${percentages.Te}%</span>)</span>` : ''}
+        ${totals.plannedTotal > 0 ? `<span class="total-working-hours"><span>合計:</span> <span class="value">${totals.responseTotal}</span> (<span class="${getUtilizationClass(totals.totalPercent)}" title="稼働率(合計) = ${totals.plannedTotal} ÷ ${totals.responseTotal} × 100 = ${totals.totalPercent}%">${totals.totalPercent}%</span>)</span>` : ''}
+      </span>
+    `;
+  }
+
+  // バッジ位置調整の共通関数
+  function adjustBadgePosition(totalsElement, cssClass) {
+    const badgeElement = totalsElement.siblings('.badge.badge-count.count');
+    if (badgeElement.length > 0) {
+      const leftOffset = badgeElement.position().left + badgeElement.outerWidth();
+      const summaryElement = totalsElement.find(`.${cssClass}`);
+      if (summaryElement.length > 0) {
+        summaryElement.css('margin-left', leftOffset + 'px');
+      }
+    }
+  }
+
+  // Ajax処理の共通関数
+  function fetchSpreadsheetData(version, successCallback, errorCallback) {
+    $.ajax({
+      url: url,
+      dataType: 'text',
+      success: function(data) {
+        let result = parseSpreadsheetData(data);
+        successCallback(result, version);
+      },
+      error: function(xhr, status, error) {
+        console.log(`${version}版通信エラー:`, error);
+        if (errorCallback) {
+          errorCallback(error);
+        }
+      }
+    });
+  }
+
+  // 予定値取得の共通関数
+  function getPlannedValues(queryTotals) {
+    const plannedValues = {};
+    queryTotals.find('.value').each(function(index) {
+      const value = parseFloat($(this).text());
+      const parentText = $(this).parent().text();
+      console.log('予定値取得デバッグ:', parentText, '→', value);
+      
+      // 予定値のみを対象にする（実績値は除外）
+      if (parentText.includes('予FE:') && !parentText.includes('実FE:')) {
+        plannedValues.FE = value;
+        console.log('FE値を設定:', value);
+      } else if (parentText.includes('予BE:') && !parentText.includes('実BE:')) {
+        plannedValues.BE = value;
+        console.log('BE値を設定:', value);
+      } else if (parentText.includes('予iOS:') && !parentText.includes('実iOS:')) {
+        plannedValues.iOS = value;
+        console.log('iOS値を設定:', value);
+      } else if (parentText.includes('予Android:') && !parentText.includes('実Android:')) {
+        plannedValues.Android = value;
+        console.log('Android値を設定:', value);
+      } else if (parentText.includes('予Te:') && !parentText.includes('実Te:')) {
+        plannedValues.Te = value;
+        console.log('Te値を設定:', value);
+      }
+    });
+    console.log('最終的な予定値:', plannedValues);
+    return plannedValues;
+  }
+
+  // データ集計の共通関数
+  function aggregateData(data, groupBy) {
+    const summary = {};
+    data.forEach(item => {
+      const key = groupBy === 'release' ? item.release : item.team;
+      if (!summary[key]) {
+        summary[key] = {
+          [groupBy]: key,
+          FE: 0,
+          BE: 0,
+          iOS: 0,
+          Android: 0,
+          Te: 0
+        };
+      }
+      summary[key].FE = roundToPrecision(summary[key].FE + item.FE);
+      summary[key].BE = roundToPrecision(summary[key].BE + item.BE);
+      summary[key].iOS = roundToPrecision(summary[key].iOS + item.iOS);
+      summary[key].Android = roundToPrecision(summary[key].Android + item.Android);
+      summary[key].Te = roundToPrecision(summary[key].Te + item.Te);
+    });
+    return Object.values(summary);
+  }
+
+  // チーム別集計の共通関数
+  function aggregateTeamData(data) {
+    const teamSummary = {
+      FE: 0,
+      BE: 0,
+      iOS: 0,
+      Android: 0,
+      Te: 0
+    };
+    data.forEach(item => {
+      teamSummary.FE = roundToPrecision(teamSummary.FE + item.FE);
+      teamSummary.BE = roundToPrecision(teamSummary.BE + item.BE);
+      teamSummary.iOS = roundToPrecision(teamSummary.iOS + item.iOS);
+      teamSummary.Android = roundToPrecision(teamSummary.Android + item.Android);
+      teamSummary.Te = roundToPrecision(teamSummary.Te + item.Te);
+    });
+    return teamSummary;
+  }
+
+  // 数値を適切に丸めるヘルパー関数
+  function roundToPrecision(num, precision = 10) {
+    return Math.round(num * precision) / precision;
+  }
+
+  // データパースの共通関数
+  function parseSpreadsheetData(data) {
+    // gviz API の JSON は "google.visualization.Query.setResponse(...)" の形なのでパースが必要
+    let json = JSON.parse(data.substr(47).slice(0, -2));
+    let rows = json.table.rows;
+    return rows.map(r => ({
+      release: r.c[0] ? r.c[0].v : '',
+      team:    r.c[1] ? r.c[1].v : '',
+      FE:      r.c[2] ? roundToPrecision(r.c[2].v || 0) : 0,
+      BE:      r.c[3] ? roundToPrecision(r.c[3].v || 0) : 0,
+      iOS:     r.c[4] ? roundToPrecision(r.c[4].v || 0) : 0,
+      Android: r.c[5] ? roundToPrecision(r.c[5].v || 0) : 0,
+      Te:      r.c[6] ? roundToPrecision(r.c[6].v || 0) : 0
+    }));
+  }
+  
+  // 稼働率に応じた色分けのCSSを動的に追加
+  function addUtilizationStyles() {
+    if (document.getElementById('utilization-styles')) {
+      return;
+    }
+    const style = document.createElement('style');
+    style.id = 'utilization-styles';
+    style.textContent = `
+      .total-working-hours {
+        margin-left: 5px;
+      }
+      .utilization-rate {
+        cursor: help;
+        font-weight: bold;
+      }
+      .utilization-rate.low {
+        color: #2ecc71 !important;
+      }
+      .utilization-rate.medium {
+        color: #f1c40f !important;
+      }
+      .utilization-rate.high {
+        color: #e74c3c !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  addUtilizationStyles();
+  if (/_WEB($|.+)/.test(title)) {
+    console.log('WEB版の処理を実行');
+    // WEB版用の処理
+    const webVersion = title.replace('#', '').match(/^[^_]+_WEB/)[0];
+    console.log('WEB版の処理を実行: ' + webVersion);
+    fetchSpreadsheetData('WEB', function(result, version) {
+        const filteredResult = result.filter(item => {
+        const itemVersion = item.release;
+          return itemVersion === webVersion;
+        });
+      let summaryArray = aggregateData(filteredResult, 'release');
+        const queryTotals = $('.query-totals');
+        if (queryTotals.length > 0) {
+        const plannedValues = getPlannedValues(queryTotals);
+          // 各チームのtotalsに集計結果を追加
+          $('.name').each(function() {
+          const teamName = $(this).text().split('：')[0];
+            const totalsElement = $(this).siblings('.totals');
+            if (totalsElement.length > 0) {
+            const teamPlannedValues = getPlannedValues(totalsElement);
+              const teamData = filteredResult.filter(item => item.team === teamName);
+              if (teamData.length > 0) {
+              let teamSummary = aggregateTeamData(teamData);
+              const percentages = calculatePercentages(teamPlannedValues, teamSummary);
+              const totals = calculateTotals(teamPlannedValues, teamSummary);
+              console.log(`WEB版計算結果: FE=${teamPlannedValues.FE}/${teamSummary.FE}=${percentages.FE}%, BE=${teamPlannedValues.BE}/${teamSummary.BE}=${percentages.BE}%, iOS=${teamPlannedValues.iOS}/${teamSummary.iOS}=${percentages.iOS}%, Android=${teamPlannedValues.Android}/${teamSummary.Android}=${percentages.Android}%, Te=${teamPlannedValues.Te}/${teamSummary.Te}=${percentages.Te}%`);
+              const teamSummaryHtml = generateSummaryHtml(teamPlannedValues, teamSummary, percentages, totals, 'web-team-summary');
+              if (teamSummaryHtml) {
+                totalsElement.append(`<br>${teamSummaryHtml}`);
+              }
+              adjustBadgePosition(totalsElement, 'web-team-summary');
+              }
+            }
+          });
+          const summaryDiv = $('<div class="web-summary-container"></div>');
+          summaryArray.forEach(summary => {
+          const percentages = calculatePercentages(plannedValues, summary);
+          const totals = calculateTotals(plannedValues, summary);
+          const summaryHtml = generateSummaryHtml(plannedValues, summary, percentages, totals, '');
+          if (summaryHtml) {
+            summaryDiv.append(`<div class="web-summary">${summaryHtml}</div>`);
+          }
+        });
+          queryTotals.append(summaryDiv);
+      }
+    });
+    return;
+  } else if (title.endsWith('_mobile')) {
+    console.log('mobile版の処理を実行');
+    // mobile版用の処理
+    const mobileVersion = title.replace('#', '');
+    fetchSpreadsheetData('mobile', function(result, version) {
+        const filteredResult = result.filter(item => {
+        const itemVersion = item.release;
+          return itemVersion === mobileVersion;
+        });
+      let summaryArray = aggregateData(filteredResult, 'release');
+      console.log('mobile版の集計結果:', summaryArray);
+      const queryTotals = $('.query-totals');
+      if (queryTotals.length > 0) {
+        const plannedValues = getPlannedValues(queryTotals);
+        const summaryDiv = $('<div class="mobile-summary-container"></div>');
+        summaryArray.forEach(summary => {
+          const percentages = calculatePercentages(plannedValues, summary);
+          const totals = calculateTotals(plannedValues, summary);
+          const summaryHtml = generateSummaryHtml(plannedValues, summary, percentages, totals, '');
+          if (summaryHtml) {
+            summaryDiv.append(`<div class="mobile-summary">${summaryHtml}</div>`);
+          }
+        });
+          queryTotals.append(summaryDiv);
+      }
+    });
+    return;
+  } else if (title.match(/^#?Dev\d{2}/)) {
+    console.log('Devチームの処理を実行');
+    // Devチーム用の処理
+    const devTeam = title.match(/^#?Dev\d{2}/)[0].replace('#', '');
+    fetchSpreadsheetData('Dev', function(result, version) {
+        const filteredResult = result.filter(item => {
+          return item.team.toUpperCase() === devTeam.toUpperCase();
+        });
+      let teamSummary = aggregateTeamData(filteredResult);
+      console.log('Devチーム集計結果:', teamSummary);
+        const queryTotals = $('.query-totals');
+        if (queryTotals.length > 0) {
+          $('.name').each(function() {
+          const versionName = $(this).text();
+            const totalsElement = $(this).siblings('.totals');
+            if (totalsElement.length > 0) {
+            // 個別のリリースの予定値を取得
+            const plannedValues = getPlannedValues(totalsElement);
+            console.log('Dev版取得した予定値 (', versionName, '):', plannedValues);
+              const versionData = filteredResult.filter(item => {
+                const itemVersion = item.release;
+                return itemVersion.startsWith(versionName) && item.team.toUpperCase() === devTeam.toUpperCase();
+              });
+              if (versionData.length > 0) {
+              let versionSummary = aggregateTeamData(versionData);
+              console.log('versionSummary:', versionSummary);
+              const percentages = calculatePercentages(plannedValues, versionSummary);
+              const totals = calculateTotals(plannedValues, versionSummary);
+              console.log('Dev版計算結果: FE=', plannedValues.FE, '/', versionSummary.FE, '=', percentages.FE, '%, BE=', plannedValues.BE, '/', versionSummary.BE, '=', percentages.BE, '%, Te=', plannedValues.Te, '/', versionSummary.Te, '=', percentages.Te, '%');
+              const versionSummaryHtml = generateSummaryHtml(plannedValues, versionSummary, percentages, totals, 'dev-version-summary');
+              if (versionSummaryHtml) {
+                totalsElement.append(`<br>${versionSummaryHtml}`);
+              }
+              adjustBadgePosition(totalsElement, 'dev-version-summary');
+            }
+          }
+        });
+        // 全体のサマリー表示
+        const summaryDiv = $('<div class="dev-summary-container"></div>');
+        // ページ全体の予定値を取得（.query-totalsから）
+        const totalPlannedValues = getPlannedValues(queryTotals);
+        console.log('全体の予定値:', totalPlannedValues);
+        const percentages = calculatePercentages(totalPlannedValues, teamSummary);
+        const totals = calculateTotals(totalPlannedValues, teamSummary);
+        const summaryHtml = generateSummaryHtml(totalPlannedValues, teamSummary, percentages, totals, '');
+        if (summaryHtml) {
+          summaryDiv.append(`<div class="dev-summary">${summaryHtml}</div>`);
+          queryTotals.append(summaryDiv);
+        }
+        console.log('Dev版集計結果をquery-totalsに追加完了');
+        } else {
+        console.log('Dev版query-totals要素が見つかりません');
+      }
+    });
+    return;
+  } else {
+    console.log('その他のタイトル:', title);
+    console.log('WEB、mobile、Dev以外のページのため処理を停止します');
+    return;
+  }
+});
+
+//]]>
+</script>
+<!-- view customize id:10 -->
+<script type="text/javascript">
+//<![CDATA[
+$(function() {
+  // Bắt đầu log để kiểm tra script có được thực thi không
+  console.log('View Customize - Highlight Subject: Script started.');
+
+  // --- PHẦN CÀI ĐẶT ---
+  // Màu cho 【〇月事前開発】 hoặc 【〇月事前調査】
+  var rule1_color = '#50C878';
+  // Màu cho 【〇〇月一部実装】
+  var rule2_color = '#E0115F'; 
+  // --- KẾT THÚC PHẦN CÀI ĐẶT ---
+
+  // 1. Định nghĩa CSS cho cả hai kiểu highlight
+  var highlightStyle =
+    // Class cho quy tắc 1
+    '.highlight-rule-1 {' +
+    '  font-weight: bold;' +
+    '  color: ' + rule1_color + ';' +
+    '}' +
+    // Class cho quy tắc 2
+    '.highlight-rule-2 {' +
+    '  font-weight: bold;' +
+    '  color: ' + rule2_color + ';' +
+    '}';
+
+  // 2. Thêm CSS đã định nghĩa vào thẻ <head> của trang
+  $('head').append('<style type="text/css">' + highlightStyle + '</style>');
+  console.log('View Customize - Highlight Subject: CSS injected.');
+
+  // 3. Định nghĩa các biểu thức chính quy (Regex)
+  // Regex 1: Tìm 【〇月事前開発】 hoặc 【〇月事前調査】
+  var rule1_regex = /(【\d{1,2}月事前(?:開発|調査)】)/g;
+  // Regex 2 (ĐÃ SỬA LỖI): Tìm 【〇〇月一部実装】
+  // [^】]+ có nghĩa là khớp với bất kỳ ký tự nào TRỪ dấu 】. Điều này ngăn việc tô màu bị lan.
+  var rule2_regex = /(【[^】]+月一部実装】)/g;
+
+
+  // 4. Lặp qua tất cả các tiêu đề (subject) trong danh sách issue
+  $('td.subject a').each(function() {
+    var linkElement = $(this);
+    var originalSubject = linkElement.html();
+    var processedSubject = originalSubject;
+
+    // 5. Áp dụng các quy tắc thay thế tuần tự
+
+    // Áp dụng quy tắc 2 【〇〇月一部実装】 trước
+    processedSubject = processedSubject.replace(rule2_regex, '<span class="highlight-rule-2">$&</span>');
+
+    // Sau đó, áp dụng quy tắc 1
+    processedSubject = processedSubject.replace(rule1_regex, '<span class="highlight-rule-1">$&</span>');
+
+    // 6. Cập nhật lại nội dung của tiêu đề nếu có sự thay đổi
+    if (processedSubject !== originalSubject) {
+      console.log('View Customize - Highlight Subject: Transformed "' + originalSubject + '" to "' + processedSubject + '"');
+      linkElement.html(processedSubject);
+    }
+  });
+
+  console.log('View Customize - Highlight Subject: Script finished.');
+});
+//]]>
+</script>
+
+<!-- page specific tags -->
+<script src="/javascripts/jstoolbar/jstoolbar.js?1720076554"></script><script src="/javascripts/jstoolbar/textile.js?1720076554"></script><script src="/javascripts/jstoolbar/lang/jstoolbar-en.js?1720076554"></script><script>
+//<![CDATA[
+var wikiImageMimeTypes = ["image/gif","image/jpeg","image/png","image/tiff","image/webp","image/x-ms-bmp"];var userHlLanguages = ["c","cpp","csharp","css","diff","go","groovy","html","java","javascript","objc","perl","php","python","r","ruby","sass","scala","shell","sql","swift","xml","yaml"];
+//]]>
+</script><link rel="stylesheet" media="screen" href="/stylesheets/jstoolbar.css?1720076554" /><script>
+//<![CDATA[
+var datepickerOptions={dateFormat: 'yy-mm-dd', firstDay: 0, showOn: 'button', buttonImageOnly: true, buttonImage: '/images/calendar.png?1720076553', showButtonPanel: true, showWeek: true, showOtherMonths: true, selectOtherMonths: true, changeMonth: true, changeYear: true, beforeShow: beforeShowDatePicker};
+//]]>
+</script>  <script src="/javascripts/attachments.js?1720076554"></script>
+    <meta name="robots" content="noindex,follow,noarchive" />
+</head>
+<body class="project-drjoy_vn has-main-menu controller-issues action-new avatars-off">
+
+<div id="wrapper">
+
+<div class="flyout-menu js-flyout-menu">
+
+        <div class="flyout-menu__search">
+            <form action="/projects/drjoy_vn/search" accept-charset="UTF-8" name="form-1f7d8938" method="get"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" />
+            <input type="hidden" name="issues" value="1" autocomplete="off" />
+            <label class="search-magnifier search-magnifier--flyout" for="flyout-search">&#9906;</label>
+            <input type="text" name="q" id="flyout-search" class="small js-search-input" placeholder="Search" />
+</form>        </div>
+
+        <div class="flyout-menu__avatar flyout-menu__avatar--no-avatar">
+            <a class="user active" href="/users/656">redminemcp</a>
+        </div>
+
+        <h3>Project</h3>
+        <span class="js-project-menu"></span>
+
+    <h3>General</h3>
+    <span class="js-general-menu"></span>
+
+    <span class="js-sidebar flyout-menu__sidebar"></span>
+
+    <h3>Profile</h3>
+    <span class="js-profile-menu"></span>
+
+</div>
+
+
+<div id="top-menu">
+    <div id="account">
+        <ul><li><a class="my-account" href="/my/account">My account</a></li><li><a class="logout" rel="nofollow" data-method="post" href="/logout">Sign out</a></li></ul>    </div>
+    <div id="loggedas">Logged in as <a class="user active" href="/users/656">redminemcp</a></div>
+    <ul><li><a class="home" href="/">Home</a></li><li><a class="my-page" href="/my/page">My page</a></li><li><a class="projects" href="/projects">Projects</a></li><li><a target="_blank" rel="noopener" class="help" href="https://www.redmine.org/guide">Help</a></li></ul></div>
+
+<div id="header">
+
+    <a href="#" class="mobile-toggle-button js-flyout-menu-toggle-button"></a>
+
+    <div id="quick-search">
+        <form action="/projects/drjoy_vn/search" accept-charset="UTF-8" name="form-4289d71d" method="get"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" />
+        <input type="hidden" name="scope" autocomplete="off" />
+        <input type="hidden" name="issues" value="1" autocomplete="off" />
+        <label for='q'>
+          <a accesskey="4" href="/projects/drjoy_vn/search">Search</a>:
+        </label>
+        <input type="text" name="q" id="q" size="20" class="small" accesskey="f" data-auto-complete="true" />
+</form>        <div id="project-jump" class="drdn"><span class="drdn-trigger">ベトナム（VN）</span><div class="drdn-content"><div class="quick-search"><input type="text" name="q" id="projects-quick-search" value="" class="autocomplete" data-automcomplete-url="/projects/autocomplete.js?jump=issues" autocomplete="off" /></div><div class="drdn-items projects selection"><strong>Recently used</strong><a title="ベトナム（VN）" class="selected" href="/projects/drjoy_vn?jump=issues"><span style="padding-left:0px;">ベトナム（VN）</span></a><a title="全体（JP+VN）" href="/projects/dev?jump=issues"><span style="padding-left:0px;">全体（JP+VN）</span></a><strong>All Projects</strong><a title="全体（JP+VN）" href="/projects/dev?jump=issues"><span style="padding-left:0px;">全体（JP+VN）</span></a><a title="ベトナム（VN）" class="selected" href="/projects/drjoy_vn?jump=issues"><span style="padding-left:16px;">ベトナム（VN）</span></a><a title="日本（JP）" href="/projects/drjoy_jp?jump=issues"><span style="padding-left:16px;">日本（JP）</span></a></div><div class="drdn-items all-projects selection"><a href="/projects?jump=issues">All Projects</a></div></div></div>
+    </div>
+
+    <h1><span class="breadcrumbs"><a class="root" href="/projects/dev?jump=issues">全体（JP+VN）</a><span class="separator"> &raquo; </span></span><span class="current-project">ベトナム（VN）</span></h1>
+
+    <div id="main-menu" class="tabs">
+        <ul><li>
+<a onclick="toggleNewObjectDropdown(); return false;" id="new-object" class="new-object" href="#"> + </a>
+<ul class="menu-children"><li><a accesskey="7" class="new-issue-sub" href="/projects/drjoy_vn/issues/new">New issue</a></li><li><a class="new-issue-category" href="/projects/drjoy_vn/issue_categories/new">New category</a></li><li><a class="new-version" href="/projects/drjoy_vn/versions/new">New version</a></li><li><a class="new-timelog" href="/projects/drjoy_vn/time_entries/new">Log time</a></li><li><a class="new-wiki-page" href="/projects/drjoy_vn/wiki/new">New wiki page</a></li></ul>
+</li><li><a class="overview" href="/projects/drjoy_vn">Overview</a></li><li><a class="activity" href="/projects/drjoy_vn/activity">Activity</a></li><li><a class="roadmap" href="/projects/drjoy_vn/roadmap">Roadmap</a></li><li><a class="issues selected" href="/projects/drjoy_vn/issues">Issues</a></li><li><a class="time-entries" href="/projects/drjoy_vn/time_entries">Spent time</a></li><li><a class="gantt" href="/projects/drjoy_vn/issues/gantt">Gantt</a></li><li><a class="wiki" href="/projects/drjoy_vn/wiki">Wiki</a></li><li><a class="settings" href="/projects/drjoy_vn/settings">Settings</a></li></ul>
+        <div class="tabs-buttons" style="display:none;">
+            <button class="tab-left" onclick="moveTabLeft(this); return false;"></button>
+            <button class="tab-right" onclick="moveTabRight(this); return false;"></button>
+        </div>
+    </div>
+</div>
+
+<div id="main" class="nosidebar">
+    <div id="sidebar">
+        
+        
+    </div>
+
+    <div id="content">
+        
+        <h2>New issue</h2>
+
+
+
+<form class="new_issue" id="issue-form" enctype="multipart/form-data" action="/projects/drjoy_vn/issues" accept-charset="UTF-8" name="issue-form-585f93c2" method="post"><input name="utf8" type="hidden" value="&#x2713;" autocomplete="off" /><input type="hidden" name="authenticity_token" value="nocrvQ1r5rnh2Z+z8J3ZpZP2z0t7qnp8azH5OEuzzsFLzxfHB2zP//I2X1fSlwSI0RNdJvcxeIlF/c53LvyFSg==" autocomplete="off" />
+  
+  
+  <div class="box tabular">
+    <div id="all_attributes">
+    
+
+<input type="hidden" name="form_update_triggered_by" id="form_update_triggered_by" value="" autocomplete="off" />
+
+
+<p id="issue_is_private_wrap">
+  <input name="issue[is_private]" type="hidden" value="0" autocomplete="off" /><input type="checkbox" value="1" name="issue[is_private]" id="issue_is_private" /><label class="inline" for="issue_is_private" id="issue_is_private_label">Private</label>
+</p>
+
+<p><label for="issue_project_id">Project<span class="required"> *</span></label><select onchange="updateIssueFrom(&#39;/projects/drjoy_vn/issues/new.js&#39;, this)" name="issue[project_id]" id="issue_project_id"><option value="1">全体（JP+VN）</option><option value="37" selected="selected">&nbsp;&nbsp;&#187; ベトナム（VN）</option><option value="38">&nbsp;&nbsp;&#187; 日本（JP）</option></select></p>
+
+<p>
+  <label for="issue_tracker_id">Tracker<span class="required"> *</span></label><select onchange="updateIssueFrom(&#39;/projects/drjoy_vn/issues/new.js&#39;, this)" name="issue[tracker_id]" id="issue_tracker_id"><option selected="selected" value="12">Dev</option>
+<option value="1">Bug</option>
+<option value="7">Task</option></select>
+  
+</p>
+  <script>
+//<![CDATA[
+
+  function selectTracker(id) {
+    var target = $('#issue_tracker_id');
+    target.attr("selected", false);
+    target.find('option[value="' + id + '"]').prop('selected', true);
+    target.trigger('change');
+    hideModal('#trackers_description h3');
+  }
+
+//]]>
+</script>
+
+<p><label for="issue_subject">Subject<span class="required"> *</span></label><input size="80" maxlength="255" type="text" value="" name="issue[subject]" id="issue_subject" /></p>
+
+<p>
+  <label for="issue_description">Description</label>
+  
+  <span id="issue_description_and_toolbar">
+    <textarea cols="60" accesskey="e" class="wiki-edit" rows="10" data-auto-complete="true" name="issue[description]" id="issue_description">
+</textarea>
+</span></p>
+<script>
+//<![CDATA[
+var wikiToolbar = new jsToolBar(document.getElementById('issue_description')); wikiToolbar.setHelpLink('/help/en/wiki_syntax_textile.html'); wikiToolbar.setPreviewUrl('/issues/preview?project_id=drjoy_vn'); wikiToolbar.draw();
+//]]>
+</script>
+
+<div id="attributes" class="attributes">
+  
+
+<div class="splitcontent">
+<div class="splitcontentleft">
+<p>
+  <label for="issue_status_id">Status<span class="required"> *</span></label><select onchange="updateIssueFrom(&#39;/projects/drjoy_vn/issues/new.js&#39;, this)" name="issue[status_id]" id="issue_status_id"><option selected="selected" value="1">New</option>
+<option value="2">In Progress</option>
+<option value="3">Resolved</option>
+<option value="9">Verified</option>
+<option value="4">Feedback</option>
+<option value="11">WFR</option>
+<option value="5">Closed</option>
+<option value="6">Rejected</option>
+<option value="12">Released</option></select>
+  
+</p>
+<script>
+//<![CDATA[
+
+  function selectIssueStatus(id) {
+    var target = $('#issue_status_id');
+    target.attr("selected", false);
+    target.find('option[value="' + id + '"]').prop('selected', true);
+    target.trigger('change');
+    hideModal('#issue_statuses_description h3');
+  }
+
+//]]>
+</script>
+<input type="hidden" name="was_default_status" value="1" autocomplete="off" />
+
+<p><label for="issue_priority_id">Priority<span class="required"> *</span></label><select name="issue[priority_id]" id="issue_priority_id"><option value="38">Undefined</option>
+<option value="1">Low</option>
+<option selected="selected" value="2">Normal</option>
+<option value="3">High</option>
+<option value="4">Urgent</option>
+<option value="5">Immediate</option></select></p>
+
+<p>
+  <label for="issue_assigned_to_id">Assignee</label><select name="issue[assigned_to_id]" id="issue_assigned_to_id"><option value="">&nbsp;</option>
+<option value="656">&lt;&lt; me &gt;&gt;</option><option value="481">an.nguyen Ja</option><option value="576">anh.do Ty</option><option value="605">anh.hoang Te</option><option value="438">anh.le Te</option><option value="521">anh.nguyen2 Te</option><option value="599">chau.nguyen cs</option><option value="553">chi.nguyen Te</option><option value="501">chung.nguyen Ja</option><option value="571">cong.nguyen Ja</option><option value="320">cuong.nguyen Ja</option><option value="592">dai.duong Ty</option><option value="537">dao.tran Ja</option><option value="660">dat.le ai</option><option value="570">dat.pham Ja</option><option value="355">dien.nguyen Ty</option><option value="625">Dinh Rina</option><option value="306">dinh.nguyen Ja</option><option value="615">dinh.vu Ja</option><option value="532">doai.nguyen Ty</option><option value="662">DrJOY 開発</option><option value="315">dung.doan Ja</option><option value="349">duy.phan An</option><option value="600">Hai.anhCS2 cs</option><option value="442">hai.nguyen3 Te</option><option value="628">hai.vo Ja</option><option value="587">hang.hoang3 Ba</option><option value="573">hang.nguyen Te</option><option value="607">hang.pham Com</option><option value="572">hien.le Ty</option><option value="627">hien.pham2 Te</option><option value="644">hoa.nguyen Te</option><option value="580">hoan.duong Ja</option><option value="564">hoang.le Ja</option><option value="314">hong.tran Ty</option><option value="451">hue.dang Te</option><option value="310">hung.dang ja</option><option value="602">huong.nguyen Ty</option><option value="643">huy.hoang Ja</option><option value="546">lam.nguyen Ja</option><option value="517">lan.duong Te</option><option value="634">Lanh リョウコ</option><option value="598">Linh Dieu</option><option value="648">linh.chu Co</option><option value="311">linh.tran Ty</option><option value="590">linh.vu2 Te</option><option value="512">loan.pham Te</option><option value="392">mai.le Te</option><option value="540">minh.nguyen Te</option><option value="325">nam.nguyen An</option><option value="536">nam.phan Ja</option><option value="319">nam.to Ty</option><option value="393">nga.nguyen Ty</option><option value="305">nga.tran Te</option><option value="478">nhung.nguyen Te</option><option value="637">nhung.nguyen3 Co</option><option value="611">nhung.pham Te</option><option value="560">oanh.leu Te</option><option value="411">pgtest@drjoy.vn Tool</option><option value="378">phong.le Ja</option><option value="659">phu.tran gcp</option><option value="398">phuong.luu Te</option><option value="566">phuong.tran Te</option><option value="479">phuong.vu Te</option><option value="326">quoc.nguyen iO</option><option value="656">Redmine MCP</option><option value="617">Shinya Aramaki</option><option value="647">son.ha ui</option><option value="383">son.nguyen2 Ty</option><option value="631">son.nguyen3 Ja</option><option value="520">tam.truong Te</option><option value="642">thang.nguyen Ba</option><option value="658">thanh.bui2 iO</option><option value="632">thanh.nguyen2 Ja</option><option value="488">thanh.tran Ja</option><option value="666">thao.do BA</option><option value="370">thao.leu Te</option><option value="402">thao.nguyen Te</option><option value="409">thoa.le Te</option><option value="498">thom.nguyen3 Te</option><option value="649">thu.dang Ty</option><option value="329">thu.nguyen Te</option><option value="597">thu.nguyen2  Te</option><option value="584">thuan.nguyen Ja</option><option value="653">thuy.le Co</option><option value="382">tien.luu Ja</option><option value="511">tinh.tran Ja</option><option value="559">tra.pham Ja</option><option value="581">tra.pham2 Te</option><option value="458">trang.le2  Te</option><option value="562">trang.nguyen3 Te</option><option value="390">tu.do Ja</option><option value="604">tuan.le2 iO</option><option value="446">tuan.nguyen2 An</option><option value="661">tuan.vu co</option><option value="313">tung.le Ja</option><option value="565">tuyen.tran Ja</option><option value="524">vi.do Ty</option><option value="655">vi.nguyen ヴィ</option><option value="441">vuD.dinh iO</option><option value="542">xuyen.nguyen Te</option><option value="353">yen.phan Te</option><option value="569">アカウント 参照用共有</option><option value="654">アキナリ thanh.bui Com</option><option value="302">イエン yen.nguyen</option><option value="406">カット cat.nguyen</option><option value="594">ゲン huyen.nguyen2 SS</option><option value="595">コウ phuong.le SS</option><option value="312">ゴク son.nguyen</option><option value="601">ジャム Tam</option><option value="399">ジュン chinh.vu</option><option value="327">タイン thanh.vu</option><option value="462">タツ tuan.le</option><option value="463">チ ngoc.le</option><option value="345">チャン trang.hoang</option><option value="549">チャンチャン trang.tran CS</option><option value="621">チョウ Zhang</option><option value="523">チー chi.hoang CS</option><option value="522">トシ Tuan</option><option value="567">ハイ hai.nguyen4</option><option value="354">ハオ hao.dam</option><option value="568">ハル thanh.pham Co</option><option value="664">ハルカ Phuong</option><option value="583">ヒロ hoang.nguyen</option><option value="424">ビック bich.hua Co</option><option value="650">ファムフエン huyen.pham</option><option value="486">フェン huyen.nguyen te</option><option value="495">フオンマイ mai.le2 SS</option><option value="475">ホア hoa.dao AC</option><option value="557">ホンリン linh.vu Com</option><option value="645">ミー my.tran Co</option><option value="657">リュウ シュウモン</option><option value="552">リリース ticket</option><option value="400">ルエン luyen.nguyen Co</option><option value="170">三田 mita</option><option value="663">井上 inoue</option><option value="652">伊藤 Hikari</option><option value="12">佐々木 Sasaki</option><option value="608">前山 maeyama</option><option value="5">前田 Maeda</option><option value="610">古田 Furuta </option><option value="483">宗 so</option><option value="174">寺島 Terashima</option><option value="188">小田川 Odagawa</option><option value="646">小見山 komiyama</option><option value="437">尾上 Onoe</option><option value="591">岡本 okamoto</option><option value="586">斉藤 saito</option><option value="665">明李 鬼塚</option><option value="622">本間 Honma</option><option value="173">杉本 sugimoto</option><option value="257">片桐 katagiri</option><option value="616">牧野 Makino</option><option value="527">相川 aikawa</option><option value="102">石松 ishimatsu</option><option value="417">神田 kanda</option><option value="485">筒井 tsutsui</option><option value="86">菊池 kikuchi</option><option value="620">藤田 Fujita</option><option value="614">西 nishi</option><option value="14">角 Sumi</option><option value="624">酒井 Sakai</option><option value="618">鈴木 Suzuki</option></select>
+    <a class="assign-to-me-link" href="#" data-id="656">Assign to me</a>
+</p>
+
+
+<p><label for="issue_fixed_version_id">Target version</label><select name="issue[fixed_version_id]" id="issue_fixed_version_id"><option value="">&nbsp;</option>
+<option value="222">251017</option>
+<option value="262">251024</option>
+<option value="260">251029</option>
+<option value="264">251030</option>
+<option value="265">251031</option>
+<option value="266">251111</option>
+<option value="223">251114</option>
+<option value="263">251121</option>
+<option value="224">251219</option>
+<option value="247">260116</option>
+<option value="261">260206</option>
+<option value="248">260313</option>
+<option value="267">260417</option>
+<option value="268">260515</option>
+<option value="269">260619</option>
+<option value="270">260717</option>
+<option value="271">260821</option>
+<option value="272">260918</option>
+<option value="180">未来分</option></select>
+<a title="New version" tabindex="200" class="icon-only icon-add" data-remote="true" data-method="get" href="/projects/drjoy_vn/versions/new">New version</a>
+</p>
+</div>
+
+<div class="splitcontentright">
+<p id="parent_issue"><label for="issue_parent_issue_id">Parent task</label><input size="10" onchange="updateIssueFrom(&#39;/projects/drjoy_vn/issues/new.js&#39;, this)" type="text" name="issue[parent_issue_id]" id="issue_parent_issue_id" /></p>
+<script>
+//<![CDATA[
+observeAutocompleteField('issue_parent_issue_id', '/issues/auto_complete?project_id=drjoy_vn&scope=tree&status=o')
+//]]>
+</script>
+
+<p id="start_date_area">
+  <label for="issue_start_date">Start date</label><input max="9999-12-31" size="10" value="2025-11-21" type="date" name="issue[start_date]" id="issue_start_date" />
+  <script>
+//<![CDATA[
+$(function() { $('#issue_start_date').addClass('date').datepickerFallback(datepickerOptions); });
+//]]>
+</script>
+</p>
+
+<p id="due_date_area">
+  <label for="issue_due_date">Due date</label><input max="9999-12-31" size="10" type="date" name="issue[due_date]" id="issue_due_date" />
+  <script>
+//<![CDATA[
+$(function() { $('#issue_due_date').addClass('date').datepickerFallback(datepickerOptions); });
+//]]>
+</script>
+</p>
+
+<p><label for="issue_estimated_hours">Estimated time</label><input size="3" value="" type="text" name="issue[estimated_hours]" id="issue_estimated_hours" /> Hours</p>
+
+<p><label for="issue_done_ratio">% Done</label><select name="issue[done_ratio]" id="issue_done_ratio"><option selected="selected" value="0">0 %</option>
+<option value="10">10 %</option>
+<option value="20">20 %</option>
+<option value="30">30 %</option>
+<option value="40">40 %</option>
+<option value="50">50 %</option>
+<option value="60">60 %</option>
+<option value="70">70 %</option>
+<option value="80">80 %</option>
+<option value="90">90 %</option>
+<option value="100">100 %</option></select></p>
+</div>
+</div>
+
+
+<div class="splitcontent">
+<div class="splitcontentleft">
+  <p><label><span title="業務区分。複数選択可。" class="field-description">機能区分(Feature)</span> <span class="required">*</span></label><select name="issue[custom_field_values][37][]" id="issue_custom_field_values_37" class="list_cf cf_37" placeholder="業務区分。複数選択可。" multiple="multiple"><option value="AM: 社内システム">AM: 社内システム</option>
+<option value="AP: モバイルアプリ">AP: モバイルアプリ</option>
+<option value="AT: 勤務管理">AT: 勤務管理</option>
+<option value="BA: 共通">BA: 共通</option>
+<option value="BI：ビジネスインテリジェンス">BI：ビジネスインテリジェンス</option>
+<option value="CA: カレンダー">CA: カレンダー</option>
+<option value="CB: チャットボット">CB: チャットボット</option>
+<option value="CH: チャット">CH: チャット</option>
+<option value="CM: CMS">CM: CMS</option>
+<option value="DF: 安全性情報配信">DF: 安全性情報配信</option>
+<option value="DH: DPC分析">DH: DPC分析</option>
+<option value="DS: 薬剤検索">DS: 薬剤検索</option>
+<option value="EN: システム環境">EN: システム環境</option>
+<option value="GL: 診療ガイドライン">GL: 診療ガイドライン</option>
+<option value="GR: グループ">GR: グループ</option>
+<option value="HA: AI電話/予約">HA: AI電話/予約</option>
+<option value="RV: 患者予約">RV: 患者予約</option>
+<option value="ID: インサイトデータ">ID: インサイトデータ</option>
+<option value="MA: マスター">MA: マスター</option>
+<option value="ME: 面会・評価">ME: 面会・評価</option>
+<option value="MI: 移行">MI: 移行</option>
+<option value="OF: 公式サイト">OF: 公式サイト</option>
+<option value="OI: OpenID">OI: OpenID</option>
+<option value="OM: お見舞い">OM: お見舞い</option>
+<option value="PH: 薬薬連携">PH: 薬薬連携</option>
+<option value="PN: 本日の製薬ニュース">PN: 本日の製薬ニュース</option>
+<option value="PR: 製品説明会">PR: 製品説明会</option>
+<option value="PY: 決済">PY: 決済</option>
+<option value="QR: QRコード招待">QR: QRコード招待</option>
+<option value="RE: 登録">RE: 登録</option>
+<option value="RR: 副作用報告">RR: 副作用報告</option>
+<option value="RS: 副作用検索">RS: 副作用検索</option>
+<option value="SC: スコア計算">SC: スコア計算</option>
+<option value="SH: シフト">SH: シフト</option>
+<option value="SM: スマート面会">SM: スマート面会</option>
+<option value="SN:　スマート入院">SN:　スマート入院</option>
+<option value="TD: ターゲット医師">TD: ターゲット医師</option>
+<option value="WL：講演会">WL：講演会</option>
+<option value="WM: Web面談">WM: Web面談</option>
+<option value="SC: 出席管理">SC: 出席管理</option>
+<option value="N/A">N/A</option></select><input type="hidden" name="issue[custom_field_values][37][]" id="issue_custom_field_values_37_" value="" autocomplete="off" /></p>
+  <p><label for="issue_custom_field_values_97"><span>分類(Category)</span> <span class="required">*</span></label><select name="issue[custom_field_values][97]" id="issue_custom_field_values_97" class="list_cf cf_97" placeholder=""><option value="">--- Please select ---</option><option value="00_全社または間接部門">00_全社または間接部門</option>
+<option value="01_労務支援事業部">01_労務支援事業部</option>
+<option value="02_AI電話事業部">02_AI電話事業部</option>
+<option value="03_医薬連携事業部">03_医薬連携事業部</option>
+<option value="04_KDDI事業部">04_KDDI事業部</option>
+<option value="05_病棟支援事業部">05_病棟支援事業部</option></select></p>
+  <p><label for="issue_custom_field_values_86"><span title="Team phụ trách" class="field-description">担当チーム (Assigned team)</span></label><select name="issue[custom_field_values][86]" id="issue_custom_field_values_86" class="list_cf cf_86" placeholder="Team phụ trách"><option value="">&nbsp;</option><option selected="selected" value="未選択">未選択</option>
+<option value="DEV01：ゴク">DEV01：ゴク</option>
+<option value="DEV02：チャン">DEV02：チャン</option>
+<option value="DEV03：ハオ">DEV03：ハオ</option>
+<option value="DEV05：タム">DEV05：タム</option>
+<option value="DEV06：カット">DEV06：カット</option>
+<option value="DEV07：イエン">DEV07：イエン</option>
+<option value="DEV08：ヒロ">DEV08：ヒロ</option>
+<option value="DEV09：タイン">DEV09：タイン</option>
+<option value="DEV10：ルエン">DEV10：ルエン</option>
+<option value="DEV11：ジュン">DEV11：ジュン</option>
+<option value="DEV12：ジュン">DEV12：ジュン</option>
+<option value="DEV13：インフラ保守">DEV13：インフラ保守</option>
+<option value="DEV：共通">DEV：共通</option>
+<option value="JPチーム">JPチーム</option></select></p>
+  <p><label for="issue_custom_field_values_101"><span>受入担当者（Acceptance person）</span></label><select name="issue[custom_field_values][101]" id="issue_custom_field_values_101" class="user_cf cf_101" placeholder=""><option value="">&nbsp;</option><option value="656">&lt;&lt; me &gt;&gt;</option>
+<option value="481">an.nguyen Ja</option>
+<option value="576">anh.do Ty</option>
+<option value="605">anh.hoang Te</option>
+<option value="438">anh.le Te</option>
+<option value="521">anh.nguyen2 Te</option>
+<option value="599">chau.nguyen cs</option>
+<option value="553">chi.nguyen Te</option>
+<option value="501">chung.nguyen Ja</option>
+<option value="571">cong.nguyen Ja</option>
+<option value="320">cuong.nguyen Ja</option>
+<option value="592">dai.duong Ty</option>
+<option value="537">dao.tran Ja</option>
+<option value="660">dat.le ai</option>
+<option value="570">dat.pham Ja</option>
+<option value="355">dien.nguyen Ty</option>
+<option value="625">Dinh Rina</option>
+<option value="306">dinh.nguyen Ja</option>
+<option value="615">dinh.vu Ja</option>
+<option value="532">doai.nguyen Ty</option>
+<option value="662">DrJOY 開発</option>
+<option value="315">dung.doan Ja</option>
+<option value="349">duy.phan An</option>
+<option value="600">Hai.anhCS2 cs</option>
+<option value="442">hai.nguyen3 Te</option>
+<option value="628">hai.vo Ja</option>
+<option value="587">hang.hoang3 Ba</option>
+<option value="573">hang.nguyen Te</option>
+<option value="607">hang.pham Com</option>
+<option value="572">hien.le Ty</option>
+<option value="627">hien.pham2 Te</option>
+<option value="644">hoa.nguyen Te</option>
+<option value="580">hoan.duong Ja</option>
+<option value="564">hoang.le Ja</option>
+<option value="314">hong.tran Ty</option>
+<option value="451">hue.dang Te</option>
+<option value="310">hung.dang ja</option>
+<option value="602">huong.nguyen Ty</option>
+<option value="643">huy.hoang Ja</option>
+<option value="546">lam.nguyen Ja</option>
+<option value="517">lan.duong Te</option>
+<option value="634">Lanh リョウコ</option>
+<option value="598">Linh Dieu</option>
+<option value="648">linh.chu Co</option>
+<option value="311">linh.tran Ty</option>
+<option value="590">linh.vu2 Te</option>
+<option value="512">loan.pham Te</option>
+<option value="392">mai.le Te</option>
+<option value="540">minh.nguyen Te</option>
+<option value="325">nam.nguyen An</option>
+<option value="536">nam.phan Ja</option>
+<option value="319">nam.to Ty</option>
+<option value="393">nga.nguyen Ty</option>
+<option value="305">nga.tran Te</option>
+<option value="478">nhung.nguyen Te</option>
+<option value="637">nhung.nguyen3 Co</option>
+<option value="611">nhung.pham Te</option>
+<option value="560">oanh.leu Te</option>
+<option value="411">pgtest@drjoy.vn Tool</option>
+<option value="378">phong.le Ja</option>
+<option value="659">phu.tran gcp</option>
+<option value="398">phuong.luu Te</option>
+<option value="566">phuong.tran Te</option>
+<option value="479">phuong.vu Te</option>
+<option value="326">quoc.nguyen iO</option>
+<option value="656">Redmine MCP</option>
+<option value="617">Shinya Aramaki</option>
+<option value="647">son.ha ui</option>
+<option value="383">son.nguyen2 Ty</option>
+<option value="631">son.nguyen3 Ja</option>
+<option value="520">tam.truong Te</option>
+<option value="642">thang.nguyen Ba</option>
+<option value="658">thanh.bui2 iO</option>
+<option value="632">thanh.nguyen2 Ja</option>
+<option value="488">thanh.tran Ja</option>
+<option value="666">thao.do BA</option>
+<option value="370">thao.leu Te</option>
+<option value="402">thao.nguyen Te</option>
+<option value="409">thoa.le Te</option>
+<option value="498">thom.nguyen3 Te</option>
+<option value="649">thu.dang Ty</option>
+<option value="329">thu.nguyen Te</option>
+<option value="597">thu.nguyen2  Te</option>
+<option value="584">thuan.nguyen Ja</option>
+<option value="653">thuy.le Co</option>
+<option value="382">tien.luu Ja</option>
+<option value="511">tinh.tran Ja</option>
+<option value="559">tra.pham Ja</option>
+<option value="581">tra.pham2 Te</option>
+<option value="458">trang.le2  Te</option>
+<option value="562">trang.nguyen3 Te</option>
+<option value="390">tu.do Ja</option>
+<option value="604">tuan.le2 iO</option>
+<option value="446">tuan.nguyen2 An</option>
+<option value="661">tuan.vu co</option>
+<option value="313">tung.le Ja</option>
+<option value="565">tuyen.tran Ja</option>
+<option value="524">vi.do Ty</option>
+<option value="655">vi.nguyen ヴィ</option>
+<option value="441">vuD.dinh iO</option>
+<option value="542">xuyen.nguyen Te</option>
+<option value="353">yen.phan Te</option>
+<option value="569">アカウント 参照用共有</option>
+<option value="654">アキナリ thanh.bui Com</option>
+<option value="302">イエン yen.nguyen</option>
+<option value="406">カット cat.nguyen</option>
+<option value="594">ゲン huyen.nguyen2 SS</option>
+<option value="595">コウ phuong.le SS</option>
+<option value="312">ゴク son.nguyen</option>
+<option value="601">ジャム Tam</option>
+<option value="399">ジュン chinh.vu</option>
+<option value="327">タイン thanh.vu</option>
+<option value="462">タツ tuan.le</option>
+<option value="463">チ ngoc.le</option>
+<option value="345">チャン trang.hoang</option>
+<option value="549">チャンチャン trang.tran CS</option>
+<option value="621">チョウ Zhang</option>
+<option value="523">チー chi.hoang CS</option>
+<option value="522">トシ Tuan</option>
+<option value="567">ハイ hai.nguyen4</option>
+<option value="354">ハオ hao.dam</option>
+<option value="568">ハル thanh.pham Co</option>
+<option value="664">ハルカ Phuong</option>
+<option value="583">ヒロ hoang.nguyen</option>
+<option value="424">ビック bich.hua Co</option>
+<option value="650">ファムフエン huyen.pham</option>
+<option value="486">フェン huyen.nguyen te</option>
+<option value="495">フオンマイ mai.le2 SS</option>
+<option value="475">ホア hoa.dao AC</option>
+<option value="557">ホンリン linh.vu Com</option>
+<option value="645">ミー my.tran Co</option>
+<option value="657">リュウ シュウモン</option>
+<option value="552">リリース ticket</option>
+<option value="400">ルエン luyen.nguyen Co</option>
+<option value="170">三田 mita</option>
+<option value="663">井上 inoue</option>
+<option value="652">伊藤 Hikari</option>
+<option value="12">佐々木 Sasaki</option>
+<option value="608">前山 maeyama</option>
+<option value="5">前田 Maeda</option>
+<option value="610">古田 Furuta </option>
+<option value="483">宗 so</option>
+<option value="174">寺島 Terashima</option>
+<option value="188">小田川 Odagawa</option>
+<option value="646">小見山 komiyama</option>
+<option value="437">尾上 Onoe</option>
+<option value="591">岡本 okamoto</option>
+<option value="586">斉藤 saito</option>
+<option value="665">明李 鬼塚</option>
+<option value="622">本間 Honma</option>
+<option value="173">杉本 sugimoto</option>
+<option value="257">片桐 katagiri</option>
+<option value="616">牧野 Makino</option>
+<option value="527">相川 aikawa</option>
+<option value="102">石松 ishimatsu</option>
+<option value="417">神田 kanda</option>
+<option value="485">筒井 tsutsui</option>
+<option value="86">菊池 kikuchi</option>
+<option value="620">藤田 Fujita</option>
+<option value="614">西 nishi</option>
+<option value="14">角 Sumi</option>
+<option value="624">酒井 Sakai</option>
+<option value="618">鈴木 Suzuki</option></select></p>
+  <p><label for="issue_custom_field_values_124"><span title="チケット仕様書ファイル（Spec Ticket file）【SRS】#ticket_number〈YYMMDD〉ticket_subject" class="field-description">チケット仕様書ファイル（Spec Ticket file）</span></label><input type="text" name="issue[custom_field_values][124]" id="issue_custom_field_values_124" value="" class="link_cf cf_124" placeholder="チケット仕様書ファイル（Spec Ticket file）【SRS】#ticket_number〈YYMMDD〉ticket_subject" /></p>
+  <p><label for="issue_custom_field_values_102"><span title="開発ファイルリンク URL của file【Investigation】#ticket_number: 〈YYMMDD〉ticket_subject" class="field-description">調査ファイル (Investigation File)</span></label><input type="text" name="issue[custom_field_values][102]" id="issue_custom_field_values_102" value="" class="link_cf cf_102" placeholder="開発ファイルリンク URL của file【Investigation】#ticket_number: 〈YYMMDD〉ticket_subject" /></p>
+  <p><label for="issue_custom_field_values_13"><span title="対応者" class="field-description">対応者(Person in-charge)</span></label><select name="issue[custom_field_values][13]" id="issue_custom_field_values_13" class="user_cf cf_13" placeholder="対応者"><option value="">&nbsp;</option><option value="656">&lt;&lt; me &gt;&gt;</option>
+<option value="481">an.nguyen Ja</option>
+<option value="576">anh.do Ty</option>
+<option value="605">anh.hoang Te</option>
+<option value="438">anh.le Te</option>
+<option value="521">anh.nguyen2 Te</option>
+<option value="599">chau.nguyen cs</option>
+<option value="553">chi.nguyen Te</option>
+<option value="501">chung.nguyen Ja</option>
+<option value="571">cong.nguyen Ja</option>
+<option value="320">cuong.nguyen Ja</option>
+<option value="592">dai.duong Ty</option>
+<option value="537">dao.tran Ja</option>
+<option value="660">dat.le ai</option>
+<option value="570">dat.pham Ja</option>
+<option value="355">dien.nguyen Ty</option>
+<option value="625">Dinh Rina</option>
+<option value="306">dinh.nguyen Ja</option>
+<option value="615">dinh.vu Ja</option>
+<option value="532">doai.nguyen Ty</option>
+<option value="662">DrJOY 開発</option>
+<option value="315">dung.doan Ja</option>
+<option value="349">duy.phan An</option>
+<option value="600">Hai.anhCS2 cs</option>
+<option value="442">hai.nguyen3 Te</option>
+<option value="628">hai.vo Ja</option>
+<option value="587">hang.hoang3 Ba</option>
+<option value="573">hang.nguyen Te</option>
+<option value="607">hang.pham Com</option>
+<option value="572">hien.le Ty</option>
+<option value="627">hien.pham2 Te</option>
+<option value="644">hoa.nguyen Te</option>
+<option value="580">hoan.duong Ja</option>
+<option value="564">hoang.le Ja</option>
+<option value="314">hong.tran Ty</option>
+<option value="451">hue.dang Te</option>
+<option value="310">hung.dang ja</option>
+<option value="602">huong.nguyen Ty</option>
+<option value="643">huy.hoang Ja</option>
+<option value="546">lam.nguyen Ja</option>
+<option value="517">lan.duong Te</option>
+<option value="634">Lanh リョウコ</option>
+<option value="598">Linh Dieu</option>
+<option value="648">linh.chu Co</option>
+<option value="311">linh.tran Ty</option>
+<option value="590">linh.vu2 Te</option>
+<option value="512">loan.pham Te</option>
+<option value="392">mai.le Te</option>
+<option value="540">minh.nguyen Te</option>
+<option value="325">nam.nguyen An</option>
+<option value="536">nam.phan Ja</option>
+<option value="319">nam.to Ty</option>
+<option value="393">nga.nguyen Ty</option>
+<option value="305">nga.tran Te</option>
+<option value="478">nhung.nguyen Te</option>
+<option value="637">nhung.nguyen3 Co</option>
+<option value="611">nhung.pham Te</option>
+<option value="560">oanh.leu Te</option>
+<option value="411">pgtest@drjoy.vn Tool</option>
+<option value="378">phong.le Ja</option>
+<option value="659">phu.tran gcp</option>
+<option value="398">phuong.luu Te</option>
+<option value="566">phuong.tran Te</option>
+<option value="479">phuong.vu Te</option>
+<option value="326">quoc.nguyen iO</option>
+<option value="656">Redmine MCP</option>
+<option value="617">Shinya Aramaki</option>
+<option value="647">son.ha ui</option>
+<option value="383">son.nguyen2 Ty</option>
+<option value="631">son.nguyen3 Ja</option>
+<option value="520">tam.truong Te</option>
+<option value="642">thang.nguyen Ba</option>
+<option value="658">thanh.bui2 iO</option>
+<option value="632">thanh.nguyen2 Ja</option>
+<option value="488">thanh.tran Ja</option>
+<option value="666">thao.do BA</option>
+<option value="370">thao.leu Te</option>
+<option value="402">thao.nguyen Te</option>
+<option value="409">thoa.le Te</option>
+<option value="498">thom.nguyen3 Te</option>
+<option value="649">thu.dang Ty</option>
+<option value="329">thu.nguyen Te</option>
+<option value="597">thu.nguyen2  Te</option>
+<option value="584">thuan.nguyen Ja</option>
+<option value="653">thuy.le Co</option>
+<option value="382">tien.luu Ja</option>
+<option value="511">tinh.tran Ja</option>
+<option value="559">tra.pham Ja</option>
+<option value="581">tra.pham2 Te</option>
+<option value="458">trang.le2  Te</option>
+<option value="562">trang.nguyen3 Te</option>
+<option value="390">tu.do Ja</option>
+<option value="604">tuan.le2 iO</option>
+<option value="446">tuan.nguyen2 An</option>
+<option value="661">tuan.vu co</option>
+<option value="313">tung.le Ja</option>
+<option value="565">tuyen.tran Ja</option>
+<option value="524">vi.do Ty</option>
+<option value="655">vi.nguyen ヴィ</option>
+<option value="441">vuD.dinh iO</option>
+<option value="542">xuyen.nguyen Te</option>
+<option value="353">yen.phan Te</option>
+<option value="569">アカウント 参照用共有</option>
+<option value="654">アキナリ thanh.bui Com</option>
+<option value="302">イエン yen.nguyen</option>
+<option value="406">カット cat.nguyen</option>
+<option value="594">ゲン huyen.nguyen2 SS</option>
+<option value="595">コウ phuong.le SS</option>
+<option value="312">ゴク son.nguyen</option>
+<option value="601">ジャム Tam</option>
+<option value="399">ジュン chinh.vu</option>
+<option value="327">タイン thanh.vu</option>
+<option value="462">タツ tuan.le</option>
+<option value="463">チ ngoc.le</option>
+<option value="345">チャン trang.hoang</option>
+<option value="549">チャンチャン trang.tran CS</option>
+<option value="621">チョウ Zhang</option>
+<option value="523">チー chi.hoang CS</option>
+<option value="522">トシ Tuan</option>
+<option value="567">ハイ hai.nguyen4</option>
+<option value="354">ハオ hao.dam</option>
+<option value="568">ハル thanh.pham Co</option>
+<option value="664">ハルカ Phuong</option>
+<option value="583">ヒロ hoang.nguyen</option>
+<option value="424">ビック bich.hua Co</option>
+<option value="650">ファムフエン huyen.pham</option>
+<option value="486">フェン huyen.nguyen te</option>
+<option value="495">フオンマイ mai.le2 SS</option>
+<option value="475">ホア hoa.dao AC</option>
+<option value="557">ホンリン linh.vu Com</option>
+<option value="645">ミー my.tran Co</option>
+<option value="657">リュウ シュウモン</option>
+<option value="552">リリース ticket</option>
+<option value="400">ルエン luyen.nguyen Co</option>
+<option value="170">三田 mita</option>
+<option value="663">井上 inoue</option>
+<option value="652">伊藤 Hikari</option>
+<option value="12">佐々木 Sasaki</option>
+<option value="608">前山 maeyama</option>
+<option value="5">前田 Maeda</option>
+<option value="610">古田 Furuta </option>
+<option value="483">宗 so</option>
+<option value="174">寺島 Terashima</option>
+<option value="188">小田川 Odagawa</option>
+<option value="646">小見山 komiyama</option>
+<option value="437">尾上 Onoe</option>
+<option value="591">岡本 okamoto</option>
+<option value="586">斉藤 saito</option>
+<option value="665">明李 鬼塚</option>
+<option value="622">本間 Honma</option>
+<option value="173">杉本 sugimoto</option>
+<option value="257">片桐 katagiri</option>
+<option value="616">牧野 Makino</option>
+<option value="527">相川 aikawa</option>
+<option value="102">石松 ishimatsu</option>
+<option value="417">神田 kanda</option>
+<option value="485">筒井 tsutsui</option>
+<option value="86">菊池 kikuchi</option>
+<option value="620">藤田 Fujita</option>
+<option value="614">西 nishi</option>
+<option value="14">角 Sumi</option>
+<option value="624">酒井 Sakai</option>
+<option value="618">鈴木 Suzuki</option></select></p>
+  <p><label><span title="修正モジュール。ソースコード修正がある場合、入力必須" class="field-description">修正モジュール（Fixed module）</span></label><select name="issue[custom_field_values][26][]" id="issue_custom_field_values_26" class="list_cf cf_26" placeholder="修正モジュール。ソースコード修正がある場合、入力必須" multiple="multiple"><option value="N/A">N/A</option>
+<option value="android-drjoy">android-drjoy</option>
+<option value="android-prjoy">android-prjoy</option>
+<option value="broadcast-starter">broadcast-starter</option>
+<option value="common-data-starter">common-data-starter</option>
+<option value="configuration">configuration</option>
+<option value="google-cloud-functions">google-cloud-functions</option>
+<option value="ios-drjoy">ios-drjoy</option>
+<option value="ios-prjoy">ios-prjoy</option>
+<option value="ios-reception">ios-reception</option>
+<option value="protobuf">protobuf</option>
+<option value="service-ai">service-ai</option>
+<option value="service-admin">service-admin</option>
+<option value="service-admin-front">service-admin-front</option>
+<option value="service-attendance">service-attendance</option>
+<option value="service-attendance-front">service-attendance-front</option>
+<option value="service-attendance-sync">service-attendance-sync</option>
+<option value="service-banking">service-banking</option>
+<option value="service-banking-front">service-banking-front</option>
+<option value="service-batch">service-batch</option>
+<option value="service-chatbot">service-chatbot</option>
+<option value="service-checking-logs">service-checking-logs</option>
+<option value="service-calendar">service-calendar</option>
+<option value="service-cdn-front">service-cdn-front</option>
+<option value="service-certificate">service-certificate</option>
+<option value="service-cms">service-cms</option>
+<option value="service-config">service-config</option>
+<option value="service-distribution-function">service-distribution-function</option>
+<option value="service-drug-search">service-drug-search</option>
+<option value="service-elastic">service-elastic</option>
+<option value="service-external-calendar">service-external-calendar</option>
+<option value="service-fcm">service-fcm</option>
+<option value="service-framework">service-framework</option>
+<option value="service-functions">service-functions</option>
+<option value="service-group">service-group</option>
+<option value="service-iot">service-iot</option>
+<option value="service-master">service-master</option>
+<option value="service-materialized-view">service-materialized-view</option>
+<option value="service-meeting">service-meeting</option>
+<option value="service-mobile-front">service-mobile-front</option>
+<option value="service-monitor">service-monitor</option>
+<option value="service-mqtt-device">service-mqtt-device</option>
+<option value="service-notification">service-notification</option>
+<option value="service-oauth2-server">service-oauth2-server</option>
+<option value="service-oidc-server">service-oidc-server</option>
+<option value="service-payment">service-payment</option>
+<option value="service-payment-webhook">service-payment-webhook</option>
+<option value="service-pharmacy">service-pharmacy</option>
+<option value="service-presentation">service-presentation</option>
+<option value="service-publisher">service-publisher</option>
+<option value="service-reaction-reporting">service-reaction-reporting</option>
+<option value="service-reaction-search">service-reaction-search</option>
+<option value="service-reception-front">service-reception-front</option>
+<option value="service-recovery">service-recovery</option>
+<option value="service-registration">service-registration</option>
+<option value="service-rtc">service-rtc</option>
+<option value="service-rtm">service-rtm</option>
+<option value="service-sendgrid">service-sendgrid</option>
+<option value="service-sendgrid-webhook">service-sendgrid-webhook</option>
+<option value="service-shift">service-shift</option>
+<option value="service-side-menu">service-side-menu</option>
+<option value="service-storage-front">service-storage-front</option>
+<option value="service-sso-front">service-sso-front</option>
+<option value="service-subscriber">service-subscriber</option>
+<option value="service-targets">service-targets</option>
+<option value="service-web-front">service-web-front</option>
+<option value="service-web-lecture">service-web-lecture</option>
+<option value="service-web-meeting">service-web-meeting</option>
+<option value="service-hospital-alliance">service-hospital-alliance</option>
+<option value="service-school">service-school</option>
+<option value="service-school-front">service-school-front</option>
+<option value="service-sns-front">service-sns-front</option>
+<option value="service-sso-front">service-sso-front</option>
+<option value="service-telcom">service-telcom</option>
+<option value="service-fax">service-fax</option>
+<option value="service-fax-ocr">service-fax-ocr</option>
+<option value="web-admin">web-admin</option>
+<option value="web-at-clock">web-at-clock</option>
+<option value="web-chatbot">web-chatbot</option>
+<option value="web-drjoy">web-drjoy</option>
+<option value="web-joypass">web-joypass</option>
+<option value="web-school">web-school</option>
+<option value="service-sns">service-sns</option>
+<option value="web-reserve">web-reserve</option>
+<option value="service-reserve-front">service-reserve-front</option>
+<option value="service-reserve">service-reserve</option>
+<option value="service-wellness-front">service-wellness-front</option>
+<option value="service-wellness">service-wellness</option>
+<option value="service-jobs">service-jobs</option>
+<option value="looker-bigquery">looker-bigquery</option>
+<option value="service-smart-visitation">service-smart-visitation</option>
+<option value="android-smart-visitation">android-smart-visitation</option>
+<option value="service-smart-visitation-front">service-smart-visitation-front</option>
+<option value="service-ai-assistant">service-ai-assistant</option>
+<option value="service-ai-ssml">service-ai-ssml</option>
+<option value="service-twilio-webhook">service-twilio-webhook</option>
+<option value="service-ai-scenario">service-ai-scenario</option>
+<option value="service-ai-tune">service-ai-tune</option></select><input type="hidden" name="issue[custom_field_values][26][]" id="issue_custom_field_values_26_" value="" autocomplete="off" /></p>
+  <p><label for="issue_custom_field_values_10"><span title="対応内容。ソースコード修正がある場合、入力必須
+
+Điền các link PR merge Jackfruit/Develop vào field Changed content.
++ PR Develop (Required)
+" class="field-description">ソースコード修正箇所（Changed content）</span></label><textarea name="issue[custom_field_values][10]" id="issue_custom_field_values_10" class="text_cf cf_10" placeholder="対応内容。ソースコード修正がある場合、入力必須
+
+Điền các link PR merge Jackfruit/Develop vào field Changed content.
++ PR Develop (Required)
+" rows="8">
+</textarea></p>
+  <p><label for="issue_custom_field_values_104"><span>試験事例ファイル （Testcase File）</span></label><input type="text" name="issue[custom_field_values][104]" id="issue_custom_field_values_104" value="" class="link_cf cf_104" placeholder="" /></p>
+  <p><label for="issue_custom_field_values_14"><span title="テスト計画。この課題の解決を確認するための詳細な手順
+Bản kế hoạch kiểm thử. Các bước chi tiết để xác nhận việc giải quyết vấn đề này." class="field-description">テスト計画(Test plan)</span></label><textarea name="issue[custom_field_values][14]" id="issue_custom_field_values_14" class="text_cf cf_14" placeholder="テスト計画。この課題の解決を確認するための詳細な手順
+Bản kế hoạch kiểm thử. Các bước chi tiết để xác nhận việc giải quyết vấn đề này." rows="8">
+</textarea></p>
+  <p><label for="issue_custom_field_values_128"><span title="Link File Spec study được tạo bởi AI (Tool AI Dev3)" class="field-description">仕様検討ファイル (FileSpecStudy)</span></label><input type="text" name="issue[custom_field_values][128]" id="issue_custom_field_values_128" value="" class="link_cf cf_128" placeholder="Link File Spec study được tạo bởi AI (Tool AI Dev3)" /></p>
+  <p><label for="issue_custom_field_values_125"><span title="チケットの点数 Story point của ticket" class="field-description">ストーリーポイント(Story point)</span></label><input type="text" name="issue[custom_field_values][125]" id="issue_custom_field_values_125" value="" class="float_cf cf_125" placeholder="チケットの点数 Story point của ticket" /></p>
+</div><div class="splitcontentright">
+  <p><label for="issue_custom_field_values_85"><span title="日本側が管理するチケットの場合チェックを入れる。 このチェックをもとに、チケット一覧のqueryを作成し、作業状況を把握するために利用する。" class="field-description">管理対象のチケットである</span> <span class="required">*</span></label><span class="bool_cf cf_85" placeholder="日本側が管理するチケットの場合チェックを入れる。 このチェックをもとに、チケット一覧のqueryを作成し、作業状況を把握するために利用する。"><input type="hidden" name="issue[custom_field_values][85]" value="0" autocomplete="off" /><input type="checkbox" name="issue[custom_field_values][85]" id="issue_custom_field_values_85" value="1" checked="checked" /></span></p>
+  <p><label for="issue_custom_field_values_89"><span title="フロントエンド" class="field-description">予FE</span></label><input type="text" name="issue[custom_field_values][89]" id="issue_custom_field_values_89" value="" class="float_cf cf_89" placeholder="フロントエンド" /></p>
+  <p><label for="issue_custom_field_values_93"><span>実FE</span></label><input type="text" name="issue[custom_field_values][93]" id="issue_custom_field_values_93" value="" class="float_cf cf_93" placeholder="" /></p>
+  <p><label for="issue_custom_field_values_88"><span title="バックエンド工数" class="field-description">予BE</span></label><input type="text" name="issue[custom_field_values][88]" id="issue_custom_field_values_88" value="" class="float_cf cf_88" placeholder="バックエンド工数" /></p>
+  <p><label for="issue_custom_field_values_92"><span title="バックエンド工数見積 " class="field-description">実BE</span></label><input type="text" name="issue[custom_field_values][92]" id="issue_custom_field_values_92" value="" class="float_cf cf_92" placeholder="バックエンド工数見積 " /></p>
+  <p><label for="issue_custom_field_values_91"><span>予iOS</span></label><input type="text" name="issue[custom_field_values][91]" id="issue_custom_field_values_91" value="" class="float_cf cf_91" placeholder="" /></p>
+  <p><label for="issue_custom_field_values_94"><span>実iOS</span></label><input type="text" name="issue[custom_field_values][94]" id="issue_custom_field_values_94" value="" class="float_cf cf_94" placeholder="" /></p>
+  <p><label for="issue_custom_field_values_90"><span>予Android</span></label><input type="text" name="issue[custom_field_values][90]" id="issue_custom_field_values_90" value="" class="float_cf cf_90" placeholder="" /></p>
+  <p><label for="issue_custom_field_values_95"><span>実Android</span></label><input type="text" name="issue[custom_field_values][95]" id="issue_custom_field_values_95" value="" class="float_cf cf_95" placeholder="" /></p>
+  <p><label for="issue_custom_field_values_98"><span title="テスト工数" class="field-description">予Te</span></label><input type="text" name="issue[custom_field_values][98]" id="issue_custom_field_values_98" value="" class="float_cf cf_98" placeholder="テスト工数" /></p>
+  <p><label for="issue_custom_field_values_99"><span>実Te</span></label><input type="text" name="issue[custom_field_values][99]" id="issue_custom_field_values_99" value="" class="float_cf cf_99" placeholder="" /></p>
+  <p><label for="issue_custom_field_values_126"><span title="見積依頼対象チケットの場合はチェックを入れる。 Trường hợp là ticket request estimate từ JP thì check." class="field-description">見積依頼</span></label><span class="bool_cf cf_126" placeholder="見積依頼対象チケットの場合はチェックを入れる。 Trường hợp là ticket request estimate từ JP thì check."><input type="hidden" name="issue[custom_field_values][126]" value="0" autocomplete="off" /><input type="checkbox" name="issue[custom_field_values][126]" id="issue_custom_field_values_126" value="1" /></span></p>
+  <p><label for="issue_custom_field_values_131"><span title="[English] Prod Release = Whether the source code will be released to the Production environment (本番環境).  - True (✓): The ticket includes source code that will be merged and released to Production. - False (✗): No source code will be merged or reflected in Production for this ticket.  [日本語] Prod Release = ソースコードが本番環境 (Production) にリリースされるかどうか。  - True (✓): このチケットのソースコードはマージされ、本番環境に反映される。 - False (✗): このチケットではソースコードのマージや本番環境への反映は行われない。" class="field-description">Prod Release (本番反映)</span></label><span class="bool_cf cf_131" placeholder="[English] Prod Release = Whether the source code will be released to the Production environment (本番環境).  - True (✓): The ticket includes source code that will be merged and released to Production. - False (✗): No source code will be merged or reflected in Production for this ticket.  [日本語] Prod Release = ソースコードが本番環境 (Production) にリリースされるかどうか。  - True (✓): このチケットのソースコードはマージされ、本番環境に反映される。 - False (✗): このチケットではソースコードのマージや本番環境への反映は行われない。"><input type="hidden" name="issue[custom_field_values][131]" value="0" autocomplete="off" /><input type="checkbox" name="issue[custom_field_values][131]" id="issue_custom_field_values_131" value="1" /></span></p>
+</div>
+</div>
+
+
+
+
+
+</div>
+
+
+
+
+
+<script>
+//<![CDATA[
+rm = window.rm || {};rm.AutoComplete = rm.AutoComplete || {};rm.AutoComplete.dataSources = JSON.parse('{"issues":"/issues/auto_complete?project_id=drjoy_vn\u0026q=","wiki_pages":"/wiki_pages/auto_complete?project_id=drjoy_vn\u0026q="}');
+//]]>
+</script>
+
+  <script>
+//<![CDATA[
+rm.AutoComplete.dataSources = Object.assign(rm.AutoComplete.dataSources, JSON.parse('{"users":"/watchers/autocomplete_for_mention?object_type=issue\u0026project_id=drjoy_vn\u0026q="}'));
+//]]>
+</script>
+
+<script>
+//<![CDATA[
+
+$(document).ready(function(){
+  $("#issue_tracker_id, #issue_status_id").each(function(){
+    $(this).val($(this).find("option[selected=selected]").val());
+  });
+  $(".assign-to-me-link").click(function(event){
+    event.preventDefault();
+    var element = $(event.target);
+    $('#issue_assigned_to_id').val(element.data('id'));
+    element.hide();
+  });
+  $('#issue_assigned_to_id').change(function(event){
+    var assign_to_me_link = $(".assign-to-me-link");
+
+    if (assign_to_me_link.length > 0) {
+      var user_id = $(event.target).val();
+      var current_user_id = assign_to_me_link.data('id');
+
+      if (user_id == current_user_id) {
+        assign_to_me_link.hide();
+      } else {
+        assign_to_me_link.show();
+      }
+    }
+  });
+});
+
+//]]>
+</script>
+    </div>
+
+
+    <p id="attachments_form"><label>Files</label>
+<span class="attachments_form">
+  <span class="attachments_fields">
+  </span>
+  <span class="add_attachment" style="">
+    <input type="file" name="attachments[dummy][file]" class="file_selector filedrop" multiple="multiple" onchange="addInputFiles(this);" data-max-number-of-files-message="This file cannot be uploaded because it exceeds the maximum number of files that can be attached simultaneously (10)" data-max-file-size="104857600" data-max-file-size-message="This file cannot be uploaded because it exceeds the maximum allowed file size (100 MB)" data-max-concurrent-uploads="2" data-upload-path="/uploads.js" data-param="attachments" data-description="true" data-description-placeholder="Optional description" />
+    (Maximum size: 100 MB)
+  </span>
+</span>
+
+</p>
+
+    <div id="watchers_form_container">
+        <input type="hidden" name="issue[watcher_user_ids][]" id="issue_watcher_user_ids_" value="" autocomplete="off" />
+  <p id="watchers_form"><label>Watchers</label>
+  <span id="watchers_inputs">
+    
+  </span>
+  <span class="search_for_watchers">
+  <a class="icon icon-add-bullet" data-remote="true" data-method="get" href="/watchers/new?project_id=drjoy_vn">Search for watchers to add</a>
+  </span>
+  </p>
+
+    </div>
+  </div>
+
+  <input type="submit" name="commit" value="Create" data-disable-with="Create" />
+  <input type="submit" name="continue" value="Create and add another" data-disable-with="Create and add another" />
+</form>
+
+        
+        <div style="clear:both;"></div>
+    </div>
+</div>
+<div id="footer">
+    Powered by <a target="_blank" rel="noopener" href="https://www.redmine.org/">Redmine</a> &copy; 2006-2024 Jean-Philippe Lang
+</div>
+
+<div id="ajax-indicator" style="display:none;"><span>Loading...</span></div>
+<div id="ajax-modal" style="display:none;"></div>
+
+</div>
+
+
+
+</body>
+</html>

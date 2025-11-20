@@ -16,7 +16,7 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { KanbanColumn } from './KanbanColumn';
 import { KanbanCard } from './KanbanCard';
-import { KanbanIssueDetailModal } from './KanbanIssueDetailModal';
+import { IssueDetailModal } from '@/components/common/modals/IssueDetailModal';
 import { ParentTicketBlock } from './ParentTicketBlock';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { updateIssueStatus, setIssues, setStatuses, updateIssue, setLoading } from '@/lib/redux/slices/kanbanSlice';
@@ -25,6 +25,7 @@ import { toast } from 'sonner';
 import { LoadingOverlay } from '@/components/ui/LoadingSpinner';
 
 import { MOCK_ISSUES, MOCK_STATUSES } from '@/data/mockData';
+import { KanbanFilters } from '@/components/common/filters/KanbanFilters';
 
 export function KanbanBoard() {
     const dispatch = useAppDispatch();
@@ -35,6 +36,7 @@ export function KanbanBoard() {
     const [filterTeam, setFilterTeam] = useState<string>('');
     const [filterAssignee, setFilterAssignee] = useState<string>('');
     const [filterIssueId, setFilterIssueId] = useState<string>('');
+    const [filterRootIssueId, setFilterRootIssueId] = useState<string>('');
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -61,21 +63,7 @@ export function KanbanBoard() {
         }
     }, [dispatch, issues.length]);
 
-    // Get unique versions and teams from issues
-    const versions = useMemo(() => {
-        const versionSet = new Set(issues.map(i => i.fixed_version?.name).filter(Boolean));
-        return Array.from(versionSet).sort();
-    }, [issues]);
 
-    const teams = useMemo(() => {
-        const teamSet = new Set(issues.map(i => i.team?.name).filter(Boolean));
-        return Array.from(teamSet).sort();
-    }, [issues]);
-
-    const assignees = useMemo(() => {
-        const assigneeSet = new Set(issues.map(i => i.assigned_to?.name).filter(Boolean));
-        return Array.from(assigneeSet).sort();
-    }, [issues]);
 
     // Filter issues based on selected filters
     const filteredIssues = useMemo(() => {
@@ -84,9 +72,10 @@ export function KanbanBoard() {
             if (filterTeam && issue.team?.name !== filterTeam) return false;
             if (filterAssignee && issue.assigned_to?.name !== filterAssignee) return false;
             if (filterIssueId && !issue.id.toString().includes(filterIssueId)) return false;
+            if (filterRootIssueId && !issue.parent_id?.toString().includes(filterRootIssueId)) return false;
             return true;
         });
-    }, [issues, filterVersion, filterTeam, filterAssignee, filterIssueId]);
+    }, [issues, filterVersion, filterTeam, filterAssignee, filterIssueId, filterRootIssueId]);
 
     // Group issues by parent
     const { parentTickets, standaloneIssues } = useMemo(() => {
@@ -210,9 +199,10 @@ export function KanbanBoard() {
         setFilterTeam('');
         setFilterAssignee('');
         setFilterIssueId('');
+        setFilterRootIssueId('');
     };
 
-    const hasActiveFilters = filterVersion || filterTeam || filterAssignee || filterIssueId;
+    const hasActiveFilters = !!(filterVersion || filterTeam || filterAssignee || filterIssueId || filterRootIssueId);
 
     return (
         <>
@@ -224,66 +214,20 @@ export function KanbanBoard() {
                 onDragEnd={handleDragEnd}
             >
                 <div className="flex flex-col">
-                    {/* Filter controls */}
-                    <div className="flex items-center space-x-4 mb-6">
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Target Version:</label>
-                            <select
-                                value={filterVersion}
-                                onChange={(e) => setFilterVersion(e.target.value)}
-                                className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                            >
-                                <option value="">All Versions</option>
-                                {versions.map(version => (
-                                    <option key={version} value={version}>{version}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Team:</label>
-                            <select
-                                value={filterTeam}
-                                onChange={(e) => setFilterTeam(e.target.value)}
-                                className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                            >
-                                <option value="">All Teams</option>
-                                {teams.map(team => (
-                                    <option key={team} value={team}>{team}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Assignee:</label>
-                            <select
-                                value={filterAssignee}
-                                onChange={(e) => setFilterAssignee(e.target.value)}
-                                className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                            >
-                                <option value="">All Assignees</option>
-                                {assignees.map(assignee => (
-                                    <option key={assignee} value={assignee}>{assignee}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Issue ID:</label>
-                            <input
-                                type="text"
-                                value={filterIssueId}
-                                onChange={(e) => setFilterIssueId(e.target.value)}
-                                placeholder="Search ID..."
-                                className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white w-24"
-                            />
-                        </div>
-                        {hasActiveFilters && (
-                            <button
-                                onClick={handleClearFilters}
-                                className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                            >
-                                Clear All Filters
-                            </button>
-                        )}
-                    </div>
+                    <KanbanFilters
+                        filterVersion={filterVersion}
+                        setFilterVersion={setFilterVersion}
+                        filterTeam={filterTeam}
+                        setFilterTeam={setFilterTeam}
+                        filterAssignee={filterAssignee}
+                        setFilterAssignee={setFilterAssignee}
+                        filterIssueId={filterIssueId}
+                        setFilterIssueId={setFilterIssueId}
+                        filterRootIssueId={filterRootIssueId}
+                        setFilterRootIssueId={setFilterRootIssueId}
+                        onClearFilters={handleClearFilters}
+                        hasActiveFilters={hasActiveFilters}
+                    />
 
                     {/* Parent Ticket Blocks */}
                     <div className="space-y-6">
@@ -331,7 +275,7 @@ export function KanbanBoard() {
             </DndContext>
 
             {selectedIssue && (
-                <KanbanIssueDetailModal
+                <IssueDetailModal
                     issue={selectedIssue}
                     onClose={() => setSelectedIssue(null)}
                     onSave={handleSaveIssue}

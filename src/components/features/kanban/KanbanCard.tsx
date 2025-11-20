@@ -42,7 +42,12 @@ export function KanbanCard({ issue, onClick }: KanbanCardProps) {
             onClick={onClick}
         >
             <div className="flex justify-between items-start mb-2">
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400">#{issue.id}</span>
+                <div className="flex items-center gap-2">
+                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">#{issue.id}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 font-medium">
+                        {issue.tracker.name}
+                    </span>
+                </div>
                 <span className={clsx(
                     "text-xs px-2 py-1 rounded-full",
                     issue.priority.name === 'High' ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" :

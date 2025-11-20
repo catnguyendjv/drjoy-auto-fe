@@ -109,6 +109,7 @@ export interface RedmineVersion {
   sharing: string;
   created_on: string;
   updated_on: string;
+  wiki_page_title?: string;
 }
 
 export interface IssueQueryParams {
@@ -142,6 +143,7 @@ class RedmineApiService {
   private apiKey: string;
 
   constructor() {
+    // Use local proxy when running in browser to avoid CORS issues
     this.baseUrl = REDMINE_CONFIG.baseUrl;
     this.apiKey = REDMINE_CONFIG.apiKey;
   }
@@ -327,7 +329,7 @@ class RedmineApiService {
    * Get versions for a project
    */
   async getVersions(projectId: number | string): Promise<{ versions: RedmineVersion[] }> {
-    return this.get<{ versions: RedmineVersion[] }>(`/projects/${projectId}/versions.json`);
+    return this.get<{ versions: RedmineVersion[] }>(`/project/fixed-versions`);
   }
 
   /**
@@ -335,6 +337,13 @@ class RedmineApiService {
    */
   async getVersion(id: number): Promise<{ version: RedmineVersion }> {
     return this.get<{ version: RedmineVersion }>(`/versions/${id}.json`);
+  }
+
+  /**
+   * Get all versions across projects
+   */
+  async getAllVersions(params?: { limit?: number; offset?: number }): Promise<RedmineVersion[]> {
+    return this.get<RedmineVersion[]>('/project/fixed-versions', params);
   }
 
   // ==================== Time Entries ====================

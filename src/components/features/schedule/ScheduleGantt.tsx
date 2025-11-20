@@ -7,11 +7,15 @@ import '@/styles/gantt-dark.css';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { setIssues, setStatuses, updateIssueDates, updateIssue, setLoading } from '@/lib/redux/slices/kanbanSlice';
 import { Issue } from '@/types/redmine';
-import { KanbanIssueDetailModal } from '../kanban/KanbanIssueDetailModal';
+import { IssueDetailModal } from '@/components/common/modals/IssueDetailModal';
 import { MOCK_ISSUES, MOCK_STATUSES } from '@/data/mockData';
 import { useTheme } from 'next-themes';
 import { toast } from 'sonner';
 import { LoadingOverlay } from '@/components/ui/LoadingSpinner';
+import { TargetVersionFilter } from '@/components/common/filters/TargetVersionFilter';
+import { TeamFilter } from '@/components/common/filters/TeamFilter';
+import { AssigneeFilter } from '@/components/common/filters/AssigneeFilter';
+import { IssueIdFilter } from '@/components/common/filters/IssueIdFilter';
 
 // Mock current user ID
 const CURRENT_USER_ID = 1;
@@ -30,6 +34,7 @@ export function ScheduleGantt() {
     const [filterTeam, setFilterTeam] = useState<string>('');
     const [filterAssignee, setFilterAssignee] = useState<string>('');
     const [filterIssueId, setFilterIssueId] = useState<string>('');
+    const [filterRootIssueId, setFilterRootIssueId] = useState<string>('');
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -49,21 +54,6 @@ export function ScheduleGantt() {
         }
     }, [dispatch, issues.length]);
 
-    // Get unique versions and teams from issues
-    const versions = useMemo(() => {
-        const versionSet = new Set(issues.map(i => i.fixed_version?.name).filter(Boolean));
-        return Array.from(versionSet).sort();
-    }, [issues]);
-
-    const teams = useMemo(() => {
-        const teamSet = new Set(issues.map(i => i.team?.name).filter(Boolean));
-        return Array.from(teamSet).sort();
-    }, [issues]);
-
-    const assignees = useMemo(() => {
-        const assigneeSet = new Set(issues.map(i => i.assigned_to?.name).filter(Boolean));
-        return Array.from(assigneeSet).sort();
-    }, [issues]);
 
     const tasks: Task[] = useMemo(() => {
         return issues
@@ -73,6 +63,9 @@ export function ScheduleGantt() {
 
                 // Filter by Issue ID
                 if (filterIssueId && !issue.id.toString().includes(filterIssueId)) return false;
+
+                // Filter by Root Issue ID (parent_id)
+                if (filterRootIssueId && !issue.parent_id?.toString().includes(filterRootIssueId)) return false;
 
                 // Filter by version
                 if (filterVersion && issue.fixed_version?.name !== filterVersion) return false;
@@ -128,7 +121,7 @@ export function ScheduleGantt() {
                     styles: TASK_STYLES,
                 };
             });
-    }, [issues, statuses, filterStartDate, filterEndDate, filterVersion, filterTeam, filterAssignee, filterIssueId]);
+    }, [issues, statuses, filterStartDate, filterEndDate, filterVersion, filterTeam, filterAssignee, filterIssueId, filterRootIssueId]);
 
     const handleTaskChange = useCallback((task: Task) => {
         const issueId = parseInt(task.id);
@@ -183,9 +176,10 @@ export function ScheduleGantt() {
         setFilterTeam('');
         setFilterAssignee('');
         setFilterIssueId('');
+        setFilterRootIssueId('');
     };
 
-    const hasActiveFilters = filterStartDate || filterEndDate || filterVersion || filterTeam || filterAssignee || filterIssueId;
+    const hasActiveFilters = filterStartDate || filterEndDate || filterVersion || filterTeam || filterAssignee || filterIssueId || filterRootIssueId;
 
     if (!mounted) {
         return (
@@ -245,57 +239,13 @@ export function ScheduleGantt() {
                     </div>
                 </div>
 
-                {/* Second row: Version and Team filters */}
+                {/* Second row: Version, Team, Assignee, and Issue ID filters */}
                 <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Target Version:</label>
-                        <select
-                            value={filterVersion}
-                            onChange={(e) => setFilterVersion(e.target.value)}
-                            className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                        >
-                            <option value="">All Versions</option>
-                            {versions.map(version => (
-                                <option key={version} value={version}>{version}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Team:</label>
-                        <select
-                            value={filterTeam}
-                            onChange={(e) => setFilterTeam(e.target.value)}
-                            className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                        >
-                            <option value="">All Teams</option>
-                            {teams.map(team => (
-                                <option key={team} value={team}>{team}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Assignee:</label>
-                        <select
-                            value={filterAssignee}
-                            onChange={(e) => setFilterAssignee(e.target.value)}
-                            className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                        >
-                            <option value="">All Assignees</option>
-                            {assignees.map(assignee => (
-                                <option key={assignee} value={assignee}>{assignee}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Issue ID:</label>
-                        <input
-                            type="text"
-                            value={filterIssueId}
-                            onChange={(e) => setFilterIssueId(e.target.value)}
-                            placeholder="Search ID..."
-                            className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white w-24"
-                        />
-                    </div>
+                    <TargetVersionFilter value={filterVersion} onChange={setFilterVersion} />
+                    <TeamFilter value={filterTeam} onChange={setFilterTeam} />
+                    <AssigneeFilter value={filterAssignee} onChange={setFilterAssignee} />
+                    <IssueIdFilter value={filterIssueId} onChange={setFilterIssueId} />
+                    <IssueIdFilter value={filterRootIssueId} onChange={setFilterRootIssueId} label="Root Issue ID:" />
                     {hasActiveFilters && (
                         <button
                             onClick={handleClearFilters}
@@ -327,7 +277,7 @@ export function ScheduleGantt() {
             </div>
 
             {selectedIssue && (
-                <KanbanIssueDetailModal
+                <IssueDetailModal
                     issue={selectedIssue}
                     onClose={() => setSelectedIssue(null)}
                     onSave={handleSaveIssue}

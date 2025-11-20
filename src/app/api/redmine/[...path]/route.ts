@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
-const REDMINE_URL = process.env.NEXT_PUBLIC_REDMINE_BASE_URL || 'https://redmine.famishare.jp';
+const REDMINE_URL = process.env.NEXT_PUBLIC_REDMINE_BASE_URL || 'http://localhost:5000/redmine';
 const REDMINE_API_KEY = process.env.NEXT_PUBLIC_REDMINE_API_KEY || '';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {

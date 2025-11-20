@@ -1,17 +1,11 @@
 /**
  * Redmine Custom Fields Configuration
  * Auto-generated from Redmine API
- * Last updated: 2025-11-21 00:35:27
+ * Last updated: 2025-11-21 00:49:51
  */
 
 // ==================== Custom Fields ====================
 export const CUSTOM_FIELDS = {
-  FUNC_CODE: {
-    id: 1,
-    name: 'Func Code',
-    fieldFormat: 'string',
-    multiple: false,
-  },
   TEST_PLAN: {
     id: 14,
     name: 'テスト計画(Test plan)',
@@ -24,30 +18,6 @@ export const CUSTOM_FIELDS = {
     fieldFormat: 'list',
     multiple: true,
   },
-  GIT_REPOSITORY: {
-    id: 40,
-    name: 'ENV: Gitリポジトリ',
-    fieldFormat: 'string',
-    multiple: false,
-  },
-  ISSUE_TYPE: {
-    id: 50,
-    name: 'Issue Type',
-    fieldFormat: 'list',
-    multiple: false,
-  },
-  FUNCTION_TYPE: {
-    id: 60,
-    name: '機能種別（Funcrion Type）',
-    fieldFormat: 'list',
-    multiple: false,
-  },
-  NOTE: {
-    id: 67,
-    name: 'Note',
-    fieldFormat: 'list',
-    multiple: false,
-  },
   MANAGED_TICKET: {
     id: 85,
     name: '管理対象のチケットである',
@@ -57,12 +27,6 @@ export const CUSTOM_FIELDS = {
   TEAM: {
     id: 86,
     name: '担当チーム (Assigned team)',
-    fieldFormat: 'list',
-    multiple: false,
-  },
-  SIMPLE_TASK: {
-    id: 96,
-    name: '簡単なチケット・simple task',
     fieldFormat: 'list',
     multiple: false,
   },
@@ -240,6 +204,42 @@ export const CUSTOM_FIELDS = {
     fieldFormat: 'bool',
     multiple: false,
   },
+  PERSON_IN_CHARGE: {
+    id: 13,
+    name: '対応者(Person in-charge)',
+    fieldFormat: 'user',
+    multiple: false,
+  },
+  FIXED_MODULE: {
+    id: 26,
+    name: '修正モジュール（Fixed module）',
+    fieldFormat: 'list',
+    multiple: true,
+  },
+  CHANGED_CONTENT: {
+    id: 10,
+    name: 'ソースコード修正箇所（Changed content）',
+    fieldFormat: 'text',
+    multiple: false,
+  },
+  EST_FE: { id: 89, name: '予FE', fieldFormat: 'float', multiple: false },
+  ACT_FE: { id: 93, name: '実FE', fieldFormat: 'float', multiple: false },
+  EST_BE: { id: 88, name: '予BE', fieldFormat: 'float', multiple: false },
+  ACT_BE: { id: 92, name: '実BE', fieldFormat: 'float', multiple: false },
+  EST_IOS: { id: 91, name: '予iOS', fieldFormat: 'float', multiple: false },
+  ACT_IOS: { id: 94, name: '実iOS', fieldFormat: 'float', multiple: false },
+  EST_ANDROID: { id: 90, name: '予Android', fieldFormat: 'float', multiple: false },
+  ACT_ANDROID: { id: 95, name: '実Android', fieldFormat: 'float', multiple: false },
+  EST_TE: { id: 98, name: '予Te', fieldFormat: 'float', multiple: false },
+  ACT_TE: { id: 99, name: '実Te', fieldFormat: 'float', multiple: false },
+  STEPS_TO_REPRO: { id: 6, name: '再現手順(Steps to repro)', fieldFormat: 'text', multiple: false },
+  EXPECTED_RESULT: { id: 15, name: '期待結果(Expected result)', fieldFormat: 'text', multiple: false },
+  RESULT: { id: 36, name: '結果(Result)', fieldFormat: 'text', multiple: false },
+  ENVIRONMENT: { id: 7, name: '発生環境(Environment)', fieldFormat: 'list', multiple: true },
+  CAUSE_CLASSIFICATION: { id: 4, name: '原因分類(Cause classification)', fieldFormat: 'list', multiple: false },
+  CAUSE_EXPLANATION: { id: 8, name: '原因説明(Cause explanation)', fieldFormat: 'text', multiple: false },
+  FIX_PLAN: { id: 9, name: '対処計画(Fix plan)', fieldFormat: 'text', multiple: false },
+  OS_BROWSER: { id: 52, name: 'OS/Browser', fieldFormat: 'list', multiple: true },
 } as const;
 
 // ==================== Custom Field Options ====================
@@ -289,63 +289,6 @@ export const FEATURE_OPTIONS = [
   { value: 'N/A', label: 'N/A' },
 ] as const;
 
-// Issue Type
-export const ISSUE_TYPE_OPTIONS = [
-  { value: '機能不全（Functionality）', label: '機能不全（Functionality）' },
-  { value: '仕様不備（Spec issue）', label: '仕様不備（Spec issue）' },
-  { value: '文書不備（Documentation）', label: '文書不備（Documentation）' },
-  { value: '表示崩れ（UI）', label: '表示崩れ（UI）' },
-  { value: 'ユーザビリティ（UX）', label: 'ユーザビリティ（UX）' },
-  { value: '性能問題（Performance）', label: '性能問題（Performance）' },
-  { value: 'セキュリティ（Security）', label: 'セキュリティ（Security）' },
-  { value: '環境問題（Configuration)', label: '環境問題（Configuration)' },
-  { value: '相互運用（Interoperability）', label: '相互運用（Interoperability）' },
-  { value: '改善（Improvement）', label: '改善（Improvement）' },
-] as const;
-
-// 機能種別（Funcrion Type）
-export const FUNCTION_TYPE_OPTIONS = [
-  { value: '共通(common)', label: '共通(common)' },
-  { value: 'ログイン(login)', label: 'ログイン(login)' },
-  { value: '面会(meeting)', label: '面会(meeting)' },
-  { value: 'プロフィール編集(edit prfile)', label: 'プロフィール編集(edit prfile)' },
-  { value: 'チャット(chat)', label: 'チャット(chat)' },
-  { value: 'カレンダー(calender)', label: 'カレンダー(calender)' },
-  { value: '院内グループ(inside groupe)', label: '院内グループ(inside groupe)' },
-  { value: '院外グループ(outside groupe)', label: '院外グループ(outside groupe)' },
-  { value: '仲介機能(mediation)', label: '仲介機能(mediation)' },
-  { value: '登録(regist)', label: '登録(regist)' },
-  { value: '入退館(reception)', label: '入退館(reception)' },
-  { value: '社内システム（管理者機能）(Administoration)', label: '社内システム（管理者機能）(Administoration)' },
-  { value: 'モバイルアプリ(mobile app)', label: 'モバイルアプリ(mobile app)' },
-  { value: 'システム環境(system enviromet)', label: 'システム環境(system enviromet)' },
-  { value: '薬薬連携(hosptial&pharmacy network)', label: '薬薬連携(hosptial&pharmacy network)' },
-  { value: 'Web面談(web meeting)', label: 'Web面談(web meeting)' },
-  { value: 'シフト(shift)', label: 'シフト(shift)' },
-  { value: '勤怠管理(attendance)', label: '勤怠管理(attendance)' },
-  { value: '副作用報告(reaction report)', label: '副作用報告(reaction report)' },
-  { value: '安全性情報(drug safty informastion)', label: '安全性情報(drug safty informastion)' },
-  { value: '公式サイト(homepage)', label: '公式サイト(homepage)' },
-] as const;
-
-// Note
-export const NOTE_OPTIONS = [
-  { value: 'CEO', label: 'CEO' },
-  { value: 'JP Engineer', label: 'JP Engineer' },
-  { value: 'QA', label: 'QA' },
-  { value: 'CS', label: 'CS' },
-  { value: 'Sales', label: 'Sales' },
-  { value: 'Designer', label: 'Designer' },
-  { value: 'BrSE', label: 'BrSE' },
-  { value: 'Comtor', label: 'Comtor' },
-  { value: 'iOS', label: 'iOS' },
-  { value: 'Android', label: 'Android' },
-  { value: 'Java', label: 'Java' },
-  { value: 'Type Script', label: 'Type Script' },
-  { value: 'HTML/CSS', label: 'HTML/CSS' },
-  { value: 'Tester', label: 'Tester' },
-] as const;
-
 // 担当チーム (Assigned team)
 export const TEAM_OPTIONS = [
   { value: '未選択', label: '未選択' },
@@ -363,13 +306,6 @@ export const TEAM_OPTIONS = [
   { value: 'DEV13：インフラ保守', label: 'DEV13：インフラ保守' },
   { value: 'DEV：共通', label: 'DEV：共通' },
   { value: 'JPチーム', label: 'JPチーム' },
-] as const;
-
-// 簡単なチケット・simple task
-export const SIMPLE_TASK_OPTIONS = [
-  { value: 'Yes', label: 'Yes' },
-  { value: 'No', label: 'No' },
-  { value: 'Undefined', label: 'Undefined' },
 ] as const;
 
 // 分類(Category)
@@ -391,6 +327,128 @@ export const SEVERITY_OPTIONS = [
   { value: '5 システム停止、あるいは全ユーザーの業務に影響する"', label: '5 システム停止、あるいは全ユーザーの業務に影響する"' },
 ] as const;
 
+// 修正モジュール（Fixed module）
+export const FIXED_MODULE_OPTIONS = [
+  { value: 'N/A', label: 'N/A' },
+  { value: 'android-drjoy', label: 'android-drjoy' },
+  { value: 'android-prjoy', label: 'android-prjoy' },
+  { value: 'broadcast-starter', label: 'broadcast-starter' },
+  { value: 'common-data-starter', label: 'common-data-starter' },
+  { value: 'configuration', label: 'configuration' },
+  { value: 'google-cloud-functions', label: 'google-cloud-functions' },
+  { value: 'ios-drjoy', label: 'ios-drjoy' },
+  { value: 'ios-prjoy', label: 'ios-prjoy' },
+  { value: 'ios-reception', label: 'ios-reception' },
+  { value: 'protobuf', label: 'protobuf' },
+  { value: 'service-ai', label: 'service-ai' },
+  { value: 'service-admin', label: 'service-admin' },
+  { value: 'service-admin-front', label: 'service-admin-front' },
+  { value: 'service-attendance', label: 'service-attendance' },
+  { value: 'service-attendance-front', label: 'service-attendance-front' },
+  { value: 'service-attendance-sync', label: 'service-attendance-sync' },
+  { value: 'service-banking', label: 'service-banking' },
+  { value: 'service-banking-front', label: 'service-banking-front' },
+  { value: 'service-batch', label: 'service-batch' },
+  { value: 'service-chatbot', label: 'service-chatbot' },
+  { value: 'service-checking-logs', label: 'service-checking-logs' },
+  { value: 'service-calendar', label: 'service-calendar' },
+  { value: 'service-cdn-front', label: 'service-cdn-front' },
+  { value: 'service-certificate', label: 'service-certificate' },
+  { value: 'service-cms', label: 'service-cms' },
+  { value: 'service-config', label: 'service-config' },
+  { value: 'service-distribution-function', label: 'service-distribution-function' },
+  { value: 'service-drug-search', label: 'service-drug-search' },
+  { value: 'service-elastic', label: 'service-elastic' },
+  { value: 'service-external-calendar', label: 'service-external-calendar' },
+  { value: 'service-fcm', label: 'service-fcm' },
+  { value: 'service-framework', label: 'service-framework' },
+  { value: 'service-functions', label: 'service-functions' },
+  { value: 'service-group', label: 'service-group' },
+  { value: 'service-iot', label: 'service-iot' },
+  { value: 'service-master', label: 'service-master' },
+  { value: 'service-materialized-view', label: 'service-materialized-view' },
+  { value: 'service-meeting', label: 'service-meeting' },
+  { value: 'service-mobile-front', label: 'service-mobile-front' },
+  { value: 'service-monitor', label: 'service-monitor' },
+  { value: 'service-mqtt-device', label: 'service-mqtt-device' },
+  { value: 'service-notification', label: 'service-notification' },
+  { value: 'service-oauth2-server', label: 'service-oauth2-server' },
+  { value: 'service-oidc-server', label: 'service-oidc-server' },
+  { value: 'service-payment', label: 'service-payment' },
+  { value: 'service-payment-webhook', label: 'service-payment-webhook' },
+  { value: 'service-pharmacy', label: 'service-pharmacy' },
+  { value: 'service-presentation', label: 'service-presentation' },
+  { value: 'service-publisher', label: 'service-publisher' },
+  { value: 'service-reaction-reporting', label: 'service-reaction-reporting' },
+  { value: 'service-reaction-search', label: 'service-reaction-search' },
+  { value: 'service-reception-front', label: 'service-reception-front' },
+  { value: 'service-recovery', label: 'service-recovery' },
+  { value: 'service-registration', label: 'service-registration' },
+  { value: 'service-rtc', label: 'service-rtc' },
+  { value: 'service-rtm', label: 'service-rtm' },
+  { value: 'service-sendgrid', label: 'service-sendgrid' },
+  { value: 'service-sendgrid-webhook', label: 'service-sendgrid-webhook' },
+  { value: 'service-shift', label: 'service-shift' },
+  { value: 'service-side-menu', label: 'service-side-menu' },
+  { value: 'service-storage-front', label: 'service-storage-front' },
+  { value: 'service-sso-front', label: 'service-sso-front' },
+  { value: 'service-subscriber', label: 'service-subscriber' },
+  { value: 'service-targets', label: 'service-targets' },
+  { value: 'service-web-front', label: 'service-web-front' },
+  { value: 'service-web-lecture', label: 'service-web-lecture' },
+  { value: 'service-web-meeting', label: 'service-web-meeting' },
+  { value: 'service-hospital-alliance', label: 'service-hospital-alliance' },
+  { value: 'service-school', label: 'service-school' },
+  { value: 'service-school-front', label: 'service-school-front' },
+  { value: 'service-sns-front', label: 'service-sns-front' },
+  { value: 'service-telcom', label: 'service-telcom' },
+  { value: 'service-fax', label: 'service-fax' },
+  { value: 'service-fax-ocr', label: 'service-fax-ocr' },
+  { value: 'web-admin', label: 'web-admin' },
+  { value: 'web-at-clock', label: 'web-at-clock' },
+  { value: 'web-chatbot', label: 'web-chatbot' },
+  { value: 'web-drjoy', label: 'web-drjoy' },
+  { value: 'web-joypass', label: 'web-joypass' },
+  { value: 'web-school', label: 'web-school' },
+  { value: 'service-sns', label: 'service-sns' },
+  { value: 'web-reserve', label: 'web-reserve' },
+  { value: 'service-reserve-front', label: 'service-reserve-front' },
+  { value: 'service-reserve', label: 'service-reserve' },
+  { value: 'service-wellness-front', label: 'service-wellness-front' },
+  { value: 'service-wellness', label: 'service-wellness' },
+  { value: 'service-jobs', label: 'service-jobs' },
+  { value: 'looker-bigquery', label: 'looker-bigquery' },
+  { value: 'service-smart-visitation', label: 'service-smart-visitation' },
+  { value: 'android-smart-visitation', label: 'android-smart-visitation' },
+  { value: 'service-smart-visitation-front', label: 'service-smart-visitation-front' },
+  { value: 'service-ai-assistant', label: 'service-ai-assistant' },
+  { value: 'service-ai-ssml', label: 'service-ai-ssml' },
+  { value: 'service-twilio-webhook', label: 'service-twilio-webhook' },
+  { value: 'service-ai-scenario', label: 'service-ai-scenario' },
+  { value: 'service-ai-tune', label: 'service-ai-tune' },
+] as const;
+
+// 発生環境(Environment)
+export const ENVIRONMENT_OPTIONS = [
+  { value: 'Fruits', label: 'Fruits' },
+  { value: 'Staging', label: 'Staging' },
+  { value: 'Production', label: 'Production' },
+] as const;
+
+// 原因分類(Cause classification)
+export const CAUSE_CLASSIFICATION_OPTIONS = [
+  { value: 'B-2:実装バグ (開発) Implementation bug (Development)', label: 'B-2:実装バグ (開発) Implementation bug (Development)' },
+  { value: 'A-1:仕様漏れ (仕様) Missing spec (Spec)', label: 'A-1:仕様漏れ (仕様) Missing spec (Spec)' },
+] as const;
+
+// OS/Browser
+export const OS_BROWSER_OPTIONS = [
+  { value: 'Browser-Chrome', label: 'Browser-Chrome' },
+  { value: 'Browser-Safari', label: 'Browser-Safari' },
+  { value: 'iOS', label: 'iOS' },
+  { value: 'Android', label: 'Android' },
+] as const;
+
 // ==================== Type Definitions ====================
 export type CustomFieldId = typeof CUSTOM_FIELDS[keyof typeof CUSTOM_FIELDS]['id'];
 export type CustomFieldFormat = 'list' | 'string' | 'text' | 'date' | 'bool' | 'user' | 'link' | 'float';
@@ -406,3 +464,5 @@ export interface CustomFieldOption {
   value: string;
   label: string;
 }
+
+export type CustomFieldValue = string | string[] | number | boolean | null | undefined;

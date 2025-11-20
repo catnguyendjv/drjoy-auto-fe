@@ -7,7 +7,7 @@
 
 // ==================== API Configuration ====================
 export const REDMINE_CONFIG = {
-  baseUrl: process.env.NEXT_PUBLIC_REDMINE_BASE_URL || 'https://redmine.famishare.jp',
+  baseUrl: process.env.NEXT_PUBLIC_REDMINE_BASE_URL || 'http://localhost:5000/redmine',
   apiKey: process.env.NEXT_PUBLIC_REDMINE_API_KEY || '',
 } as const;
 
@@ -109,10 +109,6 @@ export {
   CUSTOM_FIELDS,
   TEAM_OPTIONS,
   FEATURE_OPTIONS,
-  ISSUE_TYPE_OPTIONS,
-  FUNCTION_TYPE_OPTIONS,
-  NOTE_OPTIONS,
-  SIMPLE_TASK_OPTIONS,
   CATEGORY_OPTIONS,
   SEVERITY_OPTIONS,
 } from './redmine-custom-fields';

@@ -1,17 +1,24 @@
-import { Issue } from '@/types/redmine';
+import { Issue, CustomField } from '@/types/redmine';
 import { Edit2, Save, X, XCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { MOCK_STATUSES, MOCK_PRIORITIES, MOCK_VERSIONS, MOCK_TEAMS, MOCK_USERS } from '@/data/mockData';
+import { MOCK_STATUSES, MOCK_PRIORITIES, MOCK_VERSIONS, MOCK_USERS } from '@/data/mockData';
 import { toast } from 'sonner';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
-interface KanbanIssueDetailModalProps {
+export interface CustomFieldsProps {
+    issue: Issue;
+    isEditMode: boolean;
+    onUpdate: (updatedFields: CustomField[]) => void;
+}
+
+interface BaseIssueDetailModalProps {
     issue: Issue;
     onClose: () => void;
     onSave?: (updatedIssue: Issue) => void;
+    renderCustomFields?: (props: CustomFieldsProps) => React.ReactNode;
 }
 
-export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDetailModalProps) {
+export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomFields }: BaseIssueDetailModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
     const [isEditMode, setIsEditMode] = useState(false);
     const [editedIssue, setEditedIssue] = useState<Issue>(issue);
@@ -75,6 +82,10 @@ export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDe
         }, 600);
     };
 
+    const handleCustomFieldsUpdate = (updatedFields: CustomField[]) => {
+        setEditedIssue({ ...editedIssue, custom_fields: updatedFields });
+    };
+
     const inputClassName = "w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent";
     const selectClassName = "w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent";
 
@@ -85,15 +96,18 @@ export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDe
         >
             <div
                 ref={modalRef}
-                className="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto flex flex-col"
+                className="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col"
                 role="dialog"
                 aria-modal="true"
             >
                 {/* Header */}
                 <div className="flex items-start justify-between p-6 border-b border-gray-200 dark:border-zinc-800">
                     <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-3 mb-2 flex-wrap">
                             <span className="text-sm font-mono text-gray-500 dark:text-gray-400">#{issue.id}</span>
+                            <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                                {editedIssue.tracker.name}
+                            </span>
                             {!isEditMode ? (
                                 <>
                                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium
@@ -104,7 +118,8 @@ export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDe
                                         }`}>
                                         {editedIssue.priority.name}
                                     </span>
-                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                        ${editedIssue.status.is_closed ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}`}>
                                         {editedIssue.status.name}
                                     </span>
                                 </>
@@ -166,10 +181,10 @@ export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDe
 
                     {/* Details Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Left Column - Details */}
+                        {/* Left Column - Basic Details */}
                         <div>
                             <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                                Details
+                                Basic Details
                             </h3>
                             <div className="space-y-4">
                                 {/* Status */}
@@ -182,7 +197,7 @@ export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDe
                                             value={editedIssue.status.id}
                                             onChange={(e) => {
                                                 const status = MOCK_STATUSES.find(s => s.id === Number(e.target.value));
-                                                if (status) setEditedIssue({ ...editedIssue, status: { id: status.id, name: status.name } });
+                                                if (status) setEditedIssue({ ...editedIssue, status: { id: status.id, name: status.name, is_closed: status.is_closed } });
                                             }}
                                             className={selectClassName}
                                         >
@@ -247,13 +262,21 @@ export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDe
                                     <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Author</label>
                                     <div className="font-medium text-gray-900 dark:text-white">{editedIssue.author?.name || 'Unknown'}</div>
                                 </div>
+
+                                {/* Parent Issue */}
+                                {editedIssue.parent && (
+                                    <div>
+                                        <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Parent Issue</label>
+                                        <div className="font-medium text-gray-900 dark:text-white">#{editedIssue.parent.id}</div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        {/* Right Column - Dates & More */}
+                        {/* Right Column - Dates & Planning */}
                         <div>
                             <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                                Dates & More
+                                Dates & Planning
                             </h3>
                             <div className="space-y-4">
                                 {/* Start Date */}
@@ -308,41 +331,57 @@ export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDe
                                     )}
                                 </div>
 
-                                {/* Team */}
+                                {/* Done Ratio */}
                                 <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Team</label>
-                                    {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.team?.name || '-'}</div>
-                                    ) : (
-                                        <select
-                                            value={editedIssue.team?.id || ''}
-                                            onChange={(e) => {
-                                                const team = MOCK_TEAMS.find(t => t.id === Number(e.target.value));
-                                                setEditedIssue({ ...editedIssue, team });
-                                            }}
-                                            className={selectClassName}
-                                        >
-                                            <option value="">None</option>
-                                            {MOCK_TEAMS.map(team => (
-                                                <option key={team.id} value={team.id}>{team.name}</option>
-                                            ))}
-                                        </select>
-                                    )}
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Done Ratio</label>
+                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.done_ratio}%</div>
                                 </div>
 
-                                {/* Created */}
+                                {/* Estimated Hours */}
                                 <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Created</label>
-                                    <div className="font-medium text-gray-900 dark:text-white">{new Date(editedIssue.created_on).toLocaleDateString()}</div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Estimated Hours</label>
+                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.estimated_hours || '-'}</div>
                                 </div>
 
-                                {/* Updated */}
+                                {/* Spent Hours */}
                                 <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Updated</label>
-                                    <div className="font-medium text-gray-900 dark:text-white">{new Date(editedIssue.updated_on).toLocaleDateString()}</div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Spent Hours</label>
+                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.spent_hours || 0}</div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    {/* Custom Fields Section */}
+                    {renderCustomFields && (
+                        <div>
+                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
+                                Custom Fields
+                            </h3>
+                            {renderCustomFields({
+                                issue: editedIssue,
+                                isEditMode,
+                                onUpdate: handleCustomFieldsUpdate
+                            })}
+                        </div>
+                    )}
+
+                    {/* Timestamps */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-gray-200 dark:border-zinc-800">
+                        <div>
+                            <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Created</label>
+                            <div className="font-medium text-gray-900 dark:text-white text-sm">{new Date(editedIssue.created_on).toLocaleString()}</div>
+                        </div>
+                        <div>
+                            <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Updated</label>
+                            <div className="font-medium text-gray-900 dark:text-white text-sm">{new Date(editedIssue.updated_on).toLocaleString()}</div>
+                        </div>
+                        {editedIssue.closed_on && (
+                            <div>
+                                <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Closed</label>
+                                <div className="font-medium text-gray-900 dark:text-white text-sm">{new Date(editedIssue.closed_on).toLocaleString()}</div>
+                            </div>
+                        )}
                     </div>
                 </div>
 

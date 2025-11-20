@@ -305,12 +305,12 @@ export {
 } from './components/ui/redmine';
 
 // ==================== Example Components ====================
-export {
-  IssueDashboard,
-  SimpleIssueList,
-} from './components/examples/IssueDashboard';
+// export {
+//   IssueDashboard,
+//   SimpleIssueList,
+// } from './components/examples/IssueDashboard';
 
-export {
-  ScheduleGanttRedmine,
-} from './components/examples/ScheduleGanttRedmine';
+// export {
+//   ScheduleGanttRedmine,
+// } from './components/examples/ScheduleGanttRedmine';
 
