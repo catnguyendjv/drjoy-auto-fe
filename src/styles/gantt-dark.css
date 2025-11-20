@@ -1,0 +1,154 @@
+/* Dark mode styles for gantt-task-react with obfuscated class names */
+.dark ._3eULf {
+  /* Main container */
+  background-color: #18181b !important;
+  color: #a1a1aa !important;
+}
+
+/* Task list header */
+.dark ._1nBOt {
+  background-color: #3f3f46 !important;
+  border-bottom: 1px solid #52525b !important;
+  color: #ffffff !important;
+}
+
+.dark ._1nBOt ._WuQ0f {
+  color: #ffffff !important;
+}
+
+.dark ._2eZzQ {
+  /* Separator */
+  background-color: #52525b !important;
+}
+
+/* Task list table */
+.dark ._2B2zv {
+  background-color: #27272a !important;
+}
+
+.dark ._34SS0 {
+  /* Task list row */
+  color: #ffffff !important;
+  border-bottom: 1px solid #3f3f46 !important;
+}
+
+.dark ._34SS0:hover {
+  background-color: #3f3f46 !important;
+}
+
+.dark ._3lLk3 {
+  color: #ffffff !important;
+}
+
+/* Calendar header */
+.dark ._3rUKi {
+  /* Calendar container */
+  background-color: #27272a !important;
+  border-bottom: 1px solid #3f3f46 !important;
+}
+
+.dark ._3rUKi ._3w_5u,
+/* Top header */
+.dark ._3rUKi ._2q1Kt
+
+/* Bottom header */
+  {
+  background-color: #3f3f46 !important;
+  border-bottom: 1px solid #52525b !important;
+  color: #ffffff !important;
+}
+
+.dark ._3rUKi ._3w_5u div,
+.dark ._3rUKi ._2q1Kt div {
+  color: #ffffff !important;
+  border-right: 1px solid #52525b !important;
+}
+
+.dark ._3rUKi ._1eT-t {
+  /* Ticks */
+  color: #a1a1aa !important;
+  border-right: 1px solid #3f3f46 !important;
+}
+
+/* Grid */
+.dark ._KxSXS {
+  /* Grid container */
+  background-color: #27272a !important;
+}
+
+.dark ._19jgW {
+  /* Grid row lines */
+  stroke: #3f3f46 !important;
+}
+
+.dark ._2k9Ys {
+  /* Grid ticks */
+  stroke: #3f3f46 !important;
+}
+
+/* Today line */
+.dark ._9w8d5 {
+  /* Today line */
+  stroke: #3b82f6 !important;
+}
+
+/* Arrows */
+.dark ._3KcaM {
+  /* Arrow */
+  stroke: #71717a !important;
+}
+
+.dark ._3KcaM path {
+  fill: #71717a !important;
+}
+
+/* Task Bars - using inline styles from library, but we can try to override */
+.dark ._RuwuK {
+  /* Bar display */
+  /* The library sets fill via inline style, !important might be needed if CSS doesn't override */
+}
+
+/* Scrollbar styling for dark mode */
+.dark ._3eULf::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dark ._3eULf::-webkit-scrollbar-track {
+  background: #27272a;
+}
+
+.dark ._3eULf::-webkit-scrollbar-thumb {
+  background: #52525b;
+  border-radius: 5px;
+}
+
+.dark ._3eULf::-webkit-scrollbar-thumb:hover {
+  background: #71717a;
+}
+
+/* Horizontal scroll */
+.dark ._3zRJQ {
+  /* Horizontal scroll container */
+  background-color: #27272a !important;
+}
+
+.dark ._3zRJQ::-webkit-scrollbar-track {
+  background: #27272a;
+}
+
+.dark ._3zRJQ::-webkit-scrollbar-thumb {
+  background: #52525b;
+}
+
+/* Tooltip */
+.dark .gantt-tooltip {
+  background-color: #27272a !important;
+  border: 1px solid #3f3f46 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .gantt-tooltip .tooltip-details {
+  color: #a1a1aa !important;
+}

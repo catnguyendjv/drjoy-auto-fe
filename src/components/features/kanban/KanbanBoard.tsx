@@ -33,6 +33,8 @@ export function KanbanBoard() {
     const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
     const [filterVersion, setFilterVersion] = useState<string>('');
     const [filterTeam, setFilterTeam] = useState<string>('');
+    const [filterAssignee, setFilterAssignee] = useState<string>('');
+    const [filterIssueId, setFilterIssueId] = useState<string>('');
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -70,14 +72,21 @@ export function KanbanBoard() {
         return Array.from(teamSet).sort();
     }, [issues]);
 
+    const assignees = useMemo(() => {
+        const assigneeSet = new Set(issues.map(i => i.assigned_to?.name).filter(Boolean));
+        return Array.from(assigneeSet).sort();
+    }, [issues]);
+
     // Filter issues based on selected filters
     const filteredIssues = useMemo(() => {
         return issues.filter(issue => {
             if (filterVersion && issue.fixed_version?.name !== filterVersion) return false;
             if (filterTeam && issue.team?.name !== filterTeam) return false;
+            if (filterAssignee && issue.assigned_to?.name !== filterAssignee) return false;
+            if (filterIssueId && !issue.id.toString().includes(filterIssueId)) return false;
             return true;
         });
-    }, [issues, filterVersion, filterTeam]);
+    }, [issues, filterVersion, filterTeam, filterAssignee, filterIssueId]);
 
     // Group issues by parent
     const { parentTickets, standaloneIssues } = useMemo(() => {
@@ -199,9 +208,11 @@ export function KanbanBoard() {
     const handleClearFilters = () => {
         setFilterVersion('');
         setFilterTeam('');
+        setFilterAssignee('');
+        setFilterIssueId('');
     };
 
-    const hasActiveFilters = filterVersion || filterTeam;
+    const hasActiveFilters = filterVersion || filterTeam || filterAssignee || filterIssueId;
 
     return (
         <>
@@ -212,81 +223,106 @@ export function KanbanBoard() {
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
             >
-                {/* Filter controls */}
-                <div className="flex items-center space-x-4 mb-6">
-                    <div className="flex items-center space-x-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Target Version:</label>
-                        <select
-                            value={filterVersion}
-                            onChange={(e) => setFilterVersion(e.target.value)}
-                            className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                        >
-                            <option value="">All Versions</option>
-                            {versions.map(version => (
-                                <option key={version} value={version}>{version}</option>
-                            ))}
-                        </select>
+                <div className="flex flex-col">
+                    {/* Filter controls */}
+                    <div className="flex items-center space-x-4 mb-6">
+                        <div className="flex items-center space-x-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Target Version:</label>
+                            <select
+                                value={filterVersion}
+                                onChange={(e) => setFilterVersion(e.target.value)}
+                                className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                            >
+                                <option value="">All Versions</option>
+                                {versions.map(version => (
+                                    <option key={version} value={version}>{version}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Team:</label>
+                            <select
+                                value={filterTeam}
+                                onChange={(e) => setFilterTeam(e.target.value)}
+                                className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                            >
+                                <option value="">All Teams</option>
+                                {teams.map(team => (
+                                    <option key={team} value={team}>{team}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Assignee:</label>
+                            <select
+                                value={filterAssignee}
+                                onChange={(e) => setFilterAssignee(e.target.value)}
+                                className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                            >
+                                <option value="">All Assignees</option>
+                                {assignees.map(assignee => (
+                                    <option key={assignee} value={assignee}>{assignee}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Issue ID:</label>
+                            <input
+                                type="text"
+                                value={filterIssueId}
+                                onChange={(e) => setFilterIssueId(e.target.value)}
+                                placeholder="Search ID..."
+                                className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white w-24"
+                            />
+                        </div>
+                        {hasActiveFilters && (
+                            <button
+                                onClick={handleClearFilters}
+                                className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                            >
+                                Clear All Filters
+                            </button>
+                        )}
                     </div>
-                    <div className="flex items-center space-x-2">
-                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Team:</label>
-                        <select
-                            value={filterTeam}
-                            onChange={(e) => setFilterTeam(e.target.value)}
-                            className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                        >
-                            <option value="">All Teams</option>
-                            {teams.map(team => (
-                                <option key={team} value={team}>{team}</option>
-                            ))}
-                        </select>
-                    </div>
-                    {hasActiveFilters && (
-                        <button
-                            onClick={handleClearFilters}
-                            className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
-                            Clear All Filters
-                        </button>
-                    )}
-                </div>
 
-                {/* Parent Ticket Blocks */}
-                <div className="space-y-6 overflow-y-auto">
-                    {parentTickets.map((parent) => (
-                        <ParentTicketBlock
-                            key={parent.id}
-                            parent={parent}
-                            children={getChildrenForParent(parent.id)}
-                            statuses={statuses}
-                            onIssueClick={handleIssueClick}
-                        />
-                    ))}
+                    {/* Parent Ticket Blocks */}
+                    <div className="space-y-6">
+                        {parentTickets.map((parent) => (
+                            <ParentTicketBlock
+                                key={parent.id}
+                                parent={parent}
+                                children={getChildrenForParent(parent.id)}
+                                statuses={statuses}
+                                onIssueClick={handleIssueClick}
+                            />
+                        ))}
 
-                    {/* Standalone Issues Section */}
-                    {standaloneIssues.length > 0 && (
-                        <div className="border border-gray-300 dark:border-zinc-700 rounded-lg overflow-hidden bg-white dark:bg-zinc-900">
-                            <div className="bg-gray-100 dark:bg-zinc-800 border-b border-gray-300 dark:border-zinc-700 p-3">
-                                <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300">
-                                    Standalone Issues
-                                </h3>
-                            </div>
-                            <div className="p-4 bg-gray-50 dark:bg-zinc-950">
-                                <div className="flex gap-4 overflow-x-auto">
-                                    {statuses.map((status) => (
-                                        <KanbanColumn
-                                            key={`standalone-${status.id}`}
-                                            status={{
-                                                ...status,
-                                                id: `standalone-status-${status.id}`,
-                                            } as any}
-                                            issues={standaloneIssues.filter((i) => i.status.id === status.id)}
-                                            onIssueClick={handleIssueClick}
-                                        />
-                                    ))}
+                        {/* Standalone Issues Section */}
+                        {standaloneIssues.length > 0 && (
+                            <div className="border border-gray-300 dark:border-zinc-700 rounded-lg overflow-hidden bg-white dark:bg-zinc-900">
+                                <div className="bg-gray-100 dark:bg-zinc-800 border-b border-gray-300 dark:border-zinc-700 p-3">
+                                    <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300">
+                                        Standalone Issues
+                                    </h3>
+                                </div>
+                                <div className="p-4 bg-gray-50 dark:bg-zinc-950">
+                                    <div className="flex gap-4 overflow-x-auto">
+                                        {statuses.map((status) => (
+                                            <KanbanColumn
+                                                key={`standalone-${status.id}`}
+                                                status={{
+                                                    ...status,
+                                                    id: `standalone-status-${status.id}`,
+                                                } as any}
+                                                issues={standaloneIssues.filter((i) => i.status.id === status.id)}
+                                                onIssueClick={handleIssueClick}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
 
                 <DragOverlay>

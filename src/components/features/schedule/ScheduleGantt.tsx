@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Gantt, Task, ViewMode } from 'gantt-task-react';
 import "gantt-task-react/dist/index.css";
+import '@/styles/gantt-dark.css';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { setIssues, setStatuses, updateIssueDates, updateIssue, setLoading } from '@/lib/redux/slices/kanbanSlice';
 import { Issue } from '@/types/redmine';
@@ -25,6 +26,8 @@ export function ScheduleGantt() {
     const [filterEndDate, setFilterEndDate] = useState<string>('');
     const [filterVersion, setFilterVersion] = useState<string>('');
     const [filterTeam, setFilterTeam] = useState<string>('');
+    const [filterAssignee, setFilterAssignee] = useState<string>('');
+    const [filterIssueId, setFilterIssueId] = useState<string>('');
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -55,10 +58,19 @@ export function ScheduleGantt() {
         return Array.from(teamSet).sort();
     }, [issues]);
 
+    const assignees = useMemo(() => {
+        const assigneeSet = new Set(issues.map(i => i.assigned_to?.name).filter(Boolean));
+        return Array.from(assigneeSet).sort();
+    }, [issues]);
+
     const tasks: Task[] = useMemo(() => {
         return issues
             .filter(issue => {
-                if (issue.assigned_to?.id !== CURRENT_USER_ID) return false;
+                // Filter by assignee
+                if (filterAssignee && issue.assigned_to?.name !== filterAssignee) return false;
+
+                // Filter by Issue ID
+                if (filterIssueId && !issue.id.toString().includes(filterIssueId)) return false;
 
                 // Filter by version
                 if (filterVersion && issue.fixed_version?.name !== filterVersion) return false;
@@ -111,7 +123,7 @@ export function ScheduleGantt() {
                     styles: { progressColor: '#2563eb', progressSelectedColor: '#1d4ed8' },
                 };
             });
-    }, [issues, statuses, filterStartDate, filterEndDate, filterVersion, filterTeam]);
+    }, [issues, statuses, filterStartDate, filterEndDate, filterVersion, filterTeam, filterAssignee, filterIssueId]);
 
     const handleTaskChange = (task: Task) => {
         const issueId = parseInt(task.id);
@@ -149,30 +161,16 @@ export function ScheduleGantt() {
         setSelectedIssue(null);
     };
 
-    const darkColors = {
-        barPadding: 3,
-        barCornerRadius: 3,
-        columnWidth: 60,
-        rowHeight: 50,
-        headerHeight: 50,
-        barFill: '#3b82f6',
-        barProgress: '#2563eb',
-        barSelectedColor: '#1d4ed8',
-        barBackground: '#3f3f46',
-        textPrimary: '#ffffff',
-        textSecondary: '#a1a1aa',
-        background: '#18181b',
-        white: '#27272a',
-    };
-
     const handleClearFilters = () => {
         setFilterStartDate('');
         setFilterEndDate('');
         setFilterVersion('');
         setFilterTeam('');
+        setFilterAssignee('');
+        setFilterIssueId('');
     };
 
-    const hasActiveFilters = filterStartDate || filterEndDate || filterVersion || filterTeam;
+    const hasActiveFilters = filterStartDate || filterEndDate || filterVersion || filterTeam || filterAssignee || filterIssueId;
 
     if (!mounted) {
         return (
@@ -256,6 +254,29 @@ export function ScheduleGantt() {
                                 <option key={team} value={team}>{team}</option>
                             ))}
                         </select>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Assignee:</label>
+                        <select
+                            value={filterAssignee}
+                            onChange={(e) => setFilterAssignee(e.target.value)}
+                            className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                        >
+                            <option value="">All Assignees</option>
+                            {assignees.map(assignee => (
+                                <option key={assignee} value={assignee}>{assignee}</option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Issue ID:</label>
+                        <input
+                            type="text"
+                            value={filterIssueId}
+                            onChange={(e) => setFilterIssueId(e.target.value)}
+                            placeholder="Search ID..."
+                            className="px-3 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white w-24"
+                        />
                     </div>
                     {hasActiveFilters && (
                         <button
