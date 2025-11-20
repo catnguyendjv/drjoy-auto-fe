@@ -30,6 +30,8 @@ export interface Issue {
         id: number;
         name: string;
     };
+    parent_id?: number;
+    children?: Issue[];
     start_date?: string;
     due_date?: string;
     created_on: string;

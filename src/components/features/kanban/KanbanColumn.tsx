@@ -33,7 +33,9 @@ export function KanbanColumn({ status, issues, onIssueClick }: KanbanColumnProps
             <div
                 ref={setNodeRef}
                 className={clsx(
-                    "flex-1 bg-gray-50 dark:bg-zinc-900/50 rounded-xl p-4 space-y-3 min-h-[500px]",
+                    "flex-1 rounded-xl p-4 space-y-3 min-h-[500px]",
+                    "bg-gray-50 dark:bg-zinc-900/50",
+                    "border-2 border-gray-200 dark:border-zinc-800"
                 )}
             >
                 <SortableContext items={issues.map(i => i.id)} strategy={verticalListSortingStrategy}>

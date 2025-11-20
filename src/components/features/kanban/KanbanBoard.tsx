@@ -17,6 +17,7 @@ import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { KanbanColumn } from './KanbanColumn';
 import { KanbanCard } from './KanbanCard';
 import { KanbanIssueDetailModal } from './KanbanIssueDetailModal';
+import { ParentTicketBlock } from './ParentTicketBlock';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
 import { updateIssueStatus, setIssues, setStatuses, updateIssue, setLoading } from '@/lib/redux/slices/kanbanSlice';
 import { Issue } from '@/types/redmine';
@@ -78,6 +79,38 @@ export function KanbanBoard() {
         });
     }, [issues, filterVersion, filterTeam]);
 
+    // Group issues by parent
+    const { parentTickets, standaloneIssues } = useMemo(() => {
+        const parents: Issue[] = [];
+        const standalone: Issue[] = [];
+        const parentMap = new Map<number, Issue>();
+
+        // First pass: identify all parent tickets from filteredIssues
+        // BUT check if they have children in the FULL issues array
+        filteredIssues.forEach(issue => {
+            if (!issue.parent_id) {
+                // Check if this issue is a parent of other issues in the FULL issues list
+                const hasChildren = issues.some(i => i.parent_id === issue.id);
+                if (hasChildren) {
+                    parents.push(issue);
+                    parentMap.set(issue.id, issue);
+                } else {
+                    standalone.push(issue);
+                }
+            }
+        });
+
+        // Sort parents by ID
+        parents.sort((a, b) => a.id - b.id);
+
+        return { parentTickets: parents, standaloneIssues: standalone };
+    }, [filteredIssues, issues]);
+
+    // Get children for a parent ticket
+    const getChildrenForParent = (parentId: number): Issue[] => {
+        return filteredIssues.filter(issue => issue.parent_id === parentId);
+    };
+
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const issue = active.data.current?.issue as Issue;
@@ -104,8 +137,26 @@ export function KanbanBoard() {
         // Determine the new status
         let newStatusId: number | undefined;
 
-        // If dropped on a column
-        const overColumn = statuses.find(s => s.id === overId);
+        // If dropped on a column, handle both regular and unique IDs
+        let overColumn = statuses.find(s => s.id === overId);
+
+        // If not found directly, try to parse from unique ID strings
+        if (!overColumn && typeof overId === 'string') {
+            const parentMatch = overId.match(/^parent-\d+-status-(\d+)$/);
+            const standaloneMatch = overId.match(/^standalone-status-(\d+)$/);
+            let statusIdFromOver: number | null = null;
+
+            if (parentMatch) {
+                statusIdFromOver = parseInt(parentMatch[1], 10);
+            } else if (standaloneMatch) {
+                statusIdFromOver = parseInt(standaloneMatch[1], 10);
+            }
+
+            if (statusIdFromOver) {
+                overColumn = statuses.find(s => s.id === statusIdFromOver);
+            }
+        }
+
         if (overColumn) {
             newStatusId = overColumn.id;
         } else {
@@ -162,7 +213,7 @@ export function KanbanBoard() {
                 onDragEnd={handleDragEnd}
             >
                 {/* Filter controls */}
-                <div className="flex items-center space-x-4 mb-4">
+                <div className="flex items-center space-x-4 mb-6">
                     <div className="flex items-center space-x-2">
                         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Target Version:</label>
                         <select
@@ -199,15 +250,43 @@ export function KanbanBoard() {
                     )}
                 </div>
 
-                <div className="flex h-full gap-6 overflow-x-auto pb-4">
-                    {statuses.map((status) => (
-                        <KanbanColumn
-                            key={status.id}
-                            status={status}
-                            issues={filteredIssues.filter((i) => i.status.id === status.id)}
+                {/* Parent Ticket Blocks */}
+                <div className="space-y-6 overflow-y-auto">
+                    {parentTickets.map((parent) => (
+                        <ParentTicketBlock
+                            key={parent.id}
+                            parent={parent}
+                            children={getChildrenForParent(parent.id)}
+                            statuses={statuses}
                             onIssueClick={handleIssueClick}
                         />
                     ))}
+
+                    {/* Standalone Issues Section */}
+                    {standaloneIssues.length > 0 && (
+                        <div className="border border-gray-300 dark:border-zinc-700 rounded-lg overflow-hidden bg-white dark:bg-zinc-900">
+                            <div className="bg-gray-100 dark:bg-zinc-800 border-b border-gray-300 dark:border-zinc-700 p-3">
+                                <h3 className="text-md font-semibold text-gray-700 dark:text-gray-300">
+                                    Standalone Issues
+                                </h3>
+                            </div>
+                            <div className="p-4 bg-gray-50 dark:bg-zinc-950">
+                                <div className="flex gap-4 overflow-x-auto">
+                                    {statuses.map((status) => (
+                                        <KanbanColumn
+                                            key={`standalone-${status.id}`}
+                                            status={{
+                                                ...status,
+                                                id: `standalone-status-${status.id}`,
+                                            } as any}
+                                            issues={standaloneIssues.filter((i) => i.status.id === status.id)}
+                                            onIssueClick={handleIssueClick}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <DragOverlay>
