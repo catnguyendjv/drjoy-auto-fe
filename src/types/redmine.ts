@@ -50,3 +50,30 @@ export interface Project {
     identifier: string;
     description: string;
 }
+
+export interface Activity {
+    id: number;
+    name: string;
+}
+
+export interface TimeEntry {
+    id: number;
+    issue?: {
+        id: number;
+        subject: string;
+    };
+    user: {
+        id: number;
+        name: string;
+    };
+    activity: Activity;
+    hours: number;
+    comments: string;
+    spent_on: string; // Date in YYYY-MM-DD format
+    created_on: string;
+    updated_on: string;
+    project?: {
+        id: number;
+        name: string;
+    };
+}

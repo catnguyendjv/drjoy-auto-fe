@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Gantt, Task, ViewMode } from 'gantt-task-react';
 import "gantt-task-react/dist/index.css";
 import '@/styles/gantt-dark.css';
@@ -15,6 +15,8 @@ import { LoadingOverlay } from '@/components/ui/LoadingSpinner';
 
 // Mock current user ID
 const CURRENT_USER_ID = 1;
+
+const TASK_STYLES = { progressColor: '#2563eb', progressSelectedColor: '#1d4ed8' };
 
 export function ScheduleGantt() {
     const dispatch = useAppDispatch();
@@ -79,20 +81,21 @@ export function ScheduleGantt() {
                 if (filterTeam && issue.team?.name !== filterTeam) return false;
 
                 if (filterStartDate || filterEndDate) {
-                    const start = issue.start_date ? new Date(issue.start_date) : new Date(issue.created_on);
-                    const end = issue.due_date ? new Date(issue.due_date) : new Date(start.getTime() + 86400000);
+                    // Use local time for comparison to match visualization
+                    const start = issue.start_date ? new Date(issue.start_date + 'T00:00:00') : new Date(issue.created_on);
+                    const end = issue.due_date ? new Date(issue.due_date + 'T00:00:00') : new Date(start.getTime() + 86400000);
 
                     if (end <= start) {
                         end.setDate(start.getDate() + 1);
                     }
 
                     if (filterStartDate) {
-                        const fStart = new Date(filterStartDate);
+                        const fStart = new Date(filterStartDate + 'T00:00:00');
                         if (end < fStart) return false;
                     }
 
                     if (filterEndDate) {
-                        const fEnd = new Date(filterEndDate);
+                        const fEnd = new Date(filterEndDate + 'T00:00:00');
                         fEnd.setHours(23, 59, 59, 999);
                         if (start > fEnd) return false;
                     }
@@ -101,8 +104,10 @@ export function ScheduleGantt() {
                 return true;
             })
             .map(issue => {
-                const start = issue.start_date ? new Date(issue.start_date) : new Date(issue.created_on);
-                const end = issue.due_date ? new Date(issue.due_date) : new Date(start.getTime() + 86400000); // Default 1 day
+                // Parse dates as local time to match Gantt's internal handling and avoid timezone shifts
+                const start = issue.start_date ? new Date(issue.start_date + 'T00:00:00') : new Date(issue.created_on);
+                // Default 1 day duration if no due date
+                const end = issue.due_date ? new Date(issue.due_date + 'T00:00:00') : new Date(start.getTime() + 86400000);
 
                 // Ensure end date is after start date
                 if (end <= start) {
@@ -120,41 +125,50 @@ export function ScheduleGantt() {
                     type: 'task',
                     progress: isClosed ? 100 : 0, // Simple progress based on closed status
                     isDisabled: false,
-                    styles: { progressColor: '#2563eb', progressSelectedColor: '#1d4ed8' },
+                    styles: TASK_STYLES,
                 };
             });
     }, [issues, statuses, filterStartDate, filterEndDate, filterVersion, filterTeam, filterAssignee, filterIssueId]);
 
-    const handleTaskChange = (task: Task) => {
+    const handleTaskChange = useCallback((task: Task) => {
         const issueId = parseInt(task.id);
-        const startDate = task.start.toISOString().split('T')[0];
-        const dueDate = task.end.toISOString().split('T')[0];
 
-        // Simulate API call with loading
-        dispatch(setLoading(true));
+        // Helper to format date as YYYY-MM-DD in local time
+        const toLocalDateString = (date: Date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
 
-        setTimeout(() => {
-            try {
-                dispatch(updateIssueDates({ issueId, startDate, dueDate }));
-                dispatch(setLoading(false));
-                toast.success(`Issue #${issueId} dates updated`);
-            } catch (error) {
-                dispatch(setLoading(false));
-                toast.error('Failed to update issue dates');
-            }
-        }, 500);
-    };
+        const startDate = toLocalDateString(task.start);
+        const dueDate = toLocalDateString(task.end);
 
-    const handleTaskClick = (task: Task) => {
+        // Return a promise to let the Gantt component handle the async state
+        return new Promise<void>((resolve, reject) => {
+            setTimeout(() => {
+                try {
+                    dispatch(updateIssueDates({ issueId, startDate, dueDate }));
+                    toast.success(`Issue #${issueId} dates updated`);
+                    resolve();
+                } catch (error) {
+                    toast.error('Failed to update issue dates');
+                    reject(error);
+                }
+            }, 500);
+        });
+    }, [dispatch]);
+
+    const handleTaskClick = useCallback((task: Task) => {
         const issue = issues.find(i => i.id === parseInt(task.id));
         if (issue) {
             setSelectedIssue(issue);
         }
-    };
+    }, [issues]);
 
-    const handleExpanderClick = (task: Task) => {
+    const handleExpanderClick = useCallback((task: Task) => {
         // Handle expander click if needed
-    };
+    }, []);
 
     const handleSaveIssue = (updatedIssue: Issue) => {
         dispatch(updateIssue(updatedIssue));
@@ -292,6 +306,7 @@ export function ScheduleGantt() {
             <div className="flex-1 overflow-auto bg-white dark:bg-zinc-900 rounded-lg shadow">
                 {tasks.length > 0 ? (
                     <Gantt
+                        key={issues.map(i => i.updated_on).join('')}
                         tasks={tasks}
                         viewMode={viewMode}
                         onDateChange={handleTaskChange}
