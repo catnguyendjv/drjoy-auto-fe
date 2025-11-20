@@ -1,0 +1,390 @@
+import { Issue } from '@/types/redmine';
+import { Edit2, Save, X, XCircle } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { MOCK_STATUSES, MOCK_PRIORITIES, MOCK_VERSIONS, MOCK_TEAMS, MOCK_USERS } from '@/data/mockData';
+import { toast } from 'sonner';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+
+interface KanbanIssueDetailModalProps {
+    issue: Issue;
+    onClose: () => void;
+    onSave?: (updatedIssue: Issue) => void;
+}
+
+export function KanbanIssueDetailModal({ issue, onClose, onSave }: KanbanIssueDetailModalProps) {
+    const modalRef = useRef<HTMLDivElement>(null);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [editedIssue, setEditedIssue] = useState<Issue>(issue);
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') {
+                if (isEditMode) {
+                    handleCancelEdit();
+                } else {
+                    onClose();
+                }
+            }
+        };
+
+        document.addEventListener('keydown', handleEscape);
+        return () => document.removeEventListener('keydown', handleEscape);
+    }, [onClose, isEditMode]);
+
+    // Close on click outside
+    const handleBackdropClick = (e: React.MouseEvent) => {
+        if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+            if (!isEditMode) {
+                onClose();
+            }
+        }
+    };
+
+    const handleEdit = () => {
+        setIsEditMode(true);
+    };
+
+    const handleCancelEdit = () => {
+        setEditedIssue(issue);
+        setIsEditMode(false);
+    };
+
+    const handleSave = () => {
+        // Validation
+        if (!editedIssue.subject.trim()) {
+            toast.error('Subject cannot be empty');
+            return;
+        }
+
+        setIsSaving(true);
+
+        // Simulate API call delay
+        setTimeout(() => {
+            try {
+                if (onSave) {
+                    onSave(editedIssue);
+                }
+                setIsSaving(false);
+                setIsEditMode(false);
+                toast.success('Issue updated successfully');
+            } catch (error) {
+                setIsSaving(false);
+                toast.error('Failed to update issue');
+            }
+        }, 600);
+    };
+
+    const inputClassName = "w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+    const selectClassName = "w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+
+    return (
+        <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            onClick={handleBackdropClick}
+        >
+            <div
+                ref={modalRef}
+                className="bg-white dark:bg-zinc-900 rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto flex flex-col"
+                role="dialog"
+                aria-modal="true"
+            >
+                {/* Header */}
+                <div className="flex items-start justify-between p-6 border-b border-gray-200 dark:border-zinc-800">
+                    <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                            <span className="text-sm font-mono text-gray-500 dark:text-gray-400">#{issue.id}</span>
+                            {!isEditMode ? (
+                                <>
+                                    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium
+                                        ${editedIssue.priority.name === 'High' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                            editedIssue.priority.name === 'Urgent' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
+                                                editedIssue.priority.name === 'Normal' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                                                    'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
+                                        }`}>
+                                        {editedIssue.priority.name}
+                                    </span>
+                                    <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                                        {editedIssue.status.name}
+                                    </span>
+                                </>
+                            ) : null}
+                        </div>
+                        {!isEditMode ? (
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
+                                {editedIssue.subject}
+                            </h2>
+                        ) : (
+                            <input
+                                type="text"
+                                value={editedIssue.subject}
+                                onChange={(e) => setEditedIssue({ ...editedIssue, subject: e.target.value })}
+                                className="text-xl font-bold w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                placeholder="Issue subject"
+                            />
+                        )}
+                    </div>
+                    <div className="flex items-center gap-2 ml-4">
+                        {!isEditMode ? (
+                            <button
+                                onClick={handleEdit}
+                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                                title="Edit issue"
+                            >
+                                <Edit2 className="w-5 h-5" />
+                            </button>
+                        ) : null}
+                        <button
+                            onClick={onClose}
+                            className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 transition-colors p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-zinc-800"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+                    </div>
+                </div>
+
+                {/* Body */}
+                <div className="p-6 space-y-6">
+                    {/* Description */}
+                    <div>
+                        <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-2">
+                            Description
+                        </h3>
+                        {!isEditMode ? (
+                            <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
+                                {editedIssue.description || <span className="italic text-gray-400">No description provided.</span>}
+                            </div>
+                        ) : (
+                            <textarea
+                                value={editedIssue.description}
+                                onChange={(e) => setEditedIssue({ ...editedIssue, description: e.target.value })}
+                                className={`${inputClassName} min-h-[120px] resize-y`}
+                                placeholder="Enter issue description..."
+                            />
+                        )}
+                    </div>
+
+                    {/* Details Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Left Column - Details */}
+                        <div>
+                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
+                                Details
+                            </h3>
+                            <div className="space-y-4">
+                                {/* Status */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Status</label>
+                                    {!isEditMode ? (
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.status.name}</div>
+                                    ) : (
+                                        <select
+                                            value={editedIssue.status.id}
+                                            onChange={(e) => {
+                                                const status = MOCK_STATUSES.find(s => s.id === Number(e.target.value));
+                                                if (status) setEditedIssue({ ...editedIssue, status: { id: status.id, name: status.name } });
+                                            }}
+                                            className={selectClassName}
+                                        >
+                                            {MOCK_STATUSES.map(status => (
+                                                <option key={status.id} value={status.id}>{status.name}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+
+                                {/* Priority */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Priority</label>
+                                    {!isEditMode ? (
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.priority.name}</div>
+                                    ) : (
+                                        <select
+                                            value={editedIssue.priority.id}
+                                            onChange={(e) => {
+                                                const priority = MOCK_PRIORITIES.find(p => p.id === Number(e.target.value));
+                                                if (priority) setEditedIssue({ ...editedIssue, priority });
+                                            }}
+                                            className={selectClassName}
+                                        >
+                                            {MOCK_PRIORITIES.map(priority => (
+                                                <option key={priority.id} value={priority.id}>{priority.name}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+
+                                {/* Assignee */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Assignee</label>
+                                    {!isEditMode ? (
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.assigned_to?.name || 'Unassigned'}</div>
+                                    ) : (
+                                        <select
+                                            value={editedIssue.assigned_to?.id || ''}
+                                            onChange={(e) => {
+                                                const user = MOCK_USERS.find(u => u.id === Number(e.target.value));
+                                                setEditedIssue({ ...editedIssue, assigned_to: user });
+                                            }}
+                                            className={selectClassName}
+                                        >
+                                            <option value="">Unassigned</option>
+                                            {MOCK_USERS.map(user => (
+                                                <option key={user.id} value={user.id}>{user.name}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+
+                                {/* Project */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Project</label>
+                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.project.name}</div>
+                                </div>
+
+                                {/* Author */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Author</label>
+                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.author?.name || 'Unknown'}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Column - Dates & More */}
+                        <div>
+                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
+                                Dates & More
+                            </h3>
+                            <div className="space-y-4">
+                                {/* Start Date */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Start Date</label>
+                                    {!isEditMode ? (
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.start_date || '-'}</div>
+                                    ) : (
+                                        <input
+                                            type="date"
+                                            value={editedIssue.start_date || ''}
+                                            onChange={(e) => setEditedIssue({ ...editedIssue, start_date: e.target.value })}
+                                            className={inputClassName}
+                                        />
+                                    )}
+                                </div>
+
+                                {/* Due Date */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Due Date</label>
+                                    {!isEditMode ? (
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.due_date || '-'}</div>
+                                    ) : (
+                                        <input
+                                            type="date"
+                                            value={editedIssue.due_date || ''}
+                                            onChange={(e) => setEditedIssue({ ...editedIssue, due_date: e.target.value })}
+                                            className={inputClassName}
+                                        />
+                                    )}
+                                </div>
+
+                                {/* Fixed Version */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Target Version</label>
+                                    {!isEditMode ? (
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.fixed_version?.name || '-'}</div>
+                                    ) : (
+                                        <select
+                                            value={editedIssue.fixed_version?.id || ''}
+                                            onChange={(e) => {
+                                                const version = MOCK_VERSIONS.find(v => v.id === Number(e.target.value));
+                                                setEditedIssue({ ...editedIssue, fixed_version: version });
+                                            }}
+                                            className={selectClassName}
+                                        >
+                                            <option value="">None</option>
+                                            {MOCK_VERSIONS.map(version => (
+                                                <option key={version.id} value={version.id}>{version.name}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+
+                                {/* Team */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Team</label>
+                                    {!isEditMode ? (
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.team?.name || '-'}</div>
+                                    ) : (
+                                        <select
+                                            value={editedIssue.team?.id || ''}
+                                            onChange={(e) => {
+                                                const team = MOCK_TEAMS.find(t => t.id === Number(e.target.value));
+                                                setEditedIssue({ ...editedIssue, team });
+                                            }}
+                                            className={selectClassName}
+                                        >
+                                            <option value="">None</option>
+                                            {MOCK_TEAMS.map(team => (
+                                                <option key={team.id} value={team.id}>{team.name}</option>
+                                            ))}
+                                        </select>
+                                    )}
+                                </div>
+
+                                {/* Created */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Created</label>
+                                    <div className="font-medium text-gray-900 dark:text-white">{new Date(editedIssue.created_on).toLocaleDateString()}</div>
+                                </div>
+
+                                {/* Updated */}
+                                <div>
+                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Updated</label>
+                                    <div className="font-medium text-gray-900 dark:text-white">{new Date(editedIssue.updated_on).toLocaleDateString()}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer */}
+                <div className="p-6 border-t border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-800/30 rounded-b-xl flex justify-end gap-3">
+                    {isEditMode ? (
+                        <>
+                            <button
+                                onClick={handleCancelEdit}
+                                className="px-4 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors flex items-center gap-2"
+                            >
+                                <XCircle className="w-4 h-4" />
+                                Cancel
+                            </button>
+                            <button
+                                onClick={handleSave}
+                                disabled={isSaving}
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+                            >
+                                {isSaving ? (
+                                    <>
+                                        <LoadingSpinner size="sm" />
+                                        Saving...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="w-4 h-4" />
+                                        Save Changes
+                                    </>
+                                )}
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            onClick={onClose}
+                            className="px-4 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-zinc-700 transition-colors"
+                        >
+                            Close
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+}
