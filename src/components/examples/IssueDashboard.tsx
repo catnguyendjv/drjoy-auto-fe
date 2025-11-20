@@ -22,6 +22,7 @@ import {
   IssueListSkeleton,
   ErrorMessage,
 } from '@/components/ui/redmine';
+import { getIssueUrl } from '@/lib/utils/redmine-ui';
 
 export function IssueDashboard() {
   const [viewMode, setViewMode] = useState<'list' | 'table'>('list');
@@ -207,14 +208,14 @@ export function IssueDashboard() {
         <IssueList
           issues={filteredIssues}
           onIssueClick={(issue) => {
-            window.open(`https://redmine.famishare.jp/issues/${issue.id}`, '_blank');
+            window.open(getIssueUrl(issue.id), '_blank');
           }}
         />
       ) : (
         <IssueTable
           issues={filteredIssues}
           onIssueClick={(issue) => {
-            window.open(`https://redmine.famishare.jp/issues/${issue.id}`, '_blank');
+            window.open(getIssueUrl(issue.id), '_blank');
           }}
         />
       )}
@@ -242,7 +243,7 @@ export function SimpleIssueList() {
         {issues.map((issue) => (
           <li key={issue.id} className="p-3 bg-white dark:bg-gray-800 rounded shadow">
             <a
-              href={`https://redmine.famishare.jp/issues/${issue.id}`}
+              href={getIssueUrl(issue.id)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-600 dark:text-blue-400 hover:underline"

@@ -1,13 +1,14 @@
 /**
  * Redmine API Configuration
- * Generated from: https://redmine.famishare.jp/
- * API Key: 93ab302da634135f392e959c4789811857b3e832
+ * Configuration is loaded from environment variables:
+ * - NEXT_PUBLIC_REDMINE_BASE_URL: Base URL for Redmine instance
+ * - NEXT_PUBLIC_REDMINE_API_KEY: API key for authentication
  */
 
 // ==================== API Configuration ====================
 export const REDMINE_CONFIG = {
-  baseUrl: 'https://redmine.famishare.jp',
-  apiKey: '93ab302da634135f392e959c4789811857b3e832',
+  baseUrl: process.env.NEXT_PUBLIC_REDMINE_BASE_URL || 'https://redmine.famishare.jp',
+  apiKey: process.env.NEXT_PUBLIC_REDMINE_API_KEY || '',
 } as const;
 
 // ==================== Issue Statuses ====================
@@ -94,9 +95,33 @@ export const PRIORITIES_ARRAY = [
 ] as const;
 
 // ==================== Custom Fields ====================
-export const CUSTOM_FIELDS = {
+/**
+ * NOTE: For complete and accurate custom fields data with all possible values,
+ * please use ./redmine-custom-fields.ts which is auto-generated from Redmine API.
+ * 
+ * This CUSTOM_FIELDS constant is kept for backward compatibility.
+ * To regenerate the accurate custom fields, run:
+ * curl -H "X-Redmine-API-Key: YOUR_API_KEY" "https://redmine.famishare.jp/custom_fields.json"
+ */
+
+// Re-export from auto-generated file for accurate data
+export { 
+  CUSTOM_FIELDS,
+  TEAM_OPTIONS,
+  FEATURE_OPTIONS,
+  ISSUE_TYPE_OPTIONS,
+  FUNCTION_TYPE_OPTIONS,
+  NOTE_OPTIONS,
+  SIMPLE_TASK_OPTIONS,
+  CATEGORY_OPTIONS,
+  SEVERITY_OPTIONS,
+} from './redmine-custom-fields';
+
+// Legacy custom fields for backward compatibility
+// These IDs may not match actual Redmine - use CUSTOM_FIELDS from redmine-custom-fields.ts instead
+export const LEGACY_CUSTOM_FIELDS = {
   // General Fields
-  TEAM: { id: 1, name: 'Team', fieldFormat: 'list' },
+  TEAM_LEGACY: { id: 1, name: 'Team', fieldFormat: 'list' },
   TEST_CASE_TYPE: { id: 10, name: 'Test case type', fieldFormat: 'list' },
   TICKET_CATEGORY: { id: 40, name: 'Ticket category', fieldFormat: 'list' },
   REFACTORING_PROGRESS: { id: 45, name: 'Refactoring progress', fieldFormat: 'list' },
@@ -124,61 +149,24 @@ export const CUSTOM_FIELDS = {
   END_DATE_ACT: { id: 61, name: 'End date (Act)', fieldFormat: 'date' },
   ESTIMATE_DATE_REQUEST: { id: 62, name: 'Estimate date (Request)', fieldFormat: 'date' },
   ESTIMATED_DATE_ANSWER: { id: 63, name: 'Estimated date (Answer)', fieldFormat: 'date' },
-  PROVISIONAL_HANDLING_DATE: { id: 114, name: '暫定対応予定日(PHD)', fieldFormat: 'date' },
-  PROVISIONAL_HANDLING_COMPLETED_DATE: { id: 115, name: '暫定対応完了日(PHCD)', fieldFormat: 'date' },
-  PERMANENT_SOLUTION_PLANNED_DATE: { id: 118, name: '恒久対応予定日(PSPD)', fieldFormat: 'date' },
-  PERMANENT_SOLUTION_COMPLETED_DATE: { id: 119, name: '恒久対応完了日(PSCD)', fieldFormat: 'date' },
-  
-  // Text Fields
-  REFERENCE: { id: 9, name: 'Reference', fieldFormat: 'text' },
-  SPEC_CONTENT: { id: 24, name: 'Spec content', fieldFormat: 'text' },
-  DESIGN_CONTENT: { id: 32, name: 'Design content', fieldFormat: 'text' },
-  TEST_CONTENT: { id: 35, name: 'Test content', fieldFormat: 'text' },
-  OTHER_CONTENT: { id: 36, name: 'Other content', fieldFormat: 'text' },
-  DETAILED_PROBLEM: { id: 110, name: '不具合詳細(Desc)', fieldFormat: 'text' },
-  INVESTIGATION_CONTENT: { id: 111, name: '調査内容(Investigation)', fieldFormat: 'text' },
-  BUG_CAUSE_DESC: { id: 112, name: 'バグ原因(Cause)', fieldFormat: 'text' },
-  RECOVERY_CONTENT: { id: 113, name: 'リカバリー内容(Recovery content)', fieldFormat: 'text' },
-  PROVISIONAL_HANDLING_CONTENT: { id: 117, name: '恒久対応内容(PSC)', fieldFormat: 'text' },
-  PREVENTION_MEASURES: { id: 123, name: '再発防止策(Prevention measures)', fieldFormat: 'text' },
-  
-  // String Fields
-  RELEASE_URL: { id: 28, name: 'Release URL', fieldFormat: 'string' },
-  RELEASED_TAG: { id: 29, name: 'Released tag', fieldFormat: 'string' },
-  CREATED_BY_FAMISHARE: { id: 58, name: 'Created by Famishare (Người yêu cầu)', fieldFormat: 'string' },
-  LOC: { id: 59, name: 'LOC', fieldFormat: 'string' },
-  ORIGINAL_TICKET: { id: 127, name: '発生元チケット', fieldFormat: 'string' },
   
   // Link Fields
-  SPEC_TICKET_FILE: { id: 124, name: 'チケット仕様書ファイル（Spec Ticket file）', fieldFormat: 'link' },
-  FILE_SPEC_STUDY: { id: 128, name: '仕様検討ファイル (FileSpecStudy)', fieldFormat: 'link' },
+  SPEC_TICKET_FILE_LEGACY: { id: 124, name: 'チケット仕様書ファイル（Spec Ticket file）', fieldFormat: 'link' },
+  FILE_SPEC_STUDY_LEGACY: { id: 128, name: '仕様検討ファイル (FileSpecStudy)', fieldFormat: 'link' },
   
   // User Fields
-  REVIEWER: { id: 122, name: 'レビュー者(Reviewer)', fieldFormat: 'user' },
+  REVIEWER_LEGACY: { id: 122, name: 'レビュー者(Reviewer)', fieldFormat: 'user' },
   
   // Float Fields
-  STORY_POINT: { id: 125, name: 'ストーリーポイント(Story point)', fieldFormat: 'float' },
-  
-  // Boolean Fields
-  PROVISIONAL_HANDLING_IS_COMPLETED: { id: 116, name: '暫定対応完了(PHIC)', fieldFormat: 'bool' },
-  EMERGENCY_RELEASE: { id: 120, name: '緊急リリースフラグ(Emergency release)', fieldFormat: 'bool' },
-  PAID_FUNCTION: { id: 121, name: '有償／無償(Paid function)', fieldFormat: 'bool' },
-  ESTIMATE_REQUEST: { id: 126, name: '見積依頼', fieldFormat: 'bool' },
-  PROD_RELEASE: { id: 131, name: 'Prod Release (本番反映)', fieldFormat: 'bool' },
+  STORY_POINT_LEGACY: { id: 125, name: 'ストーリーポイント(Story point)', fieldFormat: 'float' },
 } as const;
 
-// ==================== Custom Field Options ====================
 
-// Team options
-export const TEAM_OPTIONS = [
-  { value: 'コアシステム', label: 'コアシステム' },
-  { value: 'スマホアプリ', label: 'スマホアプリ' },
-  { value: 'Web', label: 'Web' },
-  { value: 'AI', label: 'AI' },
-  { value: 'Other', label: 'Other' },
-] as const;
+// ==================== Legacy Custom Field Options ====================
+// NOTE: These are legacy options and may not match actual Redmine data
+// Use OPTIONS from redmine-custom-fields.ts for accurate data
 
-// Bug Level options
+// Bug Level options (Legacy)
 export const BUG_LEVEL_OPTIONS = [
   { value: '1', label: '1 - マスタ/DB関連の不具合' },
   { value: '2', label: '2 - 特定操作によって発生する不具合' },
@@ -187,7 +175,7 @@ export const BUG_LEVEL_OPTIONS = [
   { value: '5', label: '5 - 本番運用に影響がある不具合（サーバダウン、DBエラーなど）' },
 ] as const;
 
-// Bug Type options
+// Bug Type options (Legacy)
 export const BUG_TYPE_OPTIONS = [
   { value: '1', label: '1 - Mismatch specification' },
   { value: '2', label: '2 - Error by server' },
@@ -198,14 +186,14 @@ export const BUG_TYPE_OPTIONS = [
   { value: '7', label: '7 - Other' },
 ] as const;
 
-// Bug Environment options
+// Bug Environment options (Legacy)
 export const BUG_ENV_OPTIONS = [
   { value: 'Staging', label: 'Staging' },
   { value: 'Production', label: 'Production' },
   { value: 'Local', label: 'Local' },
 ] as const;
 
-// Bug Phase options
+// Bug Phase options (Legacy)
 export const BUG_PHASE_OPTIONS = [
   { value: '1', label: '1 - 現行システムで確認済みの不具合' },
   { value: '2', label: '2 - 仕様' },
@@ -220,7 +208,7 @@ export const BUG_PHASE_OPTIONS = [
   { value: '11', label: '11 - その他' },
 ] as const;
 
-// Bug Cause options
+// Bug Cause options (Legacy)
 export const BUG_CAUSE_OPTIONS = [
   { value: '1', label: '1 - Không đúng Spec' },
   { value: '2', label: '2 - Quên implement' },
@@ -234,7 +222,7 @@ export const BUG_CAUSE_OPTIONS = [
   { value: '10', label: '10 - Other' },
 ] as const;
 
-// Bug Culprit/Factor options
+// Bug Culprit/Factor options (Legacy)
 export const BUG_CULPRIT_OPTIONS = [
   { value: '1', label: '1 - Sai logic' },
   { value: '2', label: '2 - Thiếu kiểm tra điều kiện' },
@@ -248,7 +236,7 @@ export const BUG_CULPRIT_OPTIONS = [
   { value: '10', label: '10 - Other' },
 ] as const;
 
-// Counter Measures options
+// Counter Measures options (Legacy)
 export const COUNTER_MEASURES_OPTIONS = [
   { value: '1', label: '1 - Thiết kế lại' },
   { value: '2', label: '2 - Review kỹ hơn' },
@@ -261,7 +249,7 @@ export const COUNTER_MEASURES_OPTIONS = [
   { value: '9', label: '9 - Other' },
 ] as const;
 
-// Occurrence options
+// Occurrence options (Legacy)
 export const OCCURRENCE_OPTIONS = [
   { value: '1', label: '1 - Always' },
   { value: '2', label: '2 - Often' },
@@ -269,7 +257,7 @@ export const OCCURRENCE_OPTIONS = [
   { value: '4', label: '4 - Rarely' },
 ] as const;
 
-// Dev Category options
+// Dev Category options (Legacy)
 export const DEV_CATEGORY_OPTIONS = [
   { value: '仕様', label: '仕様' },
   { value: '設計', label: '設計' },
@@ -278,20 +266,20 @@ export const DEV_CATEGORY_OPTIONS = [
   { value: 'その他', label: 'その他' },
 ] as const;
 
-// Dev Type options
+// Dev Type options (Legacy)
 export const DEV_TYPE_OPTIONS = [
   { value: '新規', label: '新規' },
   { value: '改修', label: '改修' },
   { value: '調査', label: '調査' },
 ] as const;
 
-// Release Environment options
+// Release Environment options (Legacy)
 export const RELEASE_ENV_OPTIONS = [
   { value: 'Staging', label: 'Staging' },
   { value: 'Production', label: 'Production' },
 ] as const;
 
-// Ticket Category options
+// Ticket Category options (Legacy)
 export const TICKET_CATEGORY_OPTIONS = [
   { value: 'Backend', label: 'Backend' },
   { value: 'Frontend', label: 'Frontend' },
@@ -299,6 +287,7 @@ export const TICKET_CATEGORY_OPTIONS = [
   { value: 'DevOps', label: 'DevOps' },
   { value: 'Other', label: 'Other' },
 ] as const;
+
 
 // ==================== Type Definitions ====================
 export type IssueStatusId = typeof ISSUE_STATUSES_ARRAY[number]['id'];
@@ -310,7 +299,8 @@ export type TrackerName = typeof TRACKERS_ARRAY[number]['name'];
 export type PriorityId = typeof PRIORITIES_ARRAY[number]['id'];
 export type PriorityName = typeof PRIORITIES_ARRAY[number]['name'];
 
-export type CustomFieldId = typeof CUSTOM_FIELDS[keyof typeof CUSTOM_FIELDS]['id'];
+// Re-export types from redmine-custom-fields.ts
+export type { CustomFieldId,CustomFieldFormat, CustomFieldDefinition, CustomFieldOption } from './redmine-custom-fields';
 
 // ==================== Helper Functions ====================
 

@@ -8,6 +8,7 @@ import {
   ISSUE_STATUSES,
   TRACKERS,
   PRIORITIES,
+  REDMINE_CONFIG,
   getStatusName,
   getTrackerName,
   getPriorityName,
@@ -309,21 +310,21 @@ export function getDueDateStatus(issue: Issue): string {
 /**
  * Get Redmine issue URL
  */
-export function getIssueUrl(issueId: number, baseUrl = 'https://redmine.famishare.jp'): string {
+export function getIssueUrl(issueId: number, baseUrl = REDMINE_CONFIG.baseUrl): string {
   return `${baseUrl}/issues/${issueId}`;
 }
 
 /**
  * Get Redmine project URL
  */
-export function getProjectUrl(projectIdentifier: string, baseUrl = 'https://redmine.famishare.jp'): string {
+export function getProjectUrl(projectIdentifier: string, baseUrl = REDMINE_CONFIG.baseUrl): string {
   return `${baseUrl}/projects/${projectIdentifier}`;
 }
 
 /**
  * Get Redmine user URL
  */
-export function getUserUrl(userId: number, baseUrl = 'https://redmine.famishare.jp'): string {
+export function getUserUrl(userId: number, baseUrl = REDMINE_CONFIG.baseUrl): string {
   return `${baseUrl}/users/${userId}`;
 }
 

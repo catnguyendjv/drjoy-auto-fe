@@ -4,7 +4,7 @@
  */
 
 import type { Issue, CustomField } from '@/types/redmine';
-import { CUSTOM_FIELDS, ISSUE_STATUSES } from '../redmine-config';
+import { CUSTOM_FIELDS, LEGACY_CUSTOM_FIELDS, ISSUE_STATUSES } from '../redmine-config';
 
 // ==================== Custom Field Helpers ====================
 
@@ -42,7 +42,7 @@ export function getTeam(issue: Issue): string | null {
  * Get Bug Level custom field value
  */
 export function getBugLevel(issue: Issue): string | null {
-  const value = getCustomFieldValue(issue, CUSTOM_FIELDS.BUG_LEVEL.id);
+  const value = getCustomFieldValue(issue, LEGACY_CUSTOM_FIELDS.BUG_LEVEL.id);
   return typeof value === 'string' ? value : null;
 }
 
@@ -50,7 +50,7 @@ export function getBugLevel(issue: Issue): string | null {
  * Get Bug Type custom field value
  */
 export function getBugType(issue: Issue): string | null {
-  const value = getCustomFieldValue(issue, CUSTOM_FIELDS.BUG_TYPE.id);
+  const value = getCustomFieldValue(issue, LEGACY_CUSTOM_FIELDS.BUG_TYPE.id);
   return typeof value === 'string' ? value : null;
 }
 
@@ -58,7 +58,7 @@ export function getBugType(issue: Issue): string | null {
  * Get Bug Environment custom field value
  */
 export function getBugEnv(issue: Issue): string | null {
-  const value = getCustomFieldValue(issue, CUSTOM_FIELDS.BUG_ENV.id);
+  const value = getCustomFieldValue(issue, LEGACY_CUSTOM_FIELDS.BUG_ENV.id);
   return typeof value === 'string' ? value : null;
 }
 
@@ -74,7 +74,7 @@ export function getStoryPoint(issue: Issue): number | null {
  * Get Released Date custom field value
  */
 export function getReleasedDate(issue: Issue): string | null {
-  const value = getCustomFieldValue(issue, CUSTOM_FIELDS.RELEASED_DATE.id);
+  const value = getCustomFieldValue(issue, LEGACY_CUSTOM_FIELDS.RELEASED_DATE.id);
   return typeof value === 'string' ? value : null;
 }
 

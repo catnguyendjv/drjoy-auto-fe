@@ -4,7 +4,7 @@
  */
 
 import type { IssueQueryParams } from '../api/redmine.service';
-import { ISSUE_STATUSES, TRACKERS, PRIORITIES, CUSTOM_FIELDS } from '../redmine-config';
+import { ISSUE_STATUSES, TRACKERS, PRIORITIES, CUSTOM_FIELDS, LEGACY_CUSTOM_FIELDS } from '../redmine-config';
 
 // ==================== Common Query Presets ====================
 
@@ -279,7 +279,7 @@ export function bugsByLevelQuery(
   return {
     project_id: projectId,
     tracker_id: TRACKERS.BUG.id,
-    [`cf_${CUSTOM_FIELDS.BUG_LEVEL.id}`]: level,
+    [`cf_${LEGACY_CUSTOM_FIELDS.BUG_LEVEL.id}`]: level,
     status_id: 'open',
     limit: 100,
     sort: 'created_on:desc',
@@ -293,7 +293,7 @@ export function criticalBugsQuery(projectId?: number): IssueQueryParams {
   return {
     project_id: projectId,
     tracker_id: TRACKERS.BUG.id,
-    [`cf_${CUSTOM_FIELDS.BUG_LEVEL.id}`]: '4|5', // Level 4 or 5
+    [`cf_${LEGACY_CUSTOM_FIELDS.BUG_LEVEL.id}`]: '4|5', // Level 4 or 5
     status_id: 'open',
     limit: 100,
     sort: 'created_on:desc',

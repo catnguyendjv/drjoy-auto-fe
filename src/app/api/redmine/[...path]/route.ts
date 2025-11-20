@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 
-const REDMINE_URL = process.env.REDMINE_URL || 'https://redmine.example.com';
-const REDMINE_API_KEY = process.env.REDMINE_API_KEY || '';
+const REDMINE_URL = process.env.NEXT_PUBLIC_REDMINE_BASE_URL || 'https://redmine.famishare.jp';
+const REDMINE_API_KEY = process.env.NEXT_PUBLIC_REDMINE_API_KEY || '';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
     const { path } = await params;
