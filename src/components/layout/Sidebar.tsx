@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Kanban, Settings, Home, Calendar, Clock } from "lucide-react";
+import { Kanban, Settings, Home, Calendar, Clock, BarChart3 } from "lucide-react";
 import { clsx } from "clsx";
 
 const navigation = [
     { name: "Kanban", href: "/kanban", icon: Kanban },
     { name: "Schedule", href: "/schedule", icon: Calendar },
     { name: "Time Logs", href: "/timelogs", icon: Clock },
+    { name: "Performance", href: "/performance", icon: BarChart3 },
     { name: "Settings", href: "/settings", icon: Settings },
 ];
 

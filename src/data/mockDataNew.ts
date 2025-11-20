@@ -145,3 +145,264 @@ export const MOCK_TIME_ENTRIES: TimeEntry[] = [
         project: { id: 1, name: 'Dr.Joy Auto' }
     },
 ];
+
+// Performance Metrics Mock Data
+export const MOCK_PERFORMANCE_METRICS = [
+    // Current Week - Me
+    {
+        id: 1,
+        userId: 1,
+        userName: 'Me',
+        teamId: 1,
+        teamName: 'Frontend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(0),
+        linesOfCode: 450,
+        bugsByEnvironment: {
+            jackfruit: 2,
+            develop: 1,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    {
+        id: 2,
+        userId: 1,
+        userName: 'Me',
+        teamId: 1,
+        teamName: 'Frontend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(1),
+        linesOfCode: 380,
+        bugsByEnvironment: {
+            jackfruit: 1,
+            develop: 0,
+            staging: 1,
+            master: 0
+        },
+        lateArrivals: 1
+    },
+    {
+        id: 3,
+        userId: 1,
+        userName: 'Me',
+        teamId: 1,
+        teamName: 'Frontend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(2),
+        linesOfCode: 520,
+        bugsByEnvironment: {
+            jackfruit: 0,
+            develop: 2,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    // Backend Dev
+    {
+        id: 4,
+        userId: 2,
+        userName: 'Backend Dev',
+        teamId: 2,
+        teamName: 'Backend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(0),
+        linesOfCode: 680,
+        bugsByEnvironment: {
+            jackfruit: 3,
+            develop: 2,
+            staging: 1,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    {
+        id: 5,
+        userId: 2,
+        userName: 'Backend Dev',
+        teamId: 2,
+        teamName: 'Backend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(1),
+        linesOfCode: 590,
+        bugsByEnvironment: {
+            jackfruit: 1,
+            develop: 1,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    {
+        id: 6,
+        userId: 2,
+        userName: 'Backend Dev',
+        teamId: 2,
+        teamName: 'Backend Team',
+        versionId: 2,
+        versionName: 'v1.1.0',
+        date: getDateString(2),
+        linesOfCode: 720,
+        bugsByEnvironment: {
+            jackfruit: 2,
+            develop: 1,
+            staging: 1,
+            master: 1
+        },
+        lateArrivals: 1
+    },
+    // QA Engineer
+    {
+        id: 7,
+        userId: 3,
+        userName: 'QA Engineer',
+        teamId: 3,
+        teamName: 'QA Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(0),
+        linesOfCode: 120,
+        bugsByEnvironment: {
+            jackfruit: 0,
+            develop: 0,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    {
+        id: 8,
+        userId: 3,
+        userName: 'QA Engineer',
+        teamId: 3,
+        teamName: 'QA Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(1),
+        linesOfCode: 150,
+        bugsByEnvironment: {
+            jackfruit: 0,
+            develop: 0,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    {
+        id: 9,
+        userId: 3,
+        userName: 'QA Engineer',
+        teamId: 3,
+        teamName: 'QA Team',
+        versionId: 2,
+        versionName: 'v1.1.0',
+        date: getDateString(2),
+        linesOfCode: 180,
+        bugsByEnvironment: {
+            jackfruit: 0,
+            develop: 0,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 2
+    },
+    // Designer
+    {
+        id: 10,
+        userId: 4,
+        userName: 'Designer',
+        teamId: 1,
+        teamName: 'Frontend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(0),
+        linesOfCode: 200,
+        bugsByEnvironment: {
+            jackfruit: 1,
+            develop: 0,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    {
+        id: 11,
+        userId: 4,
+        userName: 'Designer',
+        teamId: 1,
+        teamName: 'Frontend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(1),
+        linesOfCode: 190,
+        bugsByEnvironment: {
+            jackfruit: 0,
+            develop: 1,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 1
+    },
+    {
+        id: 12,
+        userId: 4,
+        userName: 'Designer',
+        teamId: 1,
+        teamName: 'Frontend Team',
+        versionId: 2,
+        versionName: 'v1.1.0',
+        date: getDateString(2),
+        linesOfCode: 230,
+        bugsByEnvironment: {
+            jackfruit: 0,
+            develop: 0,
+            staging: 1,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    // Additional past week data for trends
+    {
+        id: 13,
+        userId: 1,
+        userName: 'Me',
+        teamId: 1,
+        teamName: 'Frontend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(5),
+        linesOfCode: 410,
+        bugsByEnvironment: {
+            jackfruit: 1,
+            develop: 1,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+    {
+        id: 14,
+        userId: 2,
+        userName: 'Backend Dev',
+        teamId: 2,
+        teamName: 'Backend Team',
+        versionId: 1,
+        versionName: 'v1.0.0',
+        date: getDateString(5),
+        linesOfCode: 650,
+        bugsByEnvironment: {
+            jackfruit: 2,
+            develop: 1,
+            staging: 0,
+            master: 0
+        },
+        lateArrivals: 0
+    },
+];
