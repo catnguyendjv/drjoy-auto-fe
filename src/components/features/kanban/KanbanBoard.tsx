@@ -168,20 +168,12 @@ export function KanbanBoard() {
         if (newStatusId && newStatusId !== issue.status.id) {
             const statusName = statuses.find(s => s.id === newStatusId)?.name || '';
 
-            // Simulate API call with loading
-            dispatch(setLoading(true));
-
-            // Simulate API delay
-            setTimeout(() => {
-                try {
-                    dispatch(updateIssueStatus({ issueId, statusId: newStatusId!, statusName }));
-                    dispatch(setLoading(false));
-                    toast.success(`Issue #${issueId} moved to ${statusName}`);
-                } catch (error) {
-                    dispatch(setLoading(false));
-                    toast.error('Failed to update issue status');
-                }
-            }, 500);
+            try {
+                dispatch(updateIssueStatus({ issueId, statusId: newStatusId!, statusName }));
+                toast.success(`Issue #${issueId} moved to ${statusName}`);
+            } catch (error) {
+                toast.error('Failed to update issue status');
+            }
         }
     }
 

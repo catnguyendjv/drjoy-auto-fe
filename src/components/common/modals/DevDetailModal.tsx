@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { BaseIssueDetailModal, CustomFieldsProps } from './BaseIssueDetailModal';
 import { CustomFieldRenderer } from './CustomFieldRenderer';
 import { CUSTOM_FIELDS, FEATURE_OPTIONS, TEAM_OPTIONS, CATEGORY_OPTIONS, FIXED_MODULE_OPTIONS, CustomFieldValue } from '@/lib/redmine-custom-fields';
@@ -12,6 +13,8 @@ interface DevDetailModalProps {
 }
 
 export function DevDetailModal({ issue, onClose, onSave }: DevDetailModalProps) {
+    const [showAllFields, setShowAllFields] = useState(false);
+
     const renderCustomFields = ({ issue, isEditMode, onUpdate }: CustomFieldsProps) => {
         const updateField = (fieldId: number, value: CustomFieldValue) => {
             let processedValue: string | string[] | null = null;
@@ -143,11 +146,37 @@ export function DevDetailModal({ issue, onClose, onSave }: DevDetailModalProps) 
                     </div>
                 </div>
 
-                {/* Implementation */}
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                        Implementation
-                    </h3>
+                <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+                    <button
+                        type="button"
+                        onClick={() => setShowAllFields(!showAllFields)}
+                        className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 focus:outline-none"
+                    >
+                        {showAllFields ? (
+                            <>
+                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                </svg>
+                                Show Less Fields
+                            </>
+                        ) : (
+                            <>
+                                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                                Show More Fields
+                            </>
+                        )}
+                    </button>
+                </div>
+
+                {showAllFields && (
+                    <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
+                        {/* Implementation */}
+                        <div>
+                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
+                                Implementation
+                            </h3>
                     <div className="space-y-4">
                         <CustomFieldRenderer
                             field={CUSTOM_FIELDS.FIXED_MODULE}
@@ -209,6 +238,8 @@ export function DevDetailModal({ issue, onClose, onSave }: DevDetailModalProps) 
                         isEditMode={isEditMode}
                     />
                 </div>
+                    </div>
+                )}
             </div>
         );
     };
