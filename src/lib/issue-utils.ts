@@ -71,6 +71,11 @@ export function issueToUpdateRequest(issue: Issue, includeCustomFields: boolean 
     request.is_private = issue.is_private;
   }
 
+  // Fixed version
+  if (issue.fixed_version?.id !== undefined) {
+    request.fixed_version_id = issue.fixed_version.id;
+  }
+
   // Custom fields
   if (includeCustomFields && issue.custom_fields && issue.custom_fields.length > 0) {
     request.custom_fields = convertCustomFields(issue.custom_fields);
@@ -95,6 +100,18 @@ export function convertCustomFields(customFields: CustomField[]): Array<{
 }
 
 /**
+ * Normalize description for comparison
+ * Handles null/undefined/empty string and line ending differences
+ */
+function normalizeDescription(description: string | null | undefined): string {
+  if (description === null || description === undefined) {
+    return '';
+  }
+  // Normalize line endings to \n and trim
+  return description.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+}
+
+/**
  * Create a partial update request with only the changed fields
  * Compares original and updated issues to determine which fields changed
  */
@@ -110,7 +127,11 @@ export function createPartialUpdateRequest(
     request.subject = updatedIssue.subject;
   }
 
-  if (updatedIssue.description !== originalIssue.description) {
+  // Normalize descriptions before comparing to handle line ending differences
+  const normalizedOriginalDesc = normalizeDescription(originalIssue.description);
+  const normalizedUpdatedDesc = normalizeDescription(updatedIssue.description);
+
+  if (normalizedUpdatedDesc !== normalizedOriginalDesc) {
     request.description = updatedIssue.description;
   }
 
@@ -142,6 +163,11 @@ export function createPartialUpdateRequest(
   if (updatedIssue.assigned_to?.id !== originalIssue.assigned_to?.id) {
     // Allow setting to undefined (unassign)
     request.assigned_to_id = updatedIssue.assigned_to?.id;
+  }
+
+  if (updatedIssue.fixed_version?.id !== originalIssue.fixed_version?.id) {
+    // Allow setting to undefined (clear version)
+    request.fixed_version_id = updatedIssue.fixed_version?.id;
   }
 
   if (updatedIssue.parent?.id !== originalIssue.parent?.id) {
@@ -190,11 +216,28 @@ export function createPartialUpdateRequest(
     request.is_private = updatedIssue.is_private;
   }
 
-  // Custom fields - compare arrays
-  if (includeCustomFields && updatedIssue.custom_fields) {
-    const hasCustomFieldChanges = JSON.stringify(updatedIssue.custom_fields) !== JSON.stringify(originalIssue.custom_fields);
-    if (hasCustomFieldChanges) {
-      request.custom_fields = convertCustomFields(updatedIssue.custom_fields);
+  // Custom fields - only send fields that actually changed
+  if (includeCustomFields && updatedIssue.custom_fields && originalIssue.custom_fields) {
+    const changedCustomFields: Array<{ id: number; value: string | number | boolean | string[] }> = [];
+
+    updatedIssue.custom_fields.forEach(updatedField => {
+      const originalField = originalIssue.custom_fields?.find(f => f.id === updatedField.id);
+
+      // Check if field value has changed
+      const hasChanged = !originalField ||
+        JSON.stringify(originalField.value) !== JSON.stringify(updatedField.value);
+
+      if (hasChanged && updatedField.value !== null && updatedField.value !== undefined) {
+        changedCustomFields.push({
+          id: updatedField.id,
+          value: updatedField.value as string | number | boolean | string[],
+        });
+      }
+    });
+
+    // Only add custom_fields to request if there are actual changes
+    if (changedCustomFields.length > 0) {
+      request.custom_fields = changedCustomFields;
     }
   }
 

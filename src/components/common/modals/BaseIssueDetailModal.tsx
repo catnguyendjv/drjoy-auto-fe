@@ -71,19 +71,19 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
         try {
             // Convert to update request format (only changed fields)
             const updateRequest = createPartialUpdateRequest(issue, editedIssue);
-            
+
             // Log for debugging - verify only changed fields are sent
             const changedFieldsCount = Object.keys(updateRequest).length;
             console.log(`[Issue Update] Sending ${changedFieldsCount} changed field(s):`, updateRequest);
-            
+
             // Call API to update issue
             const response = await redmineApi.updateIssue(editedIssue.id, updateRequest);
-            
+
             // Update the issue with response from server
             if (onSave && response.issue) {
                 onSave(response.issue as any); // Cast to Issue type
             }
-            
+
             setIsSaving(false);
             setIsEditMode(false);
             toast.success('Issue updated successfully');
@@ -184,7 +184,7 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                             </div>
                         ) : (
                             <textarea
-                                value={editedIssue.description}
+                                value={editedIssue.description || ''}
                                 onChange={(e) => setEditedIssue({ ...editedIssue, description: e.target.value })}
                                 className={`${inputClassName} min-h-[120px] resize-y`}
                                 placeholder="Enter issue description..."

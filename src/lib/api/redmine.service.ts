@@ -150,6 +150,7 @@ export interface UpdateIssueRequest {
   estimated_hours?: number;
   done_ratio?: number;
   is_private?: boolean;
+  fixed_version_id?: number;
   custom_fields?: Array<{
     id: number;
     value: string | number | boolean | string[];
@@ -248,11 +249,12 @@ class RedmineApiService {
   /**
    * Generic PUT request
    */
-  private async put<T>(endpoint: string, data: any): Promise<T> {
+  private async put<T>(endpoint: string, data: any): Promise<any> {
     const baseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
     const finalEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
     const url = `${baseUrl}${finalEndpoint}`;
 
+    console.log(url, data);
     const response = await fetch(url, {
       method: 'PUT',
       headers: this.getHeaders(),
@@ -263,7 +265,7 @@ class RedmineApiService {
       throw new Error(`Redmine API error: ${response.status} ${response.statusText}`);
     }
 
-    return response.json();
+    return response;
   }
 
   /**
@@ -301,10 +303,10 @@ class RedmineApiService {
   async getIssue(id: number, include?: string): Promise<{ issue: RedmineIssue }> {
     const params = include ? { include } : undefined;
     const response = await this.get<any>(`/issues/${id}`, params);
-    
+
     // Normalize response: if API returns the issue directly, wrap it
     if (response && response.issue) {
-        return response;
+      return response;
     }
     return { issue: response };
   }
@@ -318,15 +320,15 @@ class RedmineApiService {
    */
   async createIssue(issueData: Partial<RedmineIssue>): Promise<{ issue: RedmineIssue }> {
     let endpoint = '/issues/task'; // Default to task
-    
+
     if (issueData.tracker) {
-        const trackerId = typeof issueData.tracker === 'object' ? issueData.tracker.id : issueData.tracker;
-        
-        if (trackerId === TRACKERS.BUG.id) {
-            endpoint = '/issues/bug';
-        } else if (trackerId === TRACKERS.DEV.id) {
-            endpoint = '/issues/dev';
-        }
+      const trackerId = typeof issueData.tracker === 'object' ? issueData.tracker.id : issueData.tracker;
+
+      if (trackerId === TRACKERS.BUG.id) {
+        endpoint = '/issues/bug';
+      } else if (trackerId === TRACKERS.DEV.id) {
+        endpoint = '/issues/dev';
+      }
     }
 
     return this.post<{ issue: RedmineIssue }>(endpoint, issueData);
@@ -337,7 +339,8 @@ class RedmineApiService {
    * Mapped to: PUT /redmine/issues/:id
    */
   async updateIssue(id: number, updateData: UpdateIssueRequest): Promise<{ issue: RedmineIssue }> {
-    return this.put<{ issue: RedmineIssue }>(`/issues/${id}`, { issue: updateData });
+    console.log(updateData)
+    return this.put<{ issue: RedmineIssue }>(`/issues/${id}`, updateData);
   }
 
   /**
@@ -384,7 +387,7 @@ class RedmineApiService {
   async getUser(id: number | 'current', include?: string): Promise<{ user: RedmineUser }> {
     const response = await this.get<any>('/project/users', { id });
     if (response.users && response.users.length > 0) {
-        return { user: response.users[0] };
+      return { user: response.users[0] };
     }
     throw new Error('User not found');
   }
@@ -412,7 +415,7 @@ class RedmineApiService {
    * Not in redmine.md.
    */
   async getVersion(id: number): Promise<{ version: RedmineVersion }> {
-     throw new Error('getVersion not supported by proxy');
+    throw new Error('getVersion not supported by proxy');
   }
 
   /**
@@ -430,7 +433,7 @@ class RedmineApiService {
    * Not in redmine.md.
    */
   async getTimeEntries(params?: any): Promise<RedmineApiResponse<any[]> & { time_entries: any[] }> {
-     return this.get<RedmineApiResponse<any[]> & { time_entries: any[] }>('/time_entries', params);
+    return this.get<RedmineApiResponse<any[]> & { time_entries: any[] }>('/time_entries', params);
   }
 
   /**
