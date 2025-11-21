@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { MOCK_STATUSES, MOCK_PRIORITIES, MOCK_VERSIONS, MOCK_USERS } from '@/data/mockData';
 import { toast } from 'sonner';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { redmineApi } from '@/lib/api/redmine.service';
+import { createPartialUpdateRequest } from '@/lib/issue-utils';
 
 export interface CustomFieldsProps {
     issue: Issue;
@@ -57,7 +59,7 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
         setIsEditMode(false);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         // Validation
         if (!editedIssue.subject.trim()) {
             toast.error('Subject cannot be empty');
@@ -66,20 +68,31 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
 
         setIsSaving(true);
 
-        // Simulate API call delay
-        setTimeout(() => {
-            try {
-                if (onSave) {
-                    onSave(editedIssue);
-                }
-                setIsSaving(false);
-                setIsEditMode(false);
-                toast.success('Issue updated successfully');
-            } catch (error) {
-                setIsSaving(false);
-                toast.error('Failed to update issue');
+        try {
+            // Convert to update request format (only changed fields)
+            const updateRequest = createPartialUpdateRequest(issue, editedIssue);
+            
+            // Log for debugging - verify only changed fields are sent
+            const changedFieldsCount = Object.keys(updateRequest).length;
+            console.log(`[Issue Update] Sending ${changedFieldsCount} changed field(s):`, updateRequest);
+            
+            // Call API to update issue
+            const response = await redmineApi.updateIssue(editedIssue.id, updateRequest);
+            
+            // Update the issue with response from server
+            if (onSave && response.issue) {
+                onSave(response.issue as any); // Cast to Issue type
             }
-        }, 600);
+            
+            setIsSaving(false);
+            setIsEditMode(false);
+            toast.success('Issue updated successfully');
+        } catch (error) {
+            setIsSaving(false);
+            const errorMessage = error instanceof Error ? error.message : 'Failed to update issue';
+            toast.error(errorMessage);
+            console.error('Error updating issue:', error);
+        }
     };
 
     const handleCustomFieldsUpdate = (updatedFields: CustomField[]) => {
@@ -106,21 +119,21 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                         <div className="flex items-center gap-3 mb-2 flex-wrap">
                             <span className="text-sm font-mono text-gray-500 dark:text-gray-400">#{issue.id}</span>
                             <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
-                                {editedIssue.tracker.name}
+                                {editedIssue.tracker?.name || 'Unknown'}
                             </span>
                             {!isEditMode ? (
                                 <>
                                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium
-                                        ${editedIssue.priority.name === 'High' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
-                                            editedIssue.priority.name === 'Urgent' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
-                                                editedIssue.priority.name === 'Normal' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
+                                        ${editedIssue.priority?.name === 'High' ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' :
+                                            editedIssue.priority?.name === 'Urgent' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300' :
+                                                editedIssue.priority?.name === 'Normal' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
                                                     'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
                                         }`}>
-                                        {editedIssue.priority.name}
+                                        {editedIssue.priority?.name || 'No Priority'}
                                     </span>
                                     <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                        ${editedIssue.status.is_closed ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}`}>
-                                        {editedIssue.status.name}
+                                        ${editedIssue.status?.is_closed ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'}`}>
+                                        {editedIssue.status?.name || 'No Status'}
                                     </span>
                                 </>
                             ) : null}
@@ -191,10 +204,10 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                                 <div>
                                     <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Status</label>
                                     {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.status.name}</div>
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.status?.name || 'No Status'}</div>
                                     ) : (
                                         <select
-                                            value={editedIssue.status.id}
+                                            value={editedIssue.status?.id || ''}
                                             onChange={(e) => {
                                                 const status = MOCK_STATUSES.find(s => s.id === Number(e.target.value));
                                                 if (status) setEditedIssue({ ...editedIssue, status: { id: status.id, name: status.name, is_closed: status.is_closed } });
@@ -212,10 +225,10 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                                 <div>
                                     <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Priority</label>
                                     {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.priority.name}</div>
+                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.priority?.name || 'No Priority'}</div>
                                     ) : (
                                         <select
-                                            value={editedIssue.priority.id}
+                                            value={editedIssue.priority?.id || ''}
                                             onChange={(e) => {
                                                 const priority = MOCK_PRIORITIES.find(p => p.id === Number(e.target.value));
                                                 if (priority) setEditedIssue({ ...editedIssue, priority });
@@ -254,7 +267,7 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                                 {/* Project */}
                                 <div>
                                     <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Project</label>
-                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.project.name}</div>
+                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.project?.name || 'Unknown'}</div>
                                 </div>
 
                                 {/* Author */}

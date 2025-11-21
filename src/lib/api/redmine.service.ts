@@ -1,9 +1,9 @@
 /**
  * Redmine API Service
- * Service layer for making API calls to Redmine
+ * Service layer for making API calls to Redmine via Proxy
  */
 
-import { REDMINE_CONFIG } from '../redmine-config';
+import { REDMINE_CONFIG, TRACKERS } from '../redmine-config';
 
 // ==================== Types ====================
 
@@ -136,16 +136,47 @@ export interface RedmineApiResponse<T> {
   [key: string]: any;
 }
 
+export interface UpdateIssueRequest {
+  project_id?: number;
+  tracker_id?: number;
+  status_id?: number;
+  priority_id?: number;
+  subject?: string;
+  description?: string;
+  assigned_to_id?: number;
+  parent_issue_id?: number;
+  start_date?: string;
+  due_date?: string;
+  estimated_hours?: number;
+  done_ratio?: number;
+  is_private?: boolean;
+  custom_fields?: Array<{
+    id: number;
+    value: string | number | boolean | string[];
+  }>;
+  notes?: string;
+}
+
 // ==================== API Service ====================
 
 class RedmineApiService {
   private baseUrl: string;
-  private apiKey: string;
 
   constructor() {
-    // Use local proxy when running in browser to avoid CORS issues
+    // Base URL from environment config only
     this.baseUrl = REDMINE_CONFIG.baseUrl;
-    this.apiKey = REDMINE_CONFIG.apiKey;
+  }
+
+  /**
+   * Get API key from localStorage (user settings)
+   */
+  private getApiKey(): string {
+    if (typeof window === 'undefined') {
+      // Server-side: fallback to env config
+      return REDMINE_CONFIG.apiKey;
+    }
+    // Client-side: get from localStorage
+    return localStorage.getItem('redmine_api_key') || '';
   }
 
   /**
@@ -153,7 +184,7 @@ class RedmineApiService {
    */
   private getHeaders(): HeadersInit {
     return {
-      'X-Redmine-API-Key': this.apiKey,
+      'X-Redmine-API-Key': this.getApiKey(),
       'Content-Type': 'application/json',
     };
   }
@@ -176,7 +207,10 @@ class RedmineApiService {
    */
   private async get<T>(endpoint: string, params?: Record<string, any>): Promise<T> {
     const queryString = params ? `?${this.buildQueryString(params)}` : '';
-    const url = `${this.baseUrl}${endpoint}${queryString}`;
+    // Ensure no double slashes if baseUrl ends with / and endpoint starts with /
+    const baseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
+    const finalEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = `${baseUrl}${finalEndpoint}${queryString}`;
 
     const response = await fetch(url, {
       method: 'GET',
@@ -194,7 +228,9 @@ class RedmineApiService {
    * Generic POST request
    */
   private async post<T>(endpoint: string, data: any): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
+    const baseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
+    const finalEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = `${baseUrl}${finalEndpoint}`;
 
     const response = await fetch(url, {
       method: 'POST',
@@ -213,7 +249,9 @@ class RedmineApiService {
    * Generic PUT request
    */
   private async put<T>(endpoint: string, data: any): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
+    const baseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
+    const finalEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = `${baseUrl}${finalEndpoint}`;
 
     const response = await fetch(url, {
       method: 'PUT',
@@ -232,7 +270,9 @@ class RedmineApiService {
    * Generic DELETE request
    */
   private async delete(endpoint: string): Promise<void> {
-    const url = `${this.baseUrl}${endpoint}`;
+    const baseUrl = this.baseUrl.endsWith('/') ? this.baseUrl.slice(0, -1) : this.baseUrl;
+    const finalEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+    const url = `${baseUrl}${finalEndpoint}`;
 
     const response = await fetch(url, {
       method: 'DELETE',
@@ -248,72 +288,105 @@ class RedmineApiService {
 
   /**
    * Get list of issues
+   * Mapped to: GET /redmine/issues/query-by-filters
    */
   async getIssues(params?: IssueQueryParams): Promise<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }> {
-    return this.get<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }>('/issues.json', params);
+    return this.get<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }>('/issues/query-by-filters', params);
   }
 
   /**
    * Get single issue by ID
+   * Mapped to: GET /redmine/issues/detail/:id
    */
   async getIssue(id: number, include?: string): Promise<{ issue: RedmineIssue }> {
     const params = include ? { include } : undefined;
-    return this.get<{ issue: RedmineIssue }>(`/issues/${id}.json`, params);
+    const response = await this.get<any>(`/issues/${id}`, params);
+    
+    // Normalize response: if API returns the issue directly, wrap it
+    if (response && response.issue) {
+        return response;
+    }
+    return { issue: response };
   }
 
   /**
    * Create new issue
+   * Mapped to:
+   * - POST /redmine/issues/task
+   * - POST /redmine/issues/bug
+   * - POST /redmine/issues/dev
    */
   async createIssue(issueData: Partial<RedmineIssue>): Promise<{ issue: RedmineIssue }> {
-    return this.post<{ issue: RedmineIssue }>('/issues.json', { issue: issueData });
+    let endpoint = '/issues/task'; // Default to task
+    
+    if (issueData.tracker) {
+        const trackerId = typeof issueData.tracker === 'object' ? issueData.tracker.id : issueData.tracker;
+        
+        if (trackerId === TRACKERS.BUG.id) {
+            endpoint = '/issues/bug';
+        } else if (trackerId === TRACKERS.DEV.id) {
+            endpoint = '/issues/dev';
+        }
+    }
+
+    return this.post<{ issue: RedmineIssue }>(endpoint, issueData);
   }
 
   /**
    * Update issue
+   * Mapped to: PUT /redmine/issues/:id
    */
-  async updateIssue(id: number, issueData: Partial<RedmineIssue>): Promise<void> {
-    return this.put(`/issues/${id}.json`, { issue: issueData });
+  async updateIssue(id: number, updateData: UpdateIssueRequest): Promise<{ issue: RedmineIssue }> {
+    return this.put<{ issue: RedmineIssue }>(`/issues/${id}`, { issue: updateData });
   }
 
   /**
    * Delete issue
+   * Mapped to: DELETE /redmine/issues/:id (Assuming standard REST pattern as it's not explicitly in redmine.md)
    */
   async deleteIssue(id: number): Promise<void> {
-    return this.delete(`/issues/${id}.json`);
+    return this.delete(`/issues/${id}`);
   }
 
   // ==================== Projects ====================
 
   /**
    * Get list of projects
+   * Mapped to: GET /redmine/project/info
    */
   async getProjects(params?: { limit?: number; offset?: number }): Promise<RedmineApiResponse<RedmineProject[]> & { projects: RedmineProject[] }> {
-    return this.get<RedmineApiResponse<RedmineProject[]> & { projects: RedmineProject[] }>('/projects.json', params);
+    return this.get<RedmineApiResponse<RedmineProject[]> & { projects: RedmineProject[] }>('/project/info', params);
   }
 
   /**
    * Get single project
+   * Mapped to: GET /redmine/project/info
    */
   async getProject(id: number | string, include?: string): Promise<{ project: RedmineProject }> {
     const params = include ? { include } : undefined;
-    return this.get<{ project: RedmineProject }>(`/projects/${id}.json`, params);
+    return this.get<{ project: RedmineProject }>('/project/info', params);
   }
 
   // ==================== Users ====================
 
   /**
    * Get list of users
+   * Mapped to: GET /redmine/project/users
    */
   async getUsers(params?: { limit?: number; offset?: number; status?: number }): Promise<RedmineApiResponse<RedmineUser[]> & { users: RedmineUser[] }> {
-    return this.get<RedmineApiResponse<RedmineUser[]> & { users: RedmineUser[] }>('/users.json', params);
+    return this.get<RedmineApiResponse<RedmineUser[]> & { users: RedmineUser[] }>('/project/users', params);
   }
 
   /**
    * Get single user
+   * Mapped to: GET /redmine/project/users
    */
   async getUser(id: number | 'current', include?: string): Promise<{ user: RedmineUser }> {
-    const params = include ? { include } : undefined;
-    return this.get<{ user: RedmineUser }>(`/users/${id}.json`, params);
+    const response = await this.get<any>('/project/users', { id });
+    if (response.users && response.users.length > 0) {
+        return { user: response.users[0] };
+    }
+    throw new Error('User not found');
   }
 
   /**
@@ -327,20 +400,24 @@ class RedmineApiService {
 
   /**
    * Get versions for a project
+   * Mapped to: GET /redmine/project/fixed-versions
    */
   async getVersions(projectId: number | string): Promise<{ versions: RedmineVersion[] }> {
-    return this.get<{ versions: RedmineVersion[] }>(`/project/fixed-versions`);
+    const versions = await this.get<RedmineVersion[]>('/project/fixed-versions');
+    return { versions };
   }
 
   /**
    * Get single version
+   * Not in redmine.md.
    */
   async getVersion(id: number): Promise<{ version: RedmineVersion }> {
-    return this.get<{ version: RedmineVersion }>(`/versions/${id}.json`);
+     throw new Error('getVersion not supported by proxy');
   }
 
   /**
    * Get all versions across projects
+   * Mapped to: GET /redmine/project/fixed-versions
    */
   async getAllVersions(params?: { limit?: number; offset?: number }): Promise<RedmineVersion[]> {
     return this.get<RedmineVersion[]>('/project/fixed-versions', params);
@@ -350,32 +427,18 @@ class RedmineApiService {
 
   /**
    * Get time entries
+   * Not in redmine.md.
    */
-  async getTimeEntries(params?: {
-    issue_id?: number;
-    project_id?: number;
-    user_id?: number;
-    spent_on?: string;
-    from?: string;
-    to?: string;
-    limit?: number;
-    offset?: number;
-  }): Promise<RedmineApiResponse<any[]> & { time_entries: any[] }> {
-    return this.get<RedmineApiResponse<any[]> & { time_entries: any[] }>('/time_entries.json', params);
+  async getTimeEntries(params?: any): Promise<RedmineApiResponse<any[]> & { time_entries: any[] }> {
+     return this.get<RedmineApiResponse<any[]> & { time_entries: any[] }>('/time_entries', params);
   }
 
   /**
    * Create time entry
+   * Not in redmine.md.
    */
-  async createTimeEntry(data: {
-    issue_id?: number;
-    project_id?: number;
-    spent_on: string;
-    hours: number;
-    activity_id: number;
-    comments?: string;
-  }): Promise<{ time_entry: any }> {
-    return this.post<{ time_entry: any }>('/time_entries.json', { time_entry: data });
+  async createTimeEntry(data: any): Promise<{ time_entry: any }> {
+    return this.post<{ time_entry: any }>('/time_entries', { time_entry: data });
   }
 }
 
