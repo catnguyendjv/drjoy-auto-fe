@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
+import { UserProfile } from "@/components/common/UserProfile";
 
 export function TopMenu() {
     return (
@@ -26,7 +27,7 @@ export function TopMenu() {
             </div>
             <div className="flex items-center gap-4">
                 <ThemeToggle />
-                {/* Add user profile or other actions here */}
+                <UserProfile />
             </div>
         </div>
     );

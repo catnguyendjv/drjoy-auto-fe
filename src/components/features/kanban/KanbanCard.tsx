@@ -5,10 +5,12 @@ import { clsx } from 'clsx';
 
 interface KanbanCardProps {
     issue: Issue;
-    onClick?: () => void;
+    onClick?: (e: React.MouseEvent) => void;
+    onDoubleClick?: (e: React.MouseEvent) => void;
+    isSelected?: boolean;
 }
 
-export function KanbanCard({ issue, onClick }: KanbanCardProps) {
+export function KanbanCard({ issue, onClick, onDoubleClick, isSelected }: KanbanCardProps) {
     const {
         attributes,
         listeners,
@@ -36,10 +38,14 @@ export function KanbanCard({ issue, onClick }: KanbanCardProps) {
             {...attributes}
             {...listeners}
             className={clsx(
-                "bg-white dark:bg-zinc-800 p-4 rounded-lg shadow-sm border border-gray-200 dark:border-zinc-700 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow",
+                "bg-white dark:bg-zinc-800 p-4 rounded-lg shadow-sm border transition-shadow cursor-grab active:cursor-grabbing hover:shadow-md",
+                isSelected 
+                    ? "border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900" 
+                    : "border-gray-200 dark:border-zinc-700",
                 isDragging && "opacity-50"
             )}
             onClick={onClick}
+            onDoubleClick={onDoubleClick}
         >
             <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-2">

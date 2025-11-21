@@ -32,6 +32,7 @@ export function KanbanBoard() {
     const { issues, statuses, loading } = useAppSelector((state) => state.kanban);
     const [activeIssue, setActiveIssue] = useState<Issue | null>(null);
     const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
+    const [selectedIssueIds, setSelectedIssueIds] = useState<number[]>([]);
     const [filterVersion, setFilterVersion] = useState<string>('');
     const [filterTeam, setFilterTeam] = useState<string>('');
     const [filterAssignee, setFilterAssignee] = useState<string>('');
@@ -113,6 +114,12 @@ export function KanbanBoard() {
         const { active } = event;
         const issue = active.data.current?.issue as Issue;
         setActiveIssue(issue);
+
+        // If dragging an item that is NOT selected, clear selection and select only this one
+        // unless we want to allow adding to selection by dragging (unusual)
+        if (!selectedIssueIds.includes(issue.id)) {
+            setSelectedIssueIds([issue.id]);
+        }
     }
 
     function handleDragOver(event: DragOverEvent) {
@@ -165,19 +172,54 @@ export function KanbanBoard() {
             }
         }
 
-        if (newStatusId && newStatusId !== issue.status.id) {
+        if (newStatusId) {
             const statusName = statuses.find(s => s.id === newStatusId)?.name || '';
+            const issuesToMoveIds = selectedIssueIds.includes(issueId) ? selectedIssueIds : [issueId];
+            
+            // Filter out issues that are already in the target status
+            const issuesToUpdate = issuesToMoveIds.filter(id => {
+                const i = issues.find(issue => issue.id === id);
+                return i && i.status.id !== newStatusId;
+            });
 
-            try {
-                dispatch(updateIssueStatus({ issueId, statusId: newStatusId!, statusName }));
-                toast.success(`Issue #${issueId} moved to ${statusName}`);
-            } catch (error) {
-                toast.error('Failed to update issue status');
+            if (issuesToUpdate.length > 0) {
+                try {
+                    issuesToUpdate.forEach(id => {
+                        dispatch(updateIssueStatus({ issueId: id, statusId: newStatusId!, statusName }));
+                    });
+                    
+                    if (issuesToUpdate.length === 1) {
+                        toast.success(`Issue #${issuesToUpdate[0]} moved to ${statusName}`);
+                    } else {
+                        toast.success(`${issuesToUpdate.length} issues moved to ${statusName}`);
+                    }
+                } catch (error) {
+                    toast.error('Failed to update issue status');
+                }
             }
+        }
+        
+        // Clear selection after move
+        setSelectedIssueIds([]);
+    }
+
+    function handleIssueClick(issue: Issue, e: React.MouseEvent) {
+        if (e.ctrlKey || e.metaKey) {
+            // Toggle selection
+            setSelectedIssueIds(prev => {
+                if (prev.includes(issue.id)) {
+                    return prev.filter(id => id !== issue.id);
+                } else {
+                    return [...prev, issue.id];
+                }
+            });
+        } else {
+            // Exclusive selection
+            setSelectedIssueIds([issue.id]);
         }
     }
 
-    function handleIssueClick(issue: Issue) {
+    function handleIssueDoubleClick(issue: Issue) {
         setSelectedIssue(issue);
     }
 
@@ -230,6 +272,8 @@ export function KanbanBoard() {
                                 children={getChildrenForParent(parent.id)}
                                 statuses={statuses}
                                 onIssueClick={handleIssueClick}
+                                onIssueDoubleClick={handleIssueDoubleClick}
+                                selectedIssueIds={selectedIssueIds}
                             />
                         ))}
 
@@ -252,6 +296,8 @@ export function KanbanBoard() {
                                                 } as any}
                                                 issues={standaloneIssues.filter((i) => i.status.id === status.id)}
                                                 onIssueClick={handleIssueClick}
+                                                onIssueDoubleClick={handleIssueDoubleClick}
+                                                selectedIssueIds={selectedIssueIds}
                                             />
                                         ))}
                                     </div>
@@ -262,7 +308,16 @@ export function KanbanBoard() {
                 </div>
 
                 <DragOverlay>
-                    {activeIssue ? <KanbanCard issue={activeIssue} /> : null}
+                    {activeIssue ? (
+                        <div className="relative">
+                            <KanbanCard issue={activeIssue} isSelected={true} />
+                            {selectedIssueIds.length > 1 && selectedIssueIds.includes(activeIssue.id) && (
+                                <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-md border-2 border-white dark:border-zinc-800">
+                                    {selectedIssueIds.length}
+                                </div>
+                            )}
+                        </div>
+                    ) : null}
                 </DragOverlay>
             </DndContext>
 

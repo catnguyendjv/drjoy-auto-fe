@@ -8,7 +8,9 @@ interface ParentTicketBlockProps {
     parent: Issue;
     children: Issue[];
     statuses: IssueStatus[];
-    onIssueClick: (issue: Issue) => void;
+    onIssueClick: (issue: Issue, e: React.MouseEvent) => void;
+    onIssueDoubleClick: (issue: Issue, e: React.MouseEvent) => void;
+    selectedIssueIds: number[];
 }
 
 export function ParentTicketBlock({
@@ -16,6 +18,8 @@ export function ParentTicketBlock({
     children,
     statuses,
     onIssueClick,
+    onIssueDoubleClick,
+    selectedIssueIds,
 }: ParentTicketBlockProps) {
     const priorityColors: Record<string, string> = {
         'Low': 'text-gray-500 dark:text-gray-400',
@@ -97,6 +101,8 @@ export function ParentTicketBlock({
                             status={status as any}
                             issues={children.filter((i) => i.status.id === (status as any).originalId)}
                             onIssueClick={onIssueClick}
+                            onIssueDoubleClick={onIssueDoubleClick}
+                            selectedIssueIds={selectedIssueIds}
                         />
                     ))}
                 </div>

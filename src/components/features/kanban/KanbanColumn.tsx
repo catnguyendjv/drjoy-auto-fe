@@ -7,10 +7,12 @@ import { clsx } from 'clsx';
 interface KanbanColumnProps {
     status: IssueStatus;
     issues: Issue[];
-    onIssueClick?: (issue: Issue) => void;
+    onIssueClick?: (issue: Issue, e: React.MouseEvent) => void;
+    onIssueDoubleClick?: (issue: Issue, e: React.MouseEvent) => void;
+    selectedIssueIds?: number[];
 }
 
-export function KanbanColumn({ status, issues, onIssueClick }: KanbanColumnProps) {
+export function KanbanColumn({ status, issues, onIssueClick, onIssueDoubleClick, selectedIssueIds = [] }: KanbanColumnProps) {
     const { setNodeRef } = useDroppable({
         id: status.id,
         data: {
@@ -40,7 +42,13 @@ export function KanbanColumn({ status, issues, onIssueClick }: KanbanColumnProps
             >
                 <SortableContext items={issues.map(i => i.id)} strategy={verticalListSortingStrategy}>
                     {issues.map((issue) => (
-                        <KanbanCard key={issue.id} issue={issue} onClick={() => onIssueClick?.(issue)} />
+                        <KanbanCard 
+                            key={issue.id} 
+                            issue={issue} 
+                            onClick={(e) => onIssueClick?.(issue, e)}
+                            onDoubleClick={(e) => onIssueDoubleClick?.(issue, e)}
+                            isSelected={selectedIssueIds.includes(issue.id)}
+                        />
                     ))}
                 </SortableContext>
             </div>
