@@ -159,6 +159,13 @@ export interface UpdateIssueRequest {
   notes?: string;
 }
 
+export interface BatchUpdateIssueRequest {
+  updates: Array<{
+    id: number;
+    issue: UpdateIssueRequest;
+  }>;
+}
+
 // ==================== API Service ====================
 
 class RedmineApiService {
@@ -174,8 +181,7 @@ class RedmineApiService {
    */
   private getApiKey(): string {
     if (typeof window === 'undefined') {
-      // Server-side: fallback to env config
-      return REDMINE_CONFIG.apiKey;
+      return '';
     }
     // Client-side: get from localStorage
     return localStorage.getItem('redmine_api_key') || '';
@@ -350,6 +356,14 @@ class RedmineApiService {
   async updateIssue(id: number, updateData: UpdateIssueRequest): Promise<{ issue: RedmineIssue }> {
     console.log(updateData)
     return this.put<{ issue: RedmineIssue }>(`/issues/${id}`, updateData);
+  }
+
+  /**
+   * Batch update issues
+   * Mapped to: POST /redmine/batch-update
+   */
+  async batchUpdateIssues(batchRequest: BatchUpdateIssueRequest): Promise<any[]> {
+    return this.post<any[]>('/batch-update', batchRequest);
   }
 
   /**

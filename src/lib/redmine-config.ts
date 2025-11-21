@@ -8,7 +8,6 @@
 // ==================== API Configuration ====================
 export const REDMINE_CONFIG = {
   baseUrl: process.env.NEXT_PUBLIC_REDMINE_BASE_URL || 'http://localhost:5000/redmine',
-  apiKey: process.env.NEXT_PUBLIC_REDMINE_API_KEY || '',
 } as const;
 
 // ==================== Issue Statuses ====================
