@@ -43,7 +43,10 @@ export function ParentTicketBlock({
     return (
         <div className="mb-8 border border-gray-300 dark:border-zinc-700 rounded-lg overflow-hidden bg-white dark:bg-zinc-900">
             {/* Parent Ticket Header */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-zinc-800 dark:to-zinc-800 border-b border-gray-300 dark:border-zinc-700 p-4">
+            <div 
+                className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-zinc-800 dark:to-zinc-800 border-b border-gray-300 dark:border-zinc-700 p-4 cursor-pointer hover:from-blue-100 hover:to-indigo-100 dark:hover:from-zinc-700 dark:hover:to-zinc-700 transition-colors"
+                onDoubleClick={(e) => onIssueDoubleClick(parent, e)}
+            >
                 <div className="flex items-center justify-between">
                     <div className="flex-1">
                         <div className="flex items-center gap-3">
@@ -54,9 +57,6 @@ export function ParentTicketBlock({
                                 {parent.subject}
                             </h3>
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            {parent.description}
-                        </p>
                     </div>
                     <div className="flex items-center gap-4 ml-4">
                         <div className="text-right">

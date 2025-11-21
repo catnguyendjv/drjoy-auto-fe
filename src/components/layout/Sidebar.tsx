@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Kanban, Settings, Home, Calendar, Clock, BarChart3 } from "lucide-react";
+import { Kanban, Settings, Home, Calendar, Clock, BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
 import { clsx } from "clsx";
+import { useState } from "react";
 
 const navigation = [
     { name: "Kanban", href: "/kanban", icon: Kanban },
@@ -15,12 +16,26 @@ const navigation = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const [isCollapsed, setIsCollapsed] = useState(false);
 
     return (
-        <div className="flex h-full w-64 flex-col border-r bg-white dark:bg-black dark:border-zinc-800">
-            <div className="flex h-16 items-center px-6 border-b dark:border-zinc-800">
-                <Home className="h-6 w-6 text-blue-600 mr-2" />
-                <span className="text-lg font-bold text-gray-900 dark:text-white">Redmine App</span>
+        <div 
+            className={clsx(
+                "flex h-full flex-col border-r bg-white dark:bg-black dark:border-zinc-800 transition-all duration-300",
+                isCollapsed ? "w-16" : "w-64"
+            )}
+        >
+            <div className={clsx(
+                "flex h-16 items-center border-b dark:border-zinc-800 transition-all duration-300",
+                isCollapsed ? "justify-center px-0" : "px-6"
+            )}>
+                <Home className="h-6 w-6 text-blue-600 flex-shrink-0" />
+                <span className={clsx(
+                    "text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap overflow-hidden transition-all duration-300",
+                    isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100 ml-2"
+                )}>
+                    Redmine App
+                </span>
             </div>
             <nav className="flex-1 space-y-1 px-2 py-4">
                 {navigation.map((item) => {
@@ -29,26 +44,43 @@ export function Sidebar() {
                         <Link
                             key={item.name}
                             href={item.href}
+                            title={isCollapsed ? item.name : undefined}
                             className={clsx(
                                 "group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
                                 isActive
                                     ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
-                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800 dark:hover:text-white"
+                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800 dark:hover:text-white",
+                                isCollapsed ? "justify-center" : ""
                             )}
                         >
                             <item.icon
                                 className={clsx(
-                                    "mr-3 h-5 w-5 flex-shrink-0",
+                                    "h-5 w-5 flex-shrink-0 transition-all duration-300",
                                     isActive
                                         ? "text-blue-600 dark:text-blue-400"
-                                        : "text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300"
+                                        : "text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300",
+                                    !isCollapsed && "mr-3"
                                 )}
                             />
-                            {item.name}
+                            <span className={clsx(
+                                "whitespace-nowrap overflow-hidden transition-all duration-300",
+                                isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
+                            )}>
+                                {item.name}
+                            </span>
                         </Link>
                     );
                 })}
             </nav>
+
+            <div className="p-4 border-t dark:border-zinc-800">
+                <button
+                    onClick={() => setIsCollapsed(!isCollapsed)}
+                    className="flex w-full items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
+                >
+                    {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+                </button>
+            </div>
         </div>
     );
 }
