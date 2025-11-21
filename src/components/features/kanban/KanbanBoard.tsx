@@ -14,6 +14,7 @@ import {
     DragEndEvent,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { ChevronsDown, ChevronsRight } from 'lucide-react';
 import { KanbanColumn } from './KanbanColumn';
 import { KanbanCard } from './KanbanCard';
 import { IssueDetailModal } from '@/components/common/modals/IssueDetailModal';
@@ -44,6 +45,7 @@ export function KanbanBoard() {
     const [filterDueDateFrom, setFilterDueDateFrom] = useState<string>('');
     const [filterDueDateTo, setFilterDueDateTo] = useState<string>('');
     const [targetVersionId, setTargetVersionId] = useState<number | null>(null);
+    const [collapsedParentIds, setCollapsedParentIds] = useState<Set<number>>(new Set());
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -322,6 +324,27 @@ export function KanbanBoard() {
         return filteredIssues.filter(issue => issue.parent_id === parentId);
     };
 
+    const toggleParentCollapse = (parentId: number) => {
+        setCollapsedParentIds(prev => {
+            const next = new Set(prev);
+            if (next.has(parentId)) {
+                next.delete(parentId);
+            } else {
+                next.add(parentId);
+            }
+            return next;
+        });
+    };
+
+    const handleCollapseAll = () => {
+        const allParentIds = parentTickets.map(p => p.id);
+        setCollapsedParentIds(new Set(allParentIds));
+    };
+
+    const handleExpandAll = () => {
+        setCollapsedParentIds(new Set());
+    };
+
     function handleDragStart(event: DragStartEvent) {
         const { active } = event;
         const issue = active.data.current?.issue as Issue;
@@ -488,6 +511,23 @@ export function KanbanBoard() {
                         hasActiveFilters={hasActiveFilters}
                     />
 
+                    <div className="flex justify-end gap-2 mb-4">
+                        <button
+                            onClick={handleExpandAll}
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
+                        >
+                            <ChevronsDown className="w-4 h-4" />
+                            Expand All
+                        </button>
+                        <button
+                            onClick={handleCollapseAll}
+                            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
+                        >
+                            <ChevronsRight className="w-4 h-4" />
+                            Collapse All
+                        </button>
+                    </div>
+
                     {/* Parent Ticket Blocks */}
                     <div className="space-y-6">
                         {parentTickets.map((parent) => (
@@ -499,6 +539,8 @@ export function KanbanBoard() {
                                 onIssueClick={handleIssueClick}
                                 onIssueDoubleClick={handleIssueDoubleClick}
                                 selectedIssueIds={selectedIssueIds}
+                                isCollapsed={collapsedParentIds.has(parent.id)}
+                                onToggleCollapse={() => toggleParentCollapse(parent.id)}
                             />
                         ))}
 

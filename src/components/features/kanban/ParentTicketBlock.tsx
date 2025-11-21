@@ -1,8 +1,7 @@
-'use client';
-
 import { Issue, IssueStatus } from '@/types/redmine';
 import { KanbanColumn } from './KanbanColumn';
 import { useMemo } from 'react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 interface ParentTicketBlockProps {
     parent: Issue;
@@ -11,6 +10,8 @@ interface ParentTicketBlockProps {
     onIssueClick: (issue: Issue, e: React.MouseEvent) => void;
     onIssueDoubleClick: (issue: Issue, e: React.MouseEvent) => void;
     selectedIssueIds: number[];
+    isCollapsed: boolean;
+    onToggleCollapse: () => void;
 }
 
 export function ParentTicketBlock({
@@ -20,6 +21,8 @@ export function ParentTicketBlock({
     onIssueClick,
     onIssueDoubleClick,
     selectedIssueIds,
+    isCollapsed,
+    onToggleCollapse,
 }: ParentTicketBlockProps) {
     const priorityColors: Record<string, string> = {
         'Low': 'text-gray-500 dark:text-gray-400',
@@ -50,6 +53,19 @@ export function ParentTicketBlock({
                 <div className="flex items-center justify-between">
                     <div className="flex-1">
                         <div className="flex items-center gap-3">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    onToggleCollapse();
+                                }}
+                                className="p-1 hover:bg-black/5 dark:hover:bg-white/10 rounded transition-colors cursor-pointer"
+                            >
+                                {isCollapsed ? (
+                                    <ChevronRight className="w-5 h-5 text-gray-500" />
+                                ) : (
+                                    <ChevronDown className="w-5 h-5 text-gray-500" />
+                                )}
+                            </button>
                             <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
                                 #{parent.id}
                             </span>
@@ -93,20 +109,22 @@ export function ParentTicketBlock({
             </div>
 
             {/* Child Tickets in Columns */}
-            <div className="p-4 bg-gray-50 dark:bg-zinc-950">
-                <div className="flex gap-4 overflow-x-auto">
-                    {parentStatuses.map((status) => (
-                        <KanbanColumn
-                            key={status.id}
-                            status={status as any}
-                            issues={children.filter((i) => i.status.id === (status as any).originalId)}
-                            onIssueClick={onIssueClick}
-                            onIssueDoubleClick={onIssueDoubleClick}
-                            selectedIssueIds={selectedIssueIds}
-                        />
-                    ))}
+            {!isCollapsed && (
+                <div className="p-4 bg-gray-50 dark:bg-zinc-950">
+                    <div className="flex gap-4 overflow-x-auto">
+                        {parentStatuses.map((status) => (
+                            <KanbanColumn
+                                key={status.id}
+                                status={status as any}
+                                issues={children.filter((i) => i.status.id === (status as any).originalId)}
+                                onIssueClick={onIssueClick}
+                                onIssueDoubleClick={onIssueDoubleClick}
+                                selectedIssueIds={selectedIssueIds}
+                            />
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }
