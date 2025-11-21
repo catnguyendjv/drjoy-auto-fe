@@ -47,6 +47,7 @@ export function KanbanCard({ issue, onClick, onDoubleClick, isSelected }: Kanban
     };
 
     const dueDate = formatDate(issue.due_date);
+    const startDate = formatDate(issue.start_date);
 
     return (
         <div
@@ -92,12 +93,19 @@ export function KanbanCard({ issue, onClick, onDoubleClick, isSelected }: Kanban
                 {issue.subject}
             </h3>
 
-            {/* Fixed Version */}
-            {issue.fixed_version && (
-                <div className="mb-2">
-                    <span className="inline-block text-[10px] px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300">
-                        📅 {issue.fixed_version.name}
-                    </span>
+            {/* Time Tracking */}
+            {(issue.estimated_hours || issue.spent_hours) && (
+                <div className="flex gap-3 mb-2 text-[10px] text-gray-500 dark:text-gray-400">
+                    {issue.estimated_hours && (
+                        <span className="flex items-center gap-1" title="Estimated Time">
+                            ⏱️ {issue.estimated_hours}h
+                        </span>
+                    )}
+                    {issue.spent_hours && (
+                        <span className="flex items-center gap-1" title="Spent Time">
+                            ⌛ {issue.spent_hours}h
+                        </span>
+                    )}
                 </div>
             )}
 
@@ -118,21 +126,28 @@ export function KanbanCard({ issue, onClick, onDoubleClick, isSelected }: Kanban
                 </div>
             )}
 
-            {/* Footer: Assignee and Due Date */}
+            {/* Footer: Assignee and Dates */}
             <div className="flex justify-between items-center text-xs text-gray-500 dark:text-gray-400">
                 <span className="truncate flex-1 text-[11px]">
                     👤 {issue.assigned_to?.name || 'Unassigned'}
                 </span>
-                {dueDate && (
-                    <span className={clsx(
-                        "text-[10px] px-1.5 py-0.5 rounded font-medium ml-2",
-                        dueDate.isOverdue 
-                            ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
-                            : "bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300"
-                    )}>
-                        🗓 {dueDate.formatted}
-                    </span>
-                )}
+                <div className="flex items-center gap-1 ml-2">
+                    {startDate && (
+                         <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300" title="Start Date">
+                            🚀 {startDate.formatted}
+                        </span>
+                    )}
+                    {dueDate && (
+                        <span className={clsx(
+                            "text-[10px] px-1.5 py-0.5 rounded font-medium",
+                            dueDate.isOverdue 
+                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                                : "bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300"
+                        )} title="Due Date">
+                            🏁 {dueDate.formatted}
+                        </span>
+                    )}
+                </div>
             </div>
         </div>
     );
