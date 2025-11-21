@@ -6,9 +6,10 @@ import { toast } from 'sonner';
 interface TargetVersionFilterProps {
   value: string;
   onChange: (value: string) => void;
+  onVersionIdChange?: (versionId: number | null) => void;
 }
 
-export function TargetVersionFilter({ value, onChange }: TargetVersionFilterProps) {
+export function TargetVersionFilter({ value, onChange, onVersionIdChange }: TargetVersionFilterProps) {
   const [versions, setVersions] = useState<RedmineVersion[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -20,6 +21,98 @@ export function TargetVersionFilter({ value, onChange }: TargetVersionFilterProp
         console.log(response);
         if (response) {
           setVersions(response);
+          
+          // Auto-select version based on most recent past release
+          if (!value) {
+            console.log('🔍 Auto-selecting version from', response.length, 'total versions');
+            const now = new Date();
+            
+            // Step 1: Find all versions with "定期リリース" in description that have past due_dates
+            const pastReleases = response.filter(version => {
+              const hasTargetDescription = version.description?.includes('定期リリース');
+              if (!hasTargetDescription || !version.due_date) return false;
+              
+              const dueDate = new Date(version.due_date);
+              return dueDate < now; // Only past dates
+            });
+            
+            console.log('📅 Past releases found:', pastReleases.length);
+            
+            // Step 2: Find the most recent past release (latest past due_date)
+            let latestPastRelease: RedmineVersion | null = null;
+            if (pastReleases.length > 0) {
+              latestPastRelease = pastReleases.reduce((latest, current) => {
+                const latestDate = new Date(latest.due_date!);
+                const currentDate = new Date(current.due_date!);
+                return currentDate > latestDate ? current : latest;
+              });
+              console.log('✅ Latest past release:', latestPastRelease?.name);
+            }
+            
+            // Step 3: Find open versions with "定期リリース" that have future due_dates
+            const eligibleVersions = response.filter(version => {
+              const isOpen = version.status === 'open';
+              const hasTargetDescription = version.description?.includes('定期リリース');
+              const hasDueDate = !!version.due_date;
+              
+              if (!isOpen || !hasTargetDescription || !hasDueDate) return false;
+              
+              // Optional: could also check if due_date is in the future
+              // const dueDate = new Date(version.due_date);
+              // return dueDate >= now;
+              
+              return true;
+            });
+            
+            console.log('✅ Eligible open versions:', eligibleVersions.length);
+            
+            // Step 4: Select the version with due_date nearest to the latest past release
+            if (eligibleVersions.length > 0) {
+              let defaultVersion: RedmineVersion;
+              
+              if (latestPastRelease) {
+                // Find the next upcoming release AFTER the latest past release
+                const referenceDate = new Date(latestPastRelease.due_date!);
+                
+                // Filter for versions with due_date AFTER the latest past release
+                const futureVersions = eligibleVersions.filter(version => {
+                  const versionDate = new Date(version.due_date!);
+                  return versionDate > referenceDate;
+                });
+                
+                if (futureVersions.length > 0) {
+                  // Select the earliest future release (soonest after the past release)
+                  defaultVersion = futureVersions.reduce((earliest, current) => {
+                    const earliestDate = new Date(earliest.due_date!);
+                    const currentDate = new Date(current.due_date!);
+                    return currentDate < earliestDate ? current : earliest;
+                  });
+                } else {
+                  // No future releases found, fallback to earliest open version
+                  defaultVersion = eligibleVersions.reduce((earliest, current) => {
+                    const earliestDate = new Date(earliest.due_date!);
+                    const currentDate = new Date(current.due_date!);
+                    return currentDate < earliestDate ? current : earliest;
+                  });
+                }
+              } else {
+                // No past release found, just pick the earliest open version
+                defaultVersion = eligibleVersions.reduce((earliest, current) => {
+                  const earliestDate = new Date(earliest.due_date!);
+                  const currentDate = new Date(current.due_date!);
+                  return currentDate < earliestDate ? current : earliest;
+                });
+              }
+              
+              console.log('🎯 Auto-selected version:', defaultVersion.name, 'ID:', defaultVersion.id);
+              onChange(defaultVersion.name);
+              if (onVersionIdChange) {
+                onVersionIdChange(defaultVersion.id);
+              }
+            } else {
+              console.warn('⚠️ No eligible versions found for auto-selection');
+            }
+          }
         }
       } catch (error) {
         console.error('Failed to fetch versions:', error);
@@ -31,15 +124,28 @@ export function TargetVersionFilter({ value, onChange }: TargetVersionFilterProp
     };
 
     fetchVersions();
-  }, []);
+  }, [value, onChange, onVersionIdChange]);
 
-  const options: Option[] = [
-    { value: '', label: 'All Versions' },
-    ...versions.map(version => ({
-      value: version.name,
-      label: version.name,
-    })),
-  ];
+  const options: Option[] = versions.map(version => ({
+    value: version.name,
+    label: version.name,
+  }));
+
+  const handleChange = (newValue: string) => {
+    onChange(newValue);
+    
+    // Find the version and notify parent of the ID
+    if (onVersionIdChange) {
+      if (newValue === '') {
+        onVersionIdChange(null);
+      } else {
+        const selectedVersion = versions.find(v => v.name === newValue);
+        if (selectedVersion) {
+          onVersionIdChange(selectedVersion.id);
+        }
+      }
+    }
+  };
 
   return (
     <div className="flex items-center space-x-2">
@@ -50,8 +156,8 @@ export function TargetVersionFilter({ value, onChange }: TargetVersionFilterProp
         <SearchableSelect
           options={options}
           value={value}
-          onChange={onChange}
-          placeholder={loading ? 'Loading...' : 'All Versions'}
+          onChange={handleChange}
+          placeholder={loading ? 'Loading...' : 'Select a version'}
           isDisabled={loading}
         />
       </div>

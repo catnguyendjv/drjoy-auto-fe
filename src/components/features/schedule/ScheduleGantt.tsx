@@ -59,13 +59,19 @@ export function ScheduleGantt() {
         return issues
             .filter(issue => {
                 // Filter by assignee
-                if (filterAssignee && issue.assigned_to?.name !== filterAssignee) return false;
+                if (filterAssignee && issue.assigned_to?.id?.toString() !== filterAssignee) return false;
 
                 // Filter by Issue ID
                 if (filterIssueId && !issue.id.toString().includes(filterIssueId)) return false;
 
                 // Filter by Root Issue ID (parent_id)
-                if (filterRootIssueId && !issue.parent_id?.toString().includes(filterRootIssueId)) return false;
+                if (filterRootIssueId) {
+                    if (issue.parent_id) {
+                        if (!issue.parent_id.toString().includes(filterRootIssueId)) return false;
+                    } else {
+                        if (!issue.id.toString().includes(filterRootIssueId)) return false;
+                    }
+                }
 
                 // Filter by version
                 if (filterVersion && issue.fixed_version?.name !== filterVersion) return false;

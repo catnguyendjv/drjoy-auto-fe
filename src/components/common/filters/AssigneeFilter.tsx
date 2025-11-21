@@ -11,7 +11,7 @@ export function AssigneeFilter({ value, onChange }: AssigneeFilterProps) {
   const options: Option[] = useMemo(() => [
     { value: '', label: 'All Assignees' },
     ...REDMINE_USERS.map(user => ({
-      value: `${user.firstname} ${user.lastname}`,
+      value: user.id.toString(),
       label: `${user.firstname} ${user.lastname}`,
     })),
   ], []);

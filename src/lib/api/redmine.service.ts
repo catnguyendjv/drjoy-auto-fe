@@ -20,6 +20,7 @@ export interface RedmineIssue {
   status: {
     id: number;
     name: string;
+    is_closed?: boolean;
   };
   priority: {
     id: number;
@@ -294,6 +295,14 @@ class RedmineApiService {
    */
   async getIssues(params?: IssueQueryParams): Promise<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }> {
     return this.get<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }>('/issues/query-by-filters', params);
+  }
+
+  /**
+   * Get sprint issues
+   * Mapped to: GET /redmine/issues/sprint-issues
+   */
+  async getSprintIssues(params: { fixed_version_id?: number; assignee_id?: number }): Promise<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }> {
+    return this.get<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }>('/issues/sprint-issues', params);
   }
 
   /**
