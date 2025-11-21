@@ -94,20 +94,24 @@ export function KanbanCard({ issue, onClick, onDoubleClick, isSelected }: Kanban
             </h3>
 
             {/* Time Tracking */}
-            {(issue.estimated_hours || issue.spent_hours) && (
-                <div className="flex gap-3 mb-2 text-[10px] text-gray-500 dark:text-gray-400">
-                    {issue.estimated_hours && (
-                        <span className="flex items-center gap-1" title="Estimated Time">
-                            ⏱️ {issue.estimated_hours}h
-                        </span>
-                    )}
-                    {issue.spent_hours && (
-                        <span className="flex items-center gap-1" title="Spent Time">
-                            ⌛ {issue.spent_hours}h
-                        </span>
-                    )}
-                </div>
-            )}
+            {/* Time Tracking */}
+            <div className="flex gap-3 mb-2 text-[10px] text-gray-500 dark:text-gray-400">
+                {issue.estimated_hours ? (
+                    <span className="flex items-center gap-1" title="Estimated Time">
+                        ⏱️ {issue.estimated_hours}h
+                    </span>
+                ) : (
+                    <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400 font-medium bg-amber-50 dark:bg-amber-900/20 px-1.5 py-0.5 rounded border border-amber-200 dark:border-amber-800" title="Missing Estimate">
+                        ⚠️ No Est.
+                    </span>
+                )}
+                
+                {issue.spent_hours && (
+                    <span className="flex items-center gap-1" title="Spent Time">
+                        ⌛ {issue.spent_hours}h
+                    </span>
+                )}
+            </div>
 
             {/* Progress Bar */}
             {issue.done_ratio !== undefined && issue.done_ratio > 0 && (
@@ -133,17 +137,22 @@ export function KanbanCard({ issue, onClick, onDoubleClick, isSelected }: Kanban
                 </span>
                 <div className="flex items-center gap-1 ml-2">
                     {startDate && (
-                         <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300" title="Start Date">
+                         <span className={clsx(
+                            "text-[10px] px-1.5 py-0.5 rounded font-medium",
+                            startDate.isOverdue && (issue.done_ratio === 0 || issue.status.name === 'New')
+                                ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
+                                : "bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300"
+                         )} title={startDate.isOverdue && (issue.done_ratio === 0 || issue.status.name === 'New') ? "Start Date Overdue!" : "Start Date"}>
                             🚀 {startDate.formatted}
                         </span>
                     )}
                     {dueDate && (
                         <span className={clsx(
                             "text-[10px] px-1.5 py-0.5 rounded font-medium",
-                            dueDate.isOverdue 
-                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                            dueDate.isOverdue && issue.done_ratio < 100 && !issue.status.is_closed
+                                ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 border border-red-200 dark:border-red-800 animate-pulse"
                                 : "bg-gray-100 text-gray-700 dark:bg-zinc-700 dark:text-gray-300"
-                        )} title="Due Date">
+                        )} title={dueDate.isOverdue && issue.done_ratio < 100 && !issue.status.is_closed ? "Due Date Overdue!" : "Due Date"}>
                             🏁 {dueDate.formatted}
                         </span>
                     )}
