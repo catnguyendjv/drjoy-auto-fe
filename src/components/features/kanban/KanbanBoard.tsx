@@ -26,8 +26,8 @@ import { toast } from 'sonner';
 import { LoadingOverlay } from '@/components/ui/LoadingSpinner';
 
 import { KanbanFilters } from '@/components/common/filters/KanbanFilters';
-import { redmineApi, RedmineIssue } from '@/lib/api/redmine.service';
-import { CUSTOM_FIELDS } from '@/lib/redmine-custom-fields';
+import { redmineApi, RedmineIssue, BatchUpdateIssueRequest } from '@/lib/api/redmine.service';
+import { CUSTOM_FIELDS, ISSUE_STATUSES } from '@/lib/redmine-config';
 
 export function KanbanBoard() {
     const dispatch = useAppDispatch();
@@ -36,7 +36,7 @@ export function KanbanBoard() {
     const [selectedIssue, setSelectedIssue] = useState<Issue | null>(null);
     const [selectedIssueIds, setSelectedIssueIds] = useState<number[]>([]);
     const [filterVersion, setFilterVersion] = useState<string>('');
-    const [filterTeam, setFilterTeam] = useState<string>('');
+    const [filterTeam, setFilterTeam] = useState<string>('DEV06：カット');
     const [filterAssignee, setFilterAssignee] = useState<string>('');
     const [filterIssueId, setFilterIssueId] = useState<string>('');
     const [filterRootIssueId, setFilterRootIssueId] = useState<string>('');
@@ -72,12 +72,12 @@ export function KanbanBoard() {
             try {
                 console.log('🔍 Fetching sprint issues with params:', { 
                     fixed_version_id: targetVersionId, 
-                    assignee_id: 406 
+                    team: filterTeam 
                 });
                 
                 const response = await redmineApi.getSprintIssues({
                     fixed_version_id: targetVersionId,
-                    assignee_id: 406,
+                    team: filterTeam || undefined,
                 });
                 
                 console.log('📦 API Response:', response);
@@ -89,9 +89,17 @@ export function KanbanBoard() {
                     // We need to flatten both parent issues and their children
                     const kanbanIssues: Issue[] = [];
                     
+                    const processedIds = new Set<number>();
+                    
                     response.forEach((issue: RedmineIssue & { children?: RedmineIssue[] }) => {
                         // Helper function to convert RedmineIssue to Issue
-                        const convertToIssue = (redmineIssue: RedmineIssue, parentId?: number): Issue => {
+                        const convertToIssue = (redmineIssue: RedmineIssue, parentId?: number): Issue | null => {
+                            // Check for required fields
+                            if (!redmineIssue.status || !redmineIssue.priority || !redmineIssue.project || !redmineIssue.tracker) {
+                                console.warn(`⚠️ Issue #${redmineIssue.id} is missing required fields (status, priority, project, or tracker). Skipping.`, redmineIssue);
+                                return null;
+                            }
+
                             const teamField = redmineIssue.custom_fields?.find(cf => cf.name === CUSTOM_FIELDS.TEAM.name);
                             
                             return {
@@ -106,7 +114,7 @@ export function KanbanBoard() {
                                 assigned_to: redmineIssue.assigned_to,
                                 tracker: redmineIssue.tracker,
                                 project: redmineIssue.project,
-                                description: redmineIssue.description,
+                                description: redmineIssue.description || '',
                                 due_date: redmineIssue.due_date,
                                 start_date: redmineIssue.start_date,
                                 done_ratio: redmineIssue.done_ratio,
@@ -126,13 +134,25 @@ export function KanbanBoard() {
                         };
 
                         // Add parent issue
-                        kanbanIssues.push(convertToIssue(issue));
+                        if (!processedIds.has(issue.id)) {
+                            const converted = convertToIssue(issue);
+                            if (converted) {
+                                kanbanIssues.push(converted);
+                                processedIds.add(issue.id);
+                            }
+                        }
                         
                         // Add children issues if they exist
                         if (issue.children && Array.isArray(issue.children)) {
                             console.log(`👶 Issue #${issue.id} has ${issue.children.length} children`);
                             issue.children.forEach((child: RedmineIssue) => {
-                                kanbanIssues.push(convertToIssue(child, issue.id));
+                                if (!processedIds.has(child.id)) {
+                                    const converted = convertToIssue(child, issue.id);
+                                    if (converted) {
+                                        kanbanIssues.push(converted);
+                                        processedIds.add(child.id);
+                                    }
+                                }
                             });
                         }
                     });
@@ -142,34 +162,15 @@ export function KanbanBoard() {
 
                     dispatch(setIssues(kanbanIssues));
                     
-                    // Extract unique statuses from issues
-                    const uniqueStatuses: IssueStatus[] = Array.from(
-                        new Map(kanbanIssues.map(issue => [
-                            issue.status.id, 
-                            { ...issue.status, is_closed: issue.status.is_closed ?? false }
-                        ])).values()
-                    );
+                    // Use fixed statuses: New -> In Progress -> Resolved -> Close
+                    const fixedStatuses: IssueStatus[] = [
+                        { id: ISSUE_STATUSES.NEW.id, name: ISSUE_STATUSES.NEW.name, is_closed: ISSUE_STATUSES.NEW.isClosed },
+                        { id: ISSUE_STATUSES.IN_PROGRESS.id, name: ISSUE_STATUSES.IN_PROGRESS.name, is_closed: ISSUE_STATUSES.IN_PROGRESS.isClosed },
+                        { id: ISSUE_STATUSES.RESOLVED.id, name: ISSUE_STATUSES.RESOLVED.name, is_closed: ISSUE_STATUSES.RESOLVED.isClosed },
+                        { id: ISSUE_STATUSES.CLOSED.id, name: ISSUE_STATUSES.CLOSED.name, is_closed: ISSUE_STATUSES.CLOSED.isClosed },
+                    ];
                     
-                    // Sort statuses in the order: New -> In Progress -> Resolved -> Close
-                    const statusOrder = ['New', 'In Progress', 'Resolved', 'Close'];
-                    const sortedStatuses = uniqueStatuses.sort((a, b) => {
-                        const indexA = statusOrder.indexOf(a.name);
-                        const indexB = statusOrder.indexOf(b.name);
-                        
-                        // If both statuses are in the priority order, sort by that order
-                        if (indexA !== -1 && indexB !== -1) {
-                            return indexA - indexB;
-                        }
-                        // If only A is in the priority order, it comes first
-                        if (indexA !== -1) return -1;
-                        // If only B is in the priority order, it comes first
-                        if (indexB !== -1) return 1;
-                        // Otherwise, sort by ID
-                        return a.id - b.id;
-                    });
-                    
-                    console.log('📊 Unique statuses (sorted):', sortedStatuses);
-                    dispatch(setStatuses(sortedStatuses));
+                    dispatch(setStatuses(fixedStatuses));
                     
                     toast.success(`Loaded ${kanbanIssues.length} issues`);
                 } else {
@@ -184,7 +185,7 @@ export function KanbanBoard() {
         };
 
         loadIssues();
-    }, [dispatch, targetVersionId]);
+    }, [dispatch, targetVersionId, filterTeam]);
 
     const handleVersionIdChange = (versionId: number | null) => {
         setTargetVersionId(versionId);
@@ -361,7 +362,7 @@ export function KanbanBoard() {
         // Optional: Handle drag over logic if needed for visual feedback
     }
 
-    function handleDragEnd(event: DragEndEvent) {
+    async function handleDragEnd(event: DragEndEvent) {
         const { active, over } = event;
         setActiveIssue(null);
 
@@ -419,6 +420,19 @@ export function KanbanBoard() {
 
             if (issuesToUpdate.length > 0) {
                 try {
+                    // Call batch update API
+                    const batchRequest: BatchUpdateIssueRequest = {
+                        updates: issuesToUpdate.map(id => ({
+                            id,
+                            issue: {
+                                status_id: newStatusId!
+                            }
+                        }))
+                    };
+
+                    await redmineApi.batchUpdateIssues(batchRequest);
+
+                    // Update local state
                     issuesToUpdate.forEach(id => {
                         dispatch(updateIssueStatus({ issueId: id, statusId: newStatusId!, statusName }));
                     });
@@ -429,6 +443,7 @@ export function KanbanBoard() {
                         toast.success(`${issuesToUpdate.length} issues moved to ${statusName}`);
                     }
                 } catch (error) {
+                    console.error('Failed to update issues:', error);
                     toast.error('Failed to update issue status');
                 }
             }

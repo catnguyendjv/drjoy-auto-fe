@@ -307,7 +307,7 @@ class RedmineApiService {
    * Get sprint issues
    * Mapped to: GET /redmine/issues/sprint-issues
    */
-  async getSprintIssues(params: { fixed_version_id?: number; assignee_id?: number }): Promise<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }> {
+  async getSprintIssues(params: { fixed_version_id?: number; team?: string; }): Promise<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }> {
     return this.get<RedmineApiResponse<RedmineIssue[]> & { issues: RedmineIssue[] }>('/issues/sprint-issues', params);
   }
 
@@ -360,10 +360,10 @@ class RedmineApiService {
 
   /**
    * Batch update issues
-   * Mapped to: POST /redmine/batch-update
+   * Mapped to: POST /redmine/issues/batch-update
    */
   async batchUpdateIssues(batchRequest: BatchUpdateIssueRequest): Promise<any[]> {
-    return this.post<any[]>('/batch-update', batchRequest);
+    return this.post<any[]>('/issues/batch-update', batchRequest);
   }
 
   /**
