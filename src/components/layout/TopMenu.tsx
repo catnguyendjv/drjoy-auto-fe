@@ -1,34 +1,51 @@
+"use client";
+
+import { Navbar, NavbarBrand, NavbarContent, NavbarItem, Chip, Link as HeroLink } from "@heroui/react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ThemeToggle } from "./ThemeToggle";
 import { UserProfile } from "@/components/common/UserProfile";
 
 export function TopMenu() {
+    const pathname = usePathname();
+
+    const menuItems = [
+        { name: "Kanban", href: "/kanban" },
+        { name: "Settings", href: "/settings" },
+    ];
+
     return (
-        <div className="flex items-center justify-between bg-white px-6 py-4 shadow-sm dark:bg-zinc-800">
-            <div className="flex items-center gap-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <Navbar isBordered className="bg-content1/70 backdrop-blur" maxWidth="xl">
+            <NavbarBrand className="gap-3">
+                <Chip color="primary" variant="flat" className="font-semibold" size="lg">
                     Dr.Joy Auto
-                </h2>
-                <nav className="flex gap-4">
-                    <Link
-                        href="/kanban"
-                        className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                    >
-                        Kanban
-                    </Link>
-                    <Link
-                        href="/settings"
-                        className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                    >
-                        Settings
-                    </Link>
-                    {/* Add more menu items here */}
-                </nav>
-            </div>
-            <div className="flex items-center gap-4">
-                <ThemeToggle />
-                <UserProfile />
-            </div>
-        </div>
+                </Chip>
+            </NavbarBrand>
+            <NavbarContent justify="start" className="hidden md:flex gap-6">
+                {menuItems.map((item) => {
+                    const isActive = pathname.startsWith(item.href);
+                    return (
+                        <NavbarItem key={item.href} isActive={isActive}>
+                            <HeroLink
+                                as={Link}
+                                href={item.href}
+                                color={isActive ? "primary" : "foreground"}
+                                className="text-sm font-medium"
+                            >
+                                {item.name}
+                            </HeroLink>
+                        </NavbarItem>
+                    );
+                })}
+            </NavbarContent>
+            <NavbarContent justify="end" className="gap-4">
+                <NavbarItem>
+                    <ThemeToggle />
+                </NavbarItem>
+                <NavbarItem>
+                    <UserProfile />
+                </NavbarItem>
+            </NavbarContent>
+        </Navbar>
     );
 }

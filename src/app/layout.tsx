@@ -5,6 +5,7 @@ import StoreProvider from "./StoreProvider";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { HeroUIProviders } from "@/components/providers/HeroUIProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,8 +40,10 @@ export default function RootLayout({
               enableSystem
               disableTransitionOnChange
             >
-              {children}
-              <ToastProvider />
+              <HeroUIProviders>
+                {children}
+                <ToastProvider />
+              </HeroUIProviders>
             </ThemeProvider>
           </SessionProvider>
         </StoreProvider>

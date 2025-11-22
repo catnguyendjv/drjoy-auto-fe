@@ -1,5 +1,6 @@
 "use client";
 
+import { Button, Input, Select, SelectItem, type Selection } from "@heroui/react";
 import { FilterState } from './types';
 
 interface TimeLogFiltersProps {
@@ -25,126 +26,106 @@ export function TimeLogFilters({
         onFilterChange({ ...filters, [key]: value });
     };
 
+    const getSingleSelection = (value?: number | null): Selection => (value ? new Set([value.toString()]) : new Set());
+
+    const mapSelectionToNumber = (selection: Selection) => {
+        const key = Array.from(selection)[0];
+        return key ? Number(key) : null;
+    };
+
     return (
         <div className="bg-white dark:bg-zinc-900 rounded-lg shadow-sm border border-gray-200 dark:border-zinc-800 p-6">
             <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Filters</h2>
-                <button
-                    onClick={onReset}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-md transition-colors"
-                >
+                <Button variant="flat" size="sm" onPress={onReset}>
                     Reset Filters
-                </button>
+                </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {/* Start Date */}
-                <div>
-                    <label htmlFor="startDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Start Date
-                    </label>
-                    <input
-                        type="date"
-                        id="startDate"
-                        value={filters.startDate}
-                        onChange={(e) => handleChange('startDate', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
-                    />
-                </div>
+                <Input
+                    type="date"
+                    label="Start Date"
+                    variant="bordered"
+                    value={filters.startDate}
+                    onChange={(e) => handleChange('startDate', e.target.value)}
+                />
 
-                {/* End Date */}
-                <div>
-                    <label htmlFor="endDate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        End Date
-                    </label>
-                    <input
-                        type="date"
-                        id="endDate"
-                        value={filters.endDate}
-                        onChange={(e) => handleChange('endDate', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
-                    />
-                </div>
+                <Input
+                    type="date"
+                    label="End Date"
+                    variant="bordered"
+                    value={filters.endDate}
+                    onChange={(e) => handleChange('endDate', e.target.value)}
+                />
 
-                {/* User */}
-                <div>
-                    <label htmlFor="user" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        User
-                    </label>
-                    <select
-                        id="user"
-                        value={filters.userId || ''}
-                        onChange={(e) => handleChange('userId', e.target.value ? Number(e.target.value) : null)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
-                    >
-                        <option value="">All Users</option>
-                        {users.map((user) => (
-                            <option key={user.id} value={user.id}>
-                                {user.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <Select
+                    label="User"
+                    selectionMode="single"
+                    selectedKeys={getSingleSelection(filters.userId)}
+                    onSelectionChange={(keys) => handleChange('userId', mapSelectionToNumber(keys))}
+                    variant="bordered"
+                >
+                    <SelectItem key="" value="">
+                        All Users
+                    </SelectItem>
+                    {users.map((user) => (
+                        <SelectItem key={user.id.toString()} value={user.id.toString()}>
+                            {user.name}
+                        </SelectItem>
+                    ))}
+                </Select>
 
-                {/* Activity */}
-                <div>
-                    <label htmlFor="activity" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Activity
-                    </label>
-                    <select
-                        id="activity"
-                        value={filters.activityId || ''}
-                        onChange={(e) => handleChange('activityId', e.target.value ? Number(e.target.value) : null)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
-                    >
-                        <option value="">All Activities</option>
-                        {activities.map((activity) => (
-                            <option key={activity.id} value={activity.id}>
-                                {activity.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <Select
+                    label="Activity"
+                    selectionMode="single"
+                    selectedKeys={getSingleSelection(filters.activityId)}
+                    onSelectionChange={(keys) => handleChange('activityId', mapSelectionToNumber(keys))}
+                    variant="bordered"
+                >
+                    <SelectItem key="" value="">
+                        All Activities
+                    </SelectItem>
+                    {activities.map((activity) => (
+                        <SelectItem key={activity.id.toString()} value={activity.id.toString()}>
+                            {activity.name}
+                        </SelectItem>
+                    ))}
+                </Select>
 
-                {/* Team */}
-                <div>
-                    <label htmlFor="team" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Team
-                    </label>
-                    <select
-                        id="team"
-                        value={filters.teamId || ''}
-                        onChange={(e) => handleChange('teamId', e.target.value ? Number(e.target.value) : null)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
-                    >
-                        <option value="">All Teams</option>
-                        {teams.map((team) => (
-                            <option key={team.id} value={team.id}>
-                                {team.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <Select
+                    label="Team"
+                    selectionMode="single"
+                    selectedKeys={getSingleSelection(filters.teamId)}
+                    onSelectionChange={(keys) => handleChange('teamId', mapSelectionToNumber(keys))}
+                    variant="bordered"
+                >
+                    <SelectItem key="" value="">
+                        All Teams
+                    </SelectItem>
+                    {teams.map((team) => (
+                        <SelectItem key={team.id.toString()} value={team.id.toString()}>
+                            {team.name}
+                        </SelectItem>
+                    ))}
+                </Select>
 
-                {/* Version */}
-                <div>
-                    <label htmlFor="version" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        Target Version
-                    </label>
-                    <select
-                        id="version"
-                        value={filters.versionId || ''}
-                        onChange={(e) => handleChange('versionId', e.target.value ? Number(e.target.value) : null)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-zinc-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-zinc-800 dark:text-white"
-                    >
-                        <option value="">All Versions</option>
-                        {versions.map((version) => (
-                            <option key={version.id} value={version.id}>
-                                {version.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <Select
+                    label="Target Version"
+                    selectionMode="single"
+                    selectedKeys={getSingleSelection(filters.versionId)}
+                    onSelectionChange={(keys) => handleChange('versionId', mapSelectionToNumber(keys))}
+                    variant="bordered"
+                >
+                    <SelectItem key="" value="">
+                        All Versions
+                    </SelectItem>
+                    {versions.map((version) => (
+                        <SelectItem key={version.id.toString()} value={version.id.toString()}>
+                            {version.name}
+                        </SelectItem>
+                    ))}
+                </Select>
             </div>
         </div>
     );
