@@ -78,6 +78,12 @@
   border-right: 1px solid #3f3f46 !important;
 }
 
+.dark ._35nLX {
+  /* Calendar header backgrounds */
+  fill: #27272a !important;
+  stroke: #3f3f46 !important;
+}
+
 .dark ._3rUKi ._1eT-t {
   /* Ticks */
   color: #a1a1aa !important;
