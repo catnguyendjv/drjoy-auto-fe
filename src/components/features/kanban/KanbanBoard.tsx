@@ -378,6 +378,22 @@ export function KanbanBoard() {
         // Determine the new status
         let newStatusId: number | undefined;
 
+        // Try to read status information directly from the drop target
+        const overStatus = over.data.current?.status as (IssueStatus & { originalId?: number; id: number | string }) | undefined;
+
+        if (overStatus) {
+            const parsedStatusId =
+                typeof overStatus.originalId === 'number'
+                    ? overStatus.originalId
+                    : typeof overStatus.id === 'number'
+                        ? overStatus.id
+                        : parseInt((overStatus.id as string).match(/(\d+)$/)?.[1] ?? '', 10);
+
+            if (!Number.isNaN(parsedStatusId)) {
+                newStatusId = parsedStatusId;
+            }
+        }
+
         // If dropped on a column, handle both regular and unique IDs
         let overColumn = statuses.find(s => s.id === overId);
 
