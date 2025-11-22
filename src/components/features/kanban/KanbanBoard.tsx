@@ -32,7 +32,7 @@ import { LoadingOverlay } from '@/components/ui/LoadingSpinner';
 
 import { KanbanFilters } from '@/components/common/filters/KanbanFilters';
 import { redmineApi, RedmineIssue, BatchUpdateIssueRequest } from '@/lib/api/redmine.service';
-import { CUSTOM_FIELDS, ISSUE_STATUSES } from '@/lib/redmine-config';
+import { CUSTOM_FIELDS, ISSUE_STATUSES, TRACKERS } from '@/lib/redmine-config';
 
 /**
  * Custom collision detection that prioritizes column drops
@@ -81,6 +81,7 @@ export function KanbanBoard() {
     const [filterVersion, setFilterVersion] = useState<string>('');
     const [filterTeam, setFilterTeam] = useState<string>('DEV06：カット');
     const [filterAssignee, setFilterAssignee] = useState<string>('');
+    const [filterTracker, setFilterTracker] = useState<string>('');
     const [filterIssueId, setFilterIssueId] = useState<string>('');
     const [filterRootIssueId, setFilterRootIssueId] = useState<string>('');
     const [filterStartDateFrom, setFilterStartDateFrom] = useState<string>('');
@@ -259,6 +260,21 @@ export function KanbanBoard() {
                     return false;
                 }
             }
+
+            // Tracker filter - exact match on tracker ID
+            if (filterTracker) {
+                const issueTrackerId = issue.tracker?.id?.toString();
+                if (issueTrackerId !== filterTracker) {
+                    return false;
+                }
+            } else {
+                // If no specific tracker selected, restrict to Bug and Task only
+                // per user requirement "only need to display 2 trackers are bug and task"
+                const issueTrackerId = issue.tracker?.id;
+                if (issueTrackerId !== TRACKERS.BUG.id && issueTrackerId !== TRACKERS.TASK.id) {
+                    return false;
+                }
+            }
             
             // Issue ID filter - partial match (contains)
             if (filterIssueId) {
@@ -318,7 +334,7 @@ export function KanbanBoard() {
         }
         
         return filtered;
-    }, [issues, filterVersion, filterTeam, filterAssignee, filterIssueId, filterRootIssueId, filterStartDateFrom, filterStartDateTo, filterDueDateFrom, filterDueDateTo]);
+    }, [issues, filterVersion, filterTeam, filterAssignee, filterTracker, filterIssueId, filterRootIssueId, filterStartDateFrom, filterStartDateTo, filterDueDateFrom, filterDueDateTo]);
 
     // Group issues by parent
     const { parentTickets, standaloneIssues } = useMemo(() => {
@@ -604,6 +620,7 @@ export function KanbanBoard() {
         // Do not clear filterVersion as it's now a required field
         // Keep team filter as requested
         setFilterAssignee('');
+        setFilterTracker('');
         setFilterIssueId('');
         setFilterRootIssueId('');
         setFilterStartDateFrom('');
@@ -612,7 +629,7 @@ export function KanbanBoard() {
         setFilterDueDateTo('');
     };
 
-    const hasActiveFilters = !!(filterAssignee || filterIssueId || filterRootIssueId || filterStartDateFrom || filterStartDateTo || filterDueDateFrom || filterDueDateTo);
+    const hasActiveFilters = !!(filterAssignee || filterTracker || filterIssueId || filterRootIssueId || filterStartDateFrom || filterStartDateTo || filterDueDateFrom || filterDueDateTo);
 
     return (
         <>
@@ -632,6 +649,9 @@ export function KanbanBoard() {
                         setFilterTeam={setFilterTeam}
                         filterAssignee={filterAssignee}
                         setFilterAssignee={setFilterAssignee}
+                        filterTracker={filterTracker}
+                        setFilterTracker={setFilterTracker}
+                        availableTrackerIds={[TRACKERS.BUG.id, TRACKERS.TASK.id]}
                         filterIssueId={filterIssueId}
                         setFilterIssueId={setFilterIssueId}
                         filterRootIssueId={filterRootIssueId}

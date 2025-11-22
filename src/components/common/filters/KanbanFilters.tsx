@@ -3,6 +3,7 @@ import { TeamFilter } from './TeamFilter';
 import { AssigneeFilter } from './AssigneeFilter';
 import { IssueIdFilter } from './IssueIdFilter';
 import { DateRangeFilter } from './DateRangeFilter';
+import { TrackerFilter } from './TrackerFilter';
 
 interface KanbanFiltersProps {
   filterVersion: string;
@@ -12,6 +13,9 @@ interface KanbanFiltersProps {
   setFilterTeam: (value: string) => void;
   filterAssignee: string;
   setFilterAssignee: (value: string) => void;
+  filterTracker: string;
+  setFilterTracker: (value: string) => void;
+  availableTrackerIds?: number[];
   filterIssueId: string;
   setFilterIssueId: (value: string) => void;
   filterRootIssueId: string;
@@ -36,6 +40,9 @@ export function KanbanFilters({
   setFilterTeam,
   filterAssignee,
   setFilterAssignee,
+  filterTracker,
+  setFilterTracker,
+  availableTrackerIds,
   filterIssueId,
   setFilterIssueId,
   filterRootIssueId,
@@ -55,6 +62,7 @@ export function KanbanFilters({
     <div className="flex flex-col gap-4 mb-6">
       <div className="flex flex-wrap items-center gap-4">
         <TargetVersionFilter value={filterVersion} onChange={setFilterVersion} onVersionIdChange={onVersionIdChange} />
+        <TrackerFilter value={filterTracker} onChange={setFilterTracker} availableTrackerIds={availableTrackerIds} />
         <TeamFilter value={filterTeam} onChange={setFilterTeam} />
         <AssigneeFilter value={filterAssignee} onChange={setFilterAssignee} />
         <IssueIdFilter value={filterIssueId} onChange={setFilterIssueId} />
