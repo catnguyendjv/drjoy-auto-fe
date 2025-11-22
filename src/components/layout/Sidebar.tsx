@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Kanban, Settings, Home, Calendar, Clock, BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
+import { Kanban, Settings, Home, Calendar, Clock, BarChart3, ChevronLeft, ChevronRight, Ticket } from "lucide-react";
 import { clsx } from "clsx";
 import { useState } from "react";
 
@@ -11,6 +11,7 @@ const navigation = [
     { name: "Schedule", href: "/schedule", icon: Calendar },
     { name: "Time Logs", href: "/timelogs", icon: Clock },
     { name: "Performance", href: "/performance", icon: BarChart3 },
+    { name: "Issue Management", href: "/issue-management", icon: Ticket },
     { name: "Settings", href: "/settings", icon: Settings },
 ];
 
