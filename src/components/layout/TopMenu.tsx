@@ -17,6 +17,12 @@ export function TopMenu() {
                         Kanban
                     </Link>
                     <Link
+                        href="/issue-management"
+                        className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                    >
+                        Issue Management
+                    </Link>
+                    <Link
                         href="/settings"
                         className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                     >
