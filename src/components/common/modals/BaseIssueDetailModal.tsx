@@ -11,6 +11,7 @@ import { TextField } from '../fields/TextField';
 import { TextAreaField } from '../fields/TextAreaField';
 import { AssigneeSelectField } from './AssigneeSelectField';
 import { TargetVersionSelectField } from './TargetVersionSelectField';
+import { REDMINE_CONFIG } from '@/lib/redmine-config';
 
 export interface CustomFieldsProps {
     issue: Issue;
@@ -127,7 +128,14 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                 <div className="flex items-start justify-between p-6 border-b border-gray-200 dark:border-zinc-800">
                     <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2 flex-wrap">
-                            <span className="text-sm font-mono text-gray-500 dark:text-gray-400">#{issue.id}</span>
+                            <a 
+                                href={`${REDMINE_CONFIG.browserUrl}/issues/${issue.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm font-mono text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors"
+                            >
+                                #{issue.id}
+                            </a>
                             <span className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
                                 {editedIssue.tracker?.name || 'Unknown'}
                             </span>
@@ -259,7 +267,16 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                                 {editedIssue.parent && (
                                     <div>
                                         <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Parent Issue</label>
-                                        <div className="font-medium text-gray-900 dark:text-white">#{editedIssue.parent.id}</div>
+                                        <div className="font-medium text-gray-900 dark:text-white">
+                                            <a 
+                                                href={`${REDMINE_CONFIG.browserUrl}/issues/${editedIssue.parent.id}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="hover:text-blue-600 dark:hover:text-blue-400 hover:underline transition-colors"
+                                            >
+                                                #{editedIssue.parent.id}
+                                            </a>
+                                        </div>
                                     </div>
                                 )}
                             </div>

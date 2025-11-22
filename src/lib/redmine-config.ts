@@ -8,6 +8,7 @@
 // ==================== API Configuration ====================
 export const REDMINE_CONFIG = {
   baseUrl: process.env.NEXT_PUBLIC_REDMINE_BASE_URL || 'http://localhost:5000/redmine',
+  browserUrl: process.env.NEXT_PUBLIC_REDMINE_BROWSER_URL || 'https://redmine.famishare.jp',
 } as const;
 
 // ==================== Issue Statuses ====================

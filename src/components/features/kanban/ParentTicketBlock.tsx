@@ -2,6 +2,7 @@ import { Issue, IssueStatus } from '@/types/redmine';
 import { KanbanColumn } from './KanbanColumn';
 import { useMemo } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
+import { REDMINE_CONFIG } from '@/lib/redmine-config';
 
 interface ParentTicketBlockProps {
     parent: Issue;
@@ -66,9 +67,15 @@ export function ParentTicketBlock({
                                     <ChevronDown className="w-5 h-5 text-gray-500" />
                                 )}
                             </button>
-                            <span className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                            <a 
+                                href={`${REDMINE_CONFIG.browserUrl}/issues/${parent.id}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-sm font-semibold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline"
+                            >
                                 #{parent.id}
-                            </span>
+                            </a>
                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                                 {parent.subject}
                             </h3>

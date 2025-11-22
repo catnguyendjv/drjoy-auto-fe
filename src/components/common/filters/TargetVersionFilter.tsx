@@ -20,7 +20,36 @@ export function TargetVersionFilter({ value, onChange, onVersionIdChange }: Targ
         const response = await redmineApi.getAllVersions({ limit: 100 });
         console.log(response);
         if (response) {
-          setVersions(response);
+          // Sort versions: 
+          // 1. Status: Open first, Closed last
+          // 2. Due Date: Ascending (Earliest first)
+          const sortedVersions = response.sort((a, b) => {
+            // Status Priority
+            const getStatusPriority = (status: string) => {
+              if (status === 'open') return 0;
+              if (status === 'closed') return 2;
+              return 1;
+            };
+
+            const priorityA = getStatusPriority(a.status);
+            const priorityB = getStatusPriority(b.status);
+
+            if (priorityA !== priorityB) {
+              return priorityA - priorityB;
+            }
+
+            // Due Date Priority (Ascending)
+            if (a.due_date && b.due_date) {
+              return a.due_date.localeCompare(b.due_date);
+            }
+            // Versions with due_date come before those without
+            if (a.due_date) return -1;
+            if (b.due_date) return 1;
+
+            return 0;
+          });
+          
+          setVersions(sortedVersions);
           
           // Auto-select version based on most recent past release
           if (!value) {

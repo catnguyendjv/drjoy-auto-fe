@@ -2,6 +2,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Issue } from '@/types/redmine';
 import { clsx } from 'clsx';
+import { REDMINE_CONFIG } from '@/lib/redmine-config';
 
 interface KanbanCardProps {
     issue: Issue;
@@ -68,7 +69,15 @@ export function KanbanCard({ issue, onClick, onDoubleClick, isSelected }: Kanban
             {/* Header: ID, Tracker, Priority */}
             <div className="flex justify-between items-start mb-2">
                 <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-xs font-medium text-gray-500 dark:text-gray-400">#{issue.id}</span>
+                    <a 
+                        href={`${REDMINE_CONFIG.browserUrl}/issues/${issue.id}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:underline z-10 relative"
+                    >
+                        #{issue.id}
+                    </a>
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300 font-medium">
                         {issue.tracker.name}
                     </span>
