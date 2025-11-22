@@ -1,8 +1,9 @@
 import { BaseIssueDetailModal, CustomFieldsProps } from './BaseIssueDetailModal';
-import { CustomFieldRenderer } from './CustomFieldRenderer';
-import { CUSTOM_FIELDS, FEATURE_OPTIONS, TEAM_OPTIONS, CATEGORY_OPTIONS, CustomFieldValue } from '@/lib/redmine-custom-fields';
+import { useCustomFieldManager } from './CustomFieldManager';
+import { CustomFieldSection } from './CustomFieldSection';
+import { ModalSection } from './ModalSection';
+import { CUSTOM_FIELDS, FEATURE_OPTIONS, TEAM_OPTIONS, CATEGORY_OPTIONS } from '@/lib/redmine-custom-fields';
 import { Issue } from '@/types/redmine';
-import { MOCK_USERS } from '@/data/mockData';
 
 interface TaskDetailModalProps {
     issue: Issue;
@@ -12,94 +13,50 @@ interface TaskDetailModalProps {
 
 export function TaskDetailModal({ issue, onClose, onSave }: TaskDetailModalProps) {
     const renderCustomFields = ({ issue, isEditMode, onUpdate }: CustomFieldsProps) => {
-        const updateField = (fieldId: number, value: CustomFieldValue) => {
-            let processedValue: string | string[] | null = null;
-            if (value === undefined) {
-                processedValue = null;
-            } else if (typeof value === 'number') {
-                processedValue = String(value);
-            } else if (typeof value === 'boolean') {
-                processedValue = value ? '1' : '0';
-            } else {
-                processedValue = value;
-            }
-
-            let fieldExists = false;
-            const currentFields = issue.custom_fields || [];
-            const newFields = currentFields.map(f => {
-                if (f.id === fieldId) {
-                    fieldExists = true;
-                    return { ...f, value: processedValue };
-                }
-                return f;
-            });
-
-            if (!fieldExists) {
-                const fieldDef = Object.values(CUSTOM_FIELDS).find(f => f.id === fieldId);
-                if (fieldDef) {
-                    newFields.push({
-                        id: fieldId,
-                        name: fieldDef.name,
-                        value: processedValue,
-                        multiple: fieldDef.multiple
-                    });
-                }
-            }
-            
-            onUpdate(newFields);
-        };
-
-        const getFieldValue = (fieldId: number) => {
-            return issue.custom_fields?.find(f => f.id === fieldId)?.value;
-        };
+        const { updateField, getFieldValue } = useCustomFieldManager(issue.custom_fields, onUpdate);
 
         return (
             <div className="space-y-6">
                 {/* Feature & Category */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.FEATURE}
-                        value={getFieldValue(CUSTOM_FIELDS.FEATURE.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.FEATURE.id, val)}
+                <ModalSection>
+                    <CustomFieldSection
+                        fields={[
+                            { field: CUSTOM_FIELDS.FEATURE, options: FEATURE_OPTIONS },
+                            { field: CUSTOM_FIELDS.CATEGORY, options: CATEGORY_OPTIONS }
+                        ]}
+                        getFieldValue={getFieldValue}
+                        onFieldChange={updateField}
                         isEditMode={isEditMode}
-                        options={FEATURE_OPTIONS}
+                        layout="grid-2"
                     />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.CATEGORY}
-                        value={getFieldValue(CUSTOM_FIELDS.CATEGORY.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.CATEGORY.id, val)}
-                        isEditMode={isEditMode}
-                        options={CATEGORY_OPTIONS}
-                    />
-                </div>
+                </ModalSection>
 
                 {/* Team & Acceptance */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.TEAM}
-                        value={getFieldValue(CUSTOM_FIELDS.TEAM.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.TEAM.id, val)}
+                <ModalSection>
+                    <CustomFieldSection
+                        fields={[
+                            { field: CUSTOM_FIELDS.TEAM, options: TEAM_OPTIONS },
+                            { field: CUSTOM_FIELDS.ACCEPTANCE_PERSON }
+                        ]}
+                        getFieldValue={getFieldValue}
+                        onFieldChange={updateField}
                         isEditMode={isEditMode}
-                        options={TEAM_OPTIONS}
+                        layout="grid-2"
                     />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.ACCEPTANCE_PERSON}
-                        value={getFieldValue(CUSTOM_FIELDS.ACCEPTANCE_PERSON.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.ACCEPTANCE_PERSON.id, val)}
-                        isEditMode={isEditMode}
-                        options={MOCK_USERS.map(u => ({ value: String(u.id), label: u.name }))}
-                    />
-                </div>
+                </ModalSection>
 
                 {/* Story Point */}
-                <div>
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.STORY_POINT}
-                        value={getFieldValue(CUSTOM_FIELDS.STORY_POINT.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.STORY_POINT.id, val)}
+                <ModalSection>
+                    <CustomFieldSection
+                        fields={[
+                            { field: CUSTOM_FIELDS.STORY_POINT }
+                        ]}
+                        getFieldValue={getFieldValue}
+                        onFieldChange={updateField}
                         isEditMode={isEditMode}
+                        layout="single"
                     />
-                </div>
+                </ModalSection>
             </div>
         );
     };

@@ -9,6 +9,8 @@ import { createPartialUpdateRequest } from '@/lib/issue-utils';
 import { SelectField } from '../fields/SelectField';
 import { TextField } from '../fields/TextField';
 import { TextAreaField } from '../fields/TextAreaField';
+import { AssigneeSelectField } from './AssigneeSelectField';
+import { TargetVersionSelectField } from './TargetVersionSelectField';
 
 export interface CustomFieldsProps {
     issue: Issue;
@@ -228,18 +230,17 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                                 />
 
                                 {/* Assignee */}
-                                <SelectField
-                                    field={{ id: 'assigned_to', name: 'Assignee', fieldFormat: 'list' }}
+                                <AssigneeSelectField
                                     value={editedIssue.assigned_to?.id}
-                                    onChange={(val) => {
-                                        const user = MOCK_USERS.find(u => u.id === Number(val));
-                                        setEditedIssue({ ...editedIssue, assigned_to: user });
+                                    onChange={(userId) => {
+                                        if (userId === null) {
+                                            setEditedIssue({ ...editedIssue, assigned_to: undefined });
+                                        } else {
+                                            const user = MOCK_USERS.find(u => u.id === userId);
+                                            setEditedIssue({ ...editedIssue, assigned_to: user });
+                                        }
                                     }}
                                     isEditMode={isEditMode}
-                                    options={[
-                                        { value: '', label: 'Unassigned' },
-                                        ...MOCK_USERS.map(u => ({ value: u.id.toString(), label: u.name }))
-                                    ]}
                                 />
 
                                 {/* Project */}
@@ -287,18 +288,17 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                                 />
 
                                 {/* Fixed Version */}
-                                <SelectField
-                                    field={{ id: 'fixed_version', name: 'Target Version', fieldFormat: 'list' }}
+                                <TargetVersionSelectField
                                     value={editedIssue.fixed_version?.id}
-                                    onChange={(val) => {
-                                        const version = MOCK_VERSIONS.find(v => v.id === Number(val));
-                                        setEditedIssue({ ...editedIssue, fixed_version: version });
+                                    onChange={(versionId) => {
+                                        if (versionId === null) {
+                                            setEditedIssue({ ...editedIssue, fixed_version: undefined });
+                                        } else {
+                                            const version = MOCK_VERSIONS.find(v => v.id === versionId);
+                                            setEditedIssue({ ...editedIssue, fixed_version: version });
+                                        }
                                     }}
                                     isEditMode={isEditMode}
-                                    options={[
-                                        { value: '', label: 'None' },
-                                        ...MOCK_VERSIONS.map(v => ({ value: v.id.toString(), label: v.name }))
-                                    ]}
                                 />
 
                                 {/* Done Ratio */}

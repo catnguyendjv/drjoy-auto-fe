@@ -2,7 +2,7 @@ import { CustomFieldDefinition, CustomFieldValue } from '@/lib/redmine-custom-fi
 
 export interface BaseFieldProps {
     field: {
-        id: number;
+        id: number | string;
         name: string;
         fieldFormat: string;
         multiple?: boolean;

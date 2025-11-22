@@ -1,10 +1,11 @@
 
 import { useState } from 'react';
 import { BaseIssueDetailModal, CustomFieldsProps } from './BaseIssueDetailModal';
-import { CustomFieldRenderer } from './CustomFieldRenderer';
-import { CUSTOM_FIELDS, FEATURE_OPTIONS, TEAM_OPTIONS, CATEGORY_OPTIONS, SEVERITY_OPTIONS, ENVIRONMENT_OPTIONS, CAUSE_CLASSIFICATION_OPTIONS, OS_BROWSER_OPTIONS, FIXED_MODULE_OPTIONS, CustomFieldValue } from '@/lib/redmine-custom-fields';
+import { useCustomFieldManager } from './CustomFieldManager';
+import { CustomFieldSection } from './CustomFieldSection';
+import { ModalSection } from './ModalSection';
+import { CUSTOM_FIELDS, FEATURE_OPTIONS, TEAM_OPTIONS, CATEGORY_OPTIONS, SEVERITY_OPTIONS, ENVIRONMENT_OPTIONS, CAUSE_CLASSIFICATION_OPTIONS, OS_BROWSER_OPTIONS, FIXED_MODULE_OPTIONS } from '@/lib/redmine-custom-fields';
 import { Issue } from '@/types/redmine';
-import { MOCK_USERS } from '@/data/mockData';
 
 interface BugDetailModalProps {
     issue: Issue;
@@ -16,156 +17,76 @@ export function BugDetailModal({ issue, onClose, onSave }: BugDetailModalProps) 
     const [showAllFields, setShowAllFields] = useState(false);
 
     const renderCustomFields = ({ issue, isEditMode, onUpdate }: CustomFieldsProps) => {
-        const updateField = (fieldId: number, value: CustomFieldValue) => {
-            let processedValue: string | string[] | null = null;
-            if (value === undefined) {
-                processedValue = null;
-            } else if (typeof value === 'number') {
-                processedValue = String(value);
-            } else if (typeof value === 'boolean') {
-                processedValue = value ? '1' : '0';
-            } else {
-                processedValue = value;
-            }
-
-            let fieldExists = false;
-            const currentFields = issue.custom_fields || [];
-            const newFields = currentFields.map(f => {
-                if (f.id === fieldId) {
-                    fieldExists = true;
-                    return { ...f, value: processedValue };
-                }
-                return f;
-            });
-
-            if (!fieldExists) {
-                const fieldDef = Object.values(CUSTOM_FIELDS).find(f => f.id === fieldId);
-                if (fieldDef) {
-                    newFields.push({
-                        id: fieldId,
-                        name: fieldDef.name,
-                        value: processedValue,
-                        multiple: fieldDef.multiple
-                    });
-                }
-            }
-            
-            onUpdate(newFields);
-        };
-
-        const getFieldValue = (fieldId: number) => {
-            return issue.custom_fields?.find(f => f.id === fieldId)?.value;
-        };
+        const { updateField, getFieldValue } = useCustomFieldManager(issue.custom_fields, onUpdate);
 
         return (
             <div className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.SEVERITY}
-                        value={getFieldValue(CUSTOM_FIELDS.SEVERITY.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.SEVERITY.id, val)}
+                {/* Severity, Feature & Category */}
+                <ModalSection>
+                    <CustomFieldSection
+                        fields={[
+                            { field: CUSTOM_FIELDS.SEVERITY, options: SEVERITY_OPTIONS },
+                            { field: CUSTOM_FIELDS.FEATURE, options: FEATURE_OPTIONS },
+                            { field: CUSTOM_FIELDS.CATEGORY, options: CATEGORY_OPTIONS }
+                        ]}
+                        getFieldValue={getFieldValue}
+                        onFieldChange={updateField}
                         isEditMode={isEditMode}
-                        options={SEVERITY_OPTIONS}
+                        layout="grid-2"
                     />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.FEATURE}
-                        value={getFieldValue(CUSTOM_FIELDS.FEATURE.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.FEATURE.id, val)}
-                        isEditMode={isEditMode}
-                        options={FEATURE_OPTIONS}
-                    />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.CATEGORY}
-                        value={getFieldValue(CUSTOM_FIELDS.CATEGORY.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.CATEGORY.id, val)}
-                        isEditMode={isEditMode}
-                        options={CATEGORY_OPTIONS}
-                    />
-                </div>
+                </ModalSection>
 
                 {/* Team & Acceptance */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.TEAM}
-                        value={getFieldValue(CUSTOM_FIELDS.TEAM.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.TEAM.id, val)}
+                <ModalSection>
+                    <CustomFieldSection
+                        fields={[
+                            { field: CUSTOM_FIELDS.TEAM, options: TEAM_OPTIONS },
+                            { field: CUSTOM_FIELDS.ACCEPTANCE_PERSON },
+                            { field: CUSTOM_FIELDS.PERSON_IN_CHARGE }
+                        ]}
+                        getFieldValue={getFieldValue}
+                        onFieldChange={updateField}
                         isEditMode={isEditMode}
-                        options={TEAM_OPTIONS}
+                        layout="grid-2"
                     />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.ACCEPTANCE_PERSON}
-                        value={getFieldValue(CUSTOM_FIELDS.ACCEPTANCE_PERSON.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.ACCEPTANCE_PERSON.id, val)}
-                        isEditMode={isEditMode}
-                        options={MOCK_USERS.map(u => ({ value: String(u.id), label: u.name }))}
-                    />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.PERSON_IN_CHARGE}
-                        value={getFieldValue(CUSTOM_FIELDS.PERSON_IN_CHARGE.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.PERSON_IN_CHARGE.id, val)}
-                        isEditMode={isEditMode}
-                        options={MOCK_USERS.map(u => ({ value: String(u.id), label: u.name }))}
-                    />
-                </div>
+                </ModalSection>
 
                 {/* Bug Details */}
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                        Bug Details
-                    </h3>
-                    <div className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.OCCURRENCE_TIME}
-                                value={getFieldValue(CUSTOM_FIELDS.OCCURRENCE_TIME.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.OCCURRENCE_TIME.id, val)}
-                                isEditMode={isEditMode}
-                            />
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.BUG_REPORT_LINK}
-                                value={getFieldValue(CUSTOM_FIELDS.BUG_REPORT_LINK.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.BUG_REPORT_LINK.id, val)}
-                                isEditMode={isEditMode}
-                            />
-                        </div>
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.STEPS_TO_REPRO}
-                            value={getFieldValue(CUSTOM_FIELDS.STEPS_TO_REPRO.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.STEPS_TO_REPRO.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.EXPECTED_RESULT}
-                            value={getFieldValue(CUSTOM_FIELDS.EXPECTED_RESULT.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.EXPECTED_RESULT.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.RESULT}
-                            value={getFieldValue(CUSTOM_FIELDS.RESULT.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.RESULT.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.ENVIRONMENT}
-                                value={getFieldValue(CUSTOM_FIELDS.ENVIRONMENT.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.ENVIRONMENT.id, val)}
-                                isEditMode={isEditMode}
-                                options={ENVIRONMENT_OPTIONS}
-                            />
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.OS_BROWSER}
-                                value={getFieldValue(CUSTOM_FIELDS.OS_BROWSER.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.OS_BROWSER.id, val)}
-                                isEditMode={isEditMode}
-                                options={OS_BROWSER_OPTIONS}
-                            />
-                        </div>
-                    </div>
-                </div>
+                <ModalSection title="Bug Details">
+                    <CustomFieldSection
+                        fields={[
+                            { field: CUSTOM_FIELDS.OCCURRENCE_TIME },
+                            { field: CUSTOM_FIELDS.BUG_REPORT_LINK }
+                        ]}
+                        getFieldValue={getFieldValue}
+                        onFieldChange={updateField}
+                        isEditMode={isEditMode}
+                        layout="grid-2"
+                    />
+                    <CustomFieldSection
+                        fields={[
+                            { field: CUSTOM_FIELDS.STEPS_TO_REPRO },
+                            { field: CUSTOM_FIELDS.EXPECTED_RESULT },
+                            { field: CUSTOM_FIELDS.RESULT }
+                        ]}
+                        getFieldValue={getFieldValue}
+                        onFieldChange={updateField}
+                        isEditMode={isEditMode}
+                        layout="single"
+                    />
+                    <CustomFieldSection
+                        fields={[
+                            { field: CUSTOM_FIELDS.ENVIRONMENT, options: ENVIRONMENT_OPTIONS },
+                            { field: CUSTOM_FIELDS.OS_BROWSER, options: OS_BROWSER_OPTIONS }
+                        ]}
+                        getFieldValue={getFieldValue}
+                        onFieldChange={updateField}
+                        isEditMode={isEditMode}
+                        layout="grid-2"
+                    />
+                </ModalSection>
 
-                {/* Analysis & Fix */}
+                {/* Toggle for advanced fields */}
                 <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
                     <button
                         type="button"
@@ -192,201 +113,140 @@ export function BugDetailModal({ issue, onClose, onSave }: BugDetailModalProps) 
 
                 {showAllFields && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-top-2 duration-200">
-                        <div>
-                            <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                                Analysis & Fix
-                            </h3>
-                    <div className="space-y-4">
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.CAUSE_CLASSIFICATION}
-                            value={getFieldValue(CUSTOM_FIELDS.CAUSE_CLASSIFICATION.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.CAUSE_CLASSIFICATION.id, val)}
-                            isEditMode={isEditMode}
-                            options={CAUSE_CLASSIFICATION_OPTIONS}
-                        />
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.CAUSE_EXPLANATION}
-                            value={getFieldValue(CUSTOM_FIELDS.CAUSE_EXPLANATION.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.CAUSE_EXPLANATION.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.FIX_PLAN}
-                            value={getFieldValue(CUSTOM_FIELDS.FIX_PLAN.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.FIX_PLAN.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.SCOPE_OF_IMPACT}
-                            value={getFieldValue(CUSTOM_FIELDS.SCOPE_OF_IMPACT.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.SCOPE_OF_IMPACT.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                    </div>
-                </div>
-
-                {/* Recovery & Provisional */}
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                        Recovery & Provisional
-                    </h3>
-                    <div className="space-y-4">
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.WORKAROUND}
-                            value={getFieldValue(CUSTOM_FIELDS.WORKAROUND.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.WORKAROUND.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.RECOVERY_CONTENT}
-                            value={getFieldValue(CUSTOM_FIELDS.RECOVERY_CONTENT.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.RECOVERY_CONTENT.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.RECOVERY_DATE}
-                                value={getFieldValue(CUSTOM_FIELDS.RECOVERY_DATE.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.RECOVERY_DATE.id, val)}
+                        {/* Analysis & Fix */}
+                        <ModalSection title="Analysis & Fix">
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.CAUSE_CLASSIFICATION, options: CAUSE_CLASSIFICATION_OPTIONS },
+                                    { field: CUSTOM_FIELDS.CAUSE_EXPLANATION },
+                                    { field: CUSTOM_FIELDS.FIX_PLAN },
+                                    { field: CUSTOM_FIELDS.SCOPE_OF_IMPACT }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
                                 isEditMode={isEditMode}
+                                layout="single"
                             />
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.RECOVERY_COMPLETED}
-                                value={getFieldValue(CUSTOM_FIELDS.RECOVERY_COMPLETED.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.RECOVERY_COMPLETED.id, val)}
+                        </ModalSection>
+
+                        {/* Recovery & Provisional */}
+                        <ModalSection title="Recovery & Provisional">
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.WORKAROUND },
+                                    { field: CUSTOM_FIELDS.RECOVERY_CONTENT }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
                                 isEditMode={isEditMode}
+                                layout="single"
                             />
-                        </div>
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.PROVISIONAL_HANDLING_CONTENT}
-                            value={getFieldValue(CUSTOM_FIELDS.PROVISIONAL_HANDLING_CONTENT.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.PROVISIONAL_HANDLING_CONTENT.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.PROVISIONAL_HANDLING_DATE}
-                                value={getFieldValue(CUSTOM_FIELDS.PROVISIONAL_HANDLING_DATE.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.PROVISIONAL_HANDLING_DATE.id, val)}
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.RECOVERY_DATE },
+                                    { field: CUSTOM_FIELDS.RECOVERY_COMPLETED }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
                                 isEditMode={isEditMode}
+                                layout="grid-2"
                             />
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.PROVISIONAL_HANDLING_COMPLETED_DATE}
-                                value={getFieldValue(CUSTOM_FIELDS.PROVISIONAL_HANDLING_COMPLETED_DATE.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.PROVISIONAL_HANDLING_COMPLETED_DATE.id, val)}
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.PROVISIONAL_HANDLING_CONTENT }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
                                 isEditMode={isEditMode}
+                                layout="single"
                             />
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.PROVISIONAL_HANDLING_IS_COMPLETED}
-                                value={getFieldValue(CUSTOM_FIELDS.PROVISIONAL_HANDLING_IS_COMPLETED.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.PROVISIONAL_HANDLING_IS_COMPLETED.id, val)}
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.PROVISIONAL_HANDLING_DATE },
+                                    { field: CUSTOM_FIELDS.PROVISIONAL_HANDLING_COMPLETED_DATE },
+                                    { field: CUSTOM_FIELDS.PROVISIONAL_HANDLING_IS_COMPLETED }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
                                 isEditMode={isEditMode}
+                                layout="grid-3"
                             />
-                        </div>
-                    </div>
-                </div>
+                        </ModalSection>
 
-                {/* Permanent Solution */}
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                        Permanent Solution
-                    </h3>
-                    <div className="space-y-4">
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.PERMANENT_SOLUTION_CONTENT}
-                            value={getFieldValue(CUSTOM_FIELDS.PERMANENT_SOLUTION_CONTENT.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.PERMANENT_SOLUTION_CONTENT.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.PERMANENT_SOLUTION_PLANNED_DATE}
-                                value={getFieldValue(CUSTOM_FIELDS.PERMANENT_SOLUTION_PLANNED_DATE.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.PERMANENT_SOLUTION_PLANNED_DATE.id, val)}
+                        {/* Permanent Solution */}
+                        <ModalSection title="Permanent Solution">
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.PERMANENT_SOLUTION_CONTENT }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
                                 isEditMode={isEditMode}
+                                layout="single"
                             />
-                            <CustomFieldRenderer
-                                field={CUSTOM_FIELDS.PERMANENT_SOLUTION_COMPLETED_DATE}
-                                value={getFieldValue(CUSTOM_FIELDS.PERMANENT_SOLUTION_COMPLETED_DATE.id)}
-                                onChange={(val) => updateField(CUSTOM_FIELDS.PERMANENT_SOLUTION_COMPLETED_DATE.id, val)}
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.PERMANENT_SOLUTION_PLANNED_DATE },
+                                    { field: CUSTOM_FIELDS.PERMANENT_SOLUTION_COMPLETED_DATE }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
                                 isEditMode={isEditMode}
+                                layout="grid-2"
                             />
-                        </div>
-                    </div>
-                </div>
+                        </ModalSection>
 
-                {/* Implementation */}
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                        Implementation
-                    </h3>
-                    <div className="space-y-4">
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.FIXED_MODULE}
-                            value={getFieldValue(CUSTOM_FIELDS.FIXED_MODULE.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.FIXED_MODULE.id, val)}
-                            isEditMode={isEditMode}
-                            options={FIXED_MODULE_OPTIONS}
-                        />
-                        <CustomFieldRenderer
-                            field={CUSTOM_FIELDS.CHANGED_CONTENT}
-                            value={getFieldValue(CUSTOM_FIELDS.CHANGED_CONTENT.id)}
-                            onChange={(val) => updateField(CUSTOM_FIELDS.CHANGED_CONTENT.id, val)}
-                            isEditMode={isEditMode}
-                        />
-                    </div>
-                </div>
+                        {/* Implementation */}
+                        <ModalSection title="Implementation">
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.FIXED_MODULE, options: FIXED_MODULE_OPTIONS },
+                                    { field: CUSTOM_FIELDS.CHANGED_CONTENT }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
+                                isEditMode={isEditMode}
+                                layout="single"
+                            />
+                        </ModalSection>
 
-                {/* Estimation (Hours) */}
-                <div>
-                    <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3">
-                        Estimation (Hours)
-                    </h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.EST_FE} value={getFieldValue(CUSTOM_FIELDS.EST_FE.id)} onChange={(val) => updateField(CUSTOM_FIELDS.EST_FE.id, val)} isEditMode={isEditMode} />
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.ACT_FE} value={getFieldValue(CUSTOM_FIELDS.ACT_FE.id)} onChange={(val) => updateField(CUSTOM_FIELDS.ACT_FE.id, val)} isEditMode={isEditMode} />
-                        
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.EST_BE} value={getFieldValue(CUSTOM_FIELDS.EST_BE.id)} onChange={(val) => updateField(CUSTOM_FIELDS.EST_BE.id, val)} isEditMode={isEditMode} />
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.ACT_BE} value={getFieldValue(CUSTOM_FIELDS.ACT_BE.id)} onChange={(val) => updateField(CUSTOM_FIELDS.ACT_BE.id, val)} isEditMode={isEditMode} />
+                        {/* Estimation (Hours) */}
+                        <ModalSection title="Estimation (Hours)">
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.EST_FE },
+                                    { field: CUSTOM_FIELDS.ACT_FE },
+                                    { field: CUSTOM_FIELDS.EST_BE },
+                                    { field: CUSTOM_FIELDS.ACT_BE },
+                                    { field: CUSTOM_FIELDS.EST_IOS },
+                                    { field: CUSTOM_FIELDS.ACT_IOS },
+                                    { field: CUSTOM_FIELDS.EST_ANDROID },
+                                    { field: CUSTOM_FIELDS.ACT_ANDROID },
+                                    { field: CUSTOM_FIELDS.EST_TE },
+                                    { field: CUSTOM_FIELDS.ACT_TE }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
+                                isEditMode={isEditMode}
+                                layout="grid-4"
+                            />
+                        </ModalSection>
 
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.EST_IOS} value={getFieldValue(CUSTOM_FIELDS.EST_IOS.id)} onChange={(val) => updateField(CUSTOM_FIELDS.EST_IOS.id, val)} isEditMode={isEditMode} />
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.ACT_IOS} value={getFieldValue(CUSTOM_FIELDS.ACT_IOS.id)} onChange={(val) => updateField(CUSTOM_FIELDS.ACT_IOS.id, val)} isEditMode={isEditMode} />
-
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.EST_ANDROID} value={getFieldValue(CUSTOM_FIELDS.EST_ANDROID.id)} onChange={(val) => updateField(CUSTOM_FIELDS.EST_ANDROID.id, val)} isEditMode={isEditMode} />
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.ACT_ANDROID} value={getFieldValue(CUSTOM_FIELDS.ACT_ANDROID.id)} onChange={(val) => updateField(CUSTOM_FIELDS.ACT_ANDROID.id, val)} isEditMode={isEditMode} />
-
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.EST_TE} value={getFieldValue(CUSTOM_FIELDS.EST_TE.id)} onChange={(val) => updateField(CUSTOM_FIELDS.EST_TE.id, val)} isEditMode={isEditMode} />
-                        <CustomFieldRenderer field={CUSTOM_FIELDS.ACT_TE} value={getFieldValue(CUSTOM_FIELDS.ACT_TE.id)} onChange={(val) => updateField(CUSTOM_FIELDS.ACT_TE.id, val)} isEditMode={isEditMode} />
-                    </div>
-                </div>
-
-                {/* Flags */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.MANAGED_TICKET}
-                        value={getFieldValue(CUSTOM_FIELDS.MANAGED_TICKET.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.MANAGED_TICKET.id, val)}
-                        isEditMode={isEditMode}
-                    />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.EMERGENCY_RELEASE}
-                        value={getFieldValue(CUSTOM_FIELDS.EMERGENCY_RELEASE.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.EMERGENCY_RELEASE.id, val)}
-                        isEditMode={isEditMode}
-                    />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.PAID_FUNCTION}
-                        value={getFieldValue(CUSTOM_FIELDS.PAID_FUNCTION.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.PAID_FUNCTION.id, val)}
-                        isEditMode={isEditMode}
-                    />
-                    <CustomFieldRenderer
-                        field={CUSTOM_FIELDS.PROD_RELEASE}
-                        value={getFieldValue(CUSTOM_FIELDS.PROD_RELEASE.id)}
-                        onChange={(val) => updateField(CUSTOM_FIELDS.PROD_RELEASE.id, val)}
-                        isEditMode={isEditMode}
-                    />
-                </div>
+                        {/* Flags */}
+                        <ModalSection>
+                            <CustomFieldSection
+                                fields={[
+                                    { field: CUSTOM_FIELDS.MANAGED_TICKET },
+                                    { field: CUSTOM_FIELDS.EMERGENCY_RELEASE },
+                                    { field: CUSTOM_FIELDS.PAID_FUNCTION },
+                                    { field: CUSTOM_FIELDS.PROD_RELEASE }
+                                ]}
+                                getFieldValue={getFieldValue}
+                                onFieldChange={updateField}
+                                isEditMode={isEditMode}
+                                layout="grid-3"
+                            />
+                        </ModalSection>
                     </div>
                 )}
             </div>

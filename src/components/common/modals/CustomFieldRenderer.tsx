@@ -1,8 +1,8 @@
-
 import { TextField } from '../fields/TextField';
 import { TextAreaField } from '../fields/TextAreaField';
 import { CheckboxField } from '../fields/CheckboxField';
 import { SelectField } from '../fields/SelectField';
+import { UserSelectField } from '../fields/UserSelectField';
 import { BaseFieldProps } from '../fields/types';
 
 
@@ -12,8 +12,13 @@ interface CustomFieldRendererProps extends BaseFieldProps {}
 export function CustomFieldRenderer(props: CustomFieldRendererProps) {
     const { field, options } = props;
 
-    // List & User (Select)
-    if ((field.fieldFormat === 'list' || field.fieldFormat === 'user') && options) {
+    // User (SearchableSelect)
+    if (field.fieldFormat === 'user') {
+        return <UserSelectField {...props} />;
+    }
+
+    // List (Select)
+    if (field.fieldFormat === 'list' && options) {
         return <SelectField {...props} />;
     }
 
