@@ -1,8 +1,9 @@
-import { useDroppable } from '@dnd-kit/core';
+import { useDroppable, useDndContext } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Issue, IssueStatus } from '@/types/redmine';
 import { KanbanCard } from './KanbanCard';
 import { clsx } from 'clsx';
+import { useMemo } from 'react';
 
 interface KanbanColumnProps {
     status: IssueStatus;
@@ -13,13 +14,22 @@ interface KanbanColumnProps {
 }
 
 export function KanbanColumn({ status, issues, onIssueClick, onIssueDoubleClick, selectedIssueIds = [] }: KanbanColumnProps) {
-    const { setNodeRef } = useDroppable({
+    const { setNodeRef, isOver } = useDroppable({
         id: status.id,
         data: {
             type: 'Column',
             status,
         },
     });
+
+    const { over } = useDndContext();
+
+    const isActiveColumn = useMemo(() => {
+        if (isOver) return true;
+        if (!over) return false;
+        // Check if the item being hovered over is an issue in this column
+        return issues.some(issue => issue.id === over.id);
+    }, [isOver, over, issues]);
 
     return (
         <div className="flex flex-col w-80 shrink-0">
@@ -35,9 +45,11 @@ export function KanbanColumn({ status, issues, onIssueClick, onIssueDoubleClick,
             <div
                 ref={setNodeRef}
                 className={clsx(
-                    "flex-1 rounded-xl p-4 space-y-3 min-h-[500px]",
-                    "bg-gray-50 dark:bg-zinc-900/50",
-                    "border-2 border-gray-200 dark:border-zinc-800"
+                    "flex-1 rounded-xl p-4 space-y-3 min-h-[500px] transition-all duration-200",
+                    isActiveColumn 
+                        ? "bg-blue-100 dark:bg-blue-900/30 border-blue-500 dark:border-blue-400 ring-2 ring-blue-200 dark:ring-blue-800 shadow-lg" 
+                        : "bg-gray-50 dark:bg-zinc-900/50 border-gray-200 dark:border-zinc-800",
+                    "border-2"
                 )}
             >
                 <SortableContext items={issues.map(i => i.id)} strategy={verticalListSortingStrategy}>
