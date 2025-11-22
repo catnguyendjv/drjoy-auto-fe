@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import {
     DndContext,
     DragOverlay,
+    closestCenter,
     closestCorners,
     KeyboardSensor,
     PointerSensor,
@@ -12,6 +13,10 @@ import {
     DragStartEvent,
     DragOverEvent,
     DragEndEvent,
+    CollisionDetection,
+    pointerWithin,
+    rectIntersection,
+    getFirstCollision,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { ChevronsDown, ChevronsRight } from 'lucide-react';
@@ -28,6 +33,44 @@ import { LoadingOverlay } from '@/components/ui/LoadingSpinner';
 import { KanbanFilters } from '@/components/common/filters/KanbanFilters';
 import { redmineApi, RedmineIssue, BatchUpdateIssueRequest } from '@/lib/api/redmine.service';
 import { CUSTOM_FIELDS, ISSUE_STATUSES } from '@/lib/redmine-config';
+
+/**
+ * Custom collision detection that prioritizes column drops
+ * This helps with scenarios where there are many droppable areas
+ */
+const customCollisionDetection: CollisionDetection = (args) => {
+    // First, let's try to find collisions using pointerWithin
+    const pointerCollisions = pointerWithin(args);
+    
+    // Filter to find column containers (those with type: 'Column' in their data)
+    const columnCollisions = pointerCollisions.filter((collision) => {
+        const droppableContainer = args.droppableContainers.find(
+            (container) => container.id === collision.id
+        );
+        return droppableContainer?.data?.current?.type === 'Column';
+    });
+    
+    // If we found a column collision, use the first one
+    if (columnCollisions.length > 0) {
+        return columnCollisions;
+    }
+    
+    // If no pointer collision with columns, try rect intersection
+    const intersectionCollisions = rectIntersection(args);
+    const columnIntersections = intersectionCollisions.filter((collision) => {
+        const droppableContainer = args.droppableContainers.find(
+            (container) => container.id === collision.id
+        );
+        return droppableContainer?.data?.current?.type === 'Column';
+    });
+    
+    if (columnIntersections.length > 0) {
+        return columnIntersections;
+    }
+    
+    // Fallback to closestCenter for any remaining cases
+    return closestCenter(args);
+};
 
 export function KanbanBoard() {
     const dispatch = useAppDispatch();
@@ -160,13 +203,14 @@ export function KanbanBoard() {
                     console.log('🎯 Total kanban issues (parent + children):', kanbanIssues.length);
                     console.log('🎯 Kanban Issues:', kanbanIssues);
 
-                    dispatch(setIssues(kanbanIssues));
+                    dispatch(setIssues(kanbanIssues)); 
                     
                     // Use fixed statuses: New -> In Progress -> Resolved -> Close
                     const fixedStatuses: IssueStatus[] = [
                         { id: ISSUE_STATUSES.NEW.id, name: ISSUE_STATUSES.NEW.name, is_closed: ISSUE_STATUSES.NEW.isClosed },
-                        { id: ISSUE_STATUSES.IN_PROGRESS.id, name: ISSUE_STATUSES.IN_PROGRESS.name, is_closed: ISSUE_STATUSES.IN_PROGRESS.isClosed },
+                        { id: ISSUE_STATUSES.IN_PROGRESS.id, name: ISSUE_STATUSES.IN_PROGRESS.name, is_closed: ISSUE_STATUSES.IN_PROGRESS.isClosed }, 
                         { id: ISSUE_STATUSES.RESOLVED.id, name: ISSUE_STATUSES.RESOLVED.name, is_closed: ISSUE_STATUSES.RESOLVED.isClosed },
+                        { id: ISSUE_STATUSES.VERIFIED.id, name: ISSUE_STATUSES.VERIFIED.name, is_closed: ISSUE_STATUSES.VERIFIED.isClosed },
                         { id: ISSUE_STATUSES.CLOSED.id, name: ISSUE_STATUSES.CLOSED.name, is_closed: ISSUE_STATUSES.CLOSED.isClosed },
                     ];
                     
@@ -366,20 +410,34 @@ export function KanbanBoard() {
         const { active, over } = event;
         setActiveIssue(null);
 
-        if (!over) return;
+        if (!over) {
+            console.log('🚫 handleDragEnd: No drop target (over is null)');
+            return;
+        }
 
         const issueId = active.id as number;
         const overId = over.id; // This could be a column ID or another card ID
 
+        console.log('🎯 handleDragEnd:', {
+            activeId: issueId,
+            overId: overId,
+            overIdType: typeof overId,
+            allStatuses: statuses.map(s => ({ id: s.id, name: s.name }))
+        });
+
         // Find the issue being dragged
         const issue = issues.find((i) => i.id === issueId);
-        if (!issue) return;
+        if (!issue) {
+            console.log('🚫 Issue not found:', issueId);
+            return;
+        }
 
         // Determine the new status
         let newStatusId: number | undefined;
 
         // If dropped on a column, handle both regular and unique IDs
         let overColumn = statuses.find(s => s.id === overId);
+        console.log('🔍 Direct status match:', overColumn);
 
         // If not found directly, try to parse from unique ID strings
         if (!overColumn && typeof overId === 'string') {
@@ -387,24 +445,37 @@ export function KanbanBoard() {
             const standaloneMatch = overId.match(/^standalone-status-(\d+)$/);
             let statusIdFromOver: number | null = null;
 
+            console.log('🔍 Attempting to parse string ID:', {
+                overId,
+                parentMatch,
+                standaloneMatch
+            });
+
             if (parentMatch) {
                 statusIdFromOver = parseInt(parentMatch[1], 10);
+                console.log('✅ Parsed from parent pattern:', statusIdFromOver);
             } else if (standaloneMatch) {
                 statusIdFromOver = parseInt(standaloneMatch[1], 10);
+                console.log('✅ Parsed from standalone pattern:', statusIdFromOver);
             }
 
             if (statusIdFromOver) {
                 overColumn = statuses.find(s => s.id === statusIdFromOver);
+                console.log('🔍 Found status from parsed ID:', overColumn);
             }
         }
 
         if (overColumn) {
             newStatusId = overColumn.id;
+            console.log('✅ Determined newStatusId from column:', newStatusId);
         } else {
             // If dropped on another card, find that card's status
             const overIssue = issues.find(i => i.id === overId);
             if (overIssue) {
                 newStatusId = overIssue.status.id;
+                console.log('✅ Determined newStatusId from issue:', newStatusId);
+            } else {
+                console.log('🚫 Could not determine newStatusId - neither column nor issue found');
             }
         }
 
@@ -496,7 +567,7 @@ export function KanbanBoard() {
         <>
             <DndContext
                 sensors={sensors}
-                collisionDetection={closestCorners}
+                collisionDetection={customCollisionDetection}
                 onDragStart={handleDragStart}
                 onDragOver={handleDragOver}
                 onDragEnd={handleDragEnd}
