@@ -6,6 +6,9 @@ import { toast } from 'sonner';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { redmineApi } from '@/lib/api/redmine.service';
 import { createPartialUpdateRequest } from '@/lib/issue-utils';
+import { SelectField } from '../fields/SelectField';
+import { TextField } from '../fields/TextField';
+import { TextAreaField } from '../fields/TextAreaField';
 
 export interface CustomFieldsProps {
     issue: Issue;
@@ -19,6 +22,11 @@ interface BaseIssueDetailModalProps {
     onSave?: (updatedIssue: Issue) => void;
     renderCustomFields?: (props: CustomFieldsProps) => React.ReactNode;
 }
+
+const DONE_RATIO_OPTIONS = Array.from({ length: 11 }, (_, i) => ({
+    value: (i * 10).toString(),
+    label: `${i * 10}%`
+}));
 
 export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomFields }: BaseIssueDetailModalProps) {
     const modalRef = useRef<HTMLDivElement>(null);
@@ -99,8 +107,8 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
         setEditedIssue({ ...editedIssue, custom_fields: updatedFields });
     };
 
-    const inputClassName = "w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent";
-    const selectClassName = "w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent";
+    // Calculate if there are any changes
+    const hasChanges = Object.keys(createPartialUpdateRequest(issue, editedIssue)).length > 0;
 
     return (
         <div
@@ -143,12 +151,12 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                                 {editedIssue.subject}
                             </h2>
                         ) : (
-                            <input
-                                type="text"
+                            <TextField
+                                field={{ id: 'subject', name: 'Subject', fieldFormat: 'string' }}
                                 value={editedIssue.subject}
-                                onChange={(e) => setEditedIssue({ ...editedIssue, subject: e.target.value })}
+                                onChange={(val) => setEditedIssue({ ...editedIssue, subject: String(val) })}
+                                isEditMode={true}
                                 className="text-xl font-bold w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                placeholder="Issue subject"
                             />
                         )}
                     </div>
@@ -178,18 +186,13 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                         <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-2">
                             Description
                         </h3>
-                        {!isEditMode ? (
-                            <div className="bg-gray-50 dark:bg-zinc-800/50 rounded-lg p-4 text-gray-700 dark:text-gray-300 whitespace-pre-wrap">
-                                {editedIssue.description || <span className="italic text-gray-400">No description provided.</span>}
-                            </div>
-                        ) : (
-                            <textarea
-                                value={editedIssue.description || ''}
-                                onChange={(e) => setEditedIssue({ ...editedIssue, description: e.target.value })}
-                                className={`${inputClassName} min-h-[120px] resize-y`}
-                                placeholder="Enter issue description..."
-                            />
-                        )}
+                        <TextAreaField
+                            field={{ id: 'description', name: 'Description', fieldFormat: 'text' }}
+                            value={editedIssue.description}
+                            onChange={(val) => setEditedIssue({ ...editedIssue, description: String(val) })}
+                            isEditMode={isEditMode}
+                            className="w-full px-3 py-2 bg-white dark:bg-zinc-800 border border-gray-300 dark:border-zinc-700 rounded-lg text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent min-h-[120px] resize-y"
+                        />
                     </div>
 
                     {/* Details Grid */}
@@ -201,68 +204,43 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                             </h3>
                             <div className="space-y-4">
                                 {/* Status */}
-                                <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Status</label>
-                                    {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.status?.name || 'No Status'}</div>
-                                    ) : (
-                                        <select
-                                            value={editedIssue.status?.id || ''}
-                                            onChange={(e) => {
-                                                const status = MOCK_STATUSES.find(s => s.id === Number(e.target.value));
-                                                if (status) setEditedIssue({ ...editedIssue, status: { id: status.id, name: status.name, is_closed: status.is_closed } });
-                                            }}
-                                            className={selectClassName}
-                                        >
-                                            {MOCK_STATUSES.map(status => (
-                                                <option key={status.id} value={status.id}>{status.name}</option>
-                                            ))}
-                                        </select>
-                                    )}
-                                </div>
+                                <SelectField
+                                    field={{ id: 'status', name: 'Status', fieldFormat: 'list' }}
+                                    value={editedIssue.status?.id}
+                                    onChange={(val) => {
+                                        const status = MOCK_STATUSES.find(s => s.id === Number(val));
+                                        if (status) setEditedIssue({ ...editedIssue, status: { id: status.id, name: status.name, is_closed: status.is_closed } });
+                                    }}
+                                    isEditMode={isEditMode}
+                                    options={MOCK_STATUSES.map(s => ({ value: s.id.toString(), label: s.name }))}
+                                />
 
                                 {/* Priority */}
-                                <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Priority</label>
-                                    {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.priority?.name || 'No Priority'}</div>
-                                    ) : (
-                                        <select
-                                            value={editedIssue.priority?.id || ''}
-                                            onChange={(e) => {
-                                                const priority = MOCK_PRIORITIES.find(p => p.id === Number(e.target.value));
-                                                if (priority) setEditedIssue({ ...editedIssue, priority });
-                                            }}
-                                            className={selectClassName}
-                                        >
-                                            {MOCK_PRIORITIES.map(priority => (
-                                                <option key={priority.id} value={priority.id}>{priority.name}</option>
-                                            ))}
-                                        </select>
-                                    )}
-                                </div>
+                                <SelectField
+                                    field={{ id: 'priority', name: 'Priority', fieldFormat: 'list' }}
+                                    value={editedIssue.priority?.id}
+                                    onChange={(val) => {
+                                        const priority = MOCK_PRIORITIES.find(p => p.id === Number(val));
+                                        if (priority) setEditedIssue({ ...editedIssue, priority });
+                                    }}
+                                    isEditMode={isEditMode}
+                                    options={MOCK_PRIORITIES.map(p => ({ value: p.id.toString(), label: p.name }))}
+                                />
 
                                 {/* Assignee */}
-                                <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Assignee</label>
-                                    {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.assigned_to?.name || 'Unassigned'}</div>
-                                    ) : (
-                                        <select
-                                            value={editedIssue.assigned_to?.id || ''}
-                                            onChange={(e) => {
-                                                const user = MOCK_USERS.find(u => u.id === Number(e.target.value));
-                                                setEditedIssue({ ...editedIssue, assigned_to: user });
-                                            }}
-                                            className={selectClassName}
-                                        >
-                                            <option value="">Unassigned</option>
-                                            {MOCK_USERS.map(user => (
-                                                <option key={user.id} value={user.id}>{user.name}</option>
-                                            ))}
-                                        </select>
-                                    )}
-                                </div>
+                                <SelectField
+                                    field={{ id: 'assigned_to', name: 'Assignee', fieldFormat: 'list' }}
+                                    value={editedIssue.assigned_to?.id}
+                                    onChange={(val) => {
+                                        const user = MOCK_USERS.find(u => u.id === Number(val));
+                                        setEditedIssue({ ...editedIssue, assigned_to: user });
+                                    }}
+                                    isEditMode={isEditMode}
+                                    options={[
+                                        { value: '', label: 'Unassigned' },
+                                        ...MOCK_USERS.map(u => ({ value: u.id.toString(), label: u.name }))
+                                    ]}
+                                />
 
                                 {/* Project */}
                                 <div>
@@ -293,68 +271,52 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                             </h3>
                             <div className="space-y-4">
                                 {/* Start Date */}
-                                <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Start Date</label>
-                                    {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.start_date || '-'}</div>
-                                    ) : (
-                                        <input
-                                            type="date"
-                                            value={editedIssue.start_date || ''}
-                                            onChange={(e) => setEditedIssue({ ...editedIssue, start_date: e.target.value })}
-                                            className={inputClassName}
-                                        />
-                                    )}
-                                </div>
+                                <TextField
+                                    field={{ id: 'start_date', name: 'Start Date', fieldFormat: 'date' }}
+                                    value={editedIssue.start_date}
+                                    onChange={(val) => setEditedIssue({ ...editedIssue, start_date: String(val) })}
+                                    isEditMode={isEditMode}
+                                />
 
                                 {/* Due Date */}
-                                <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Due Date</label>
-                                    {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.due_date || '-'}</div>
-                                    ) : (
-                                        <input
-                                            type="date"
-                                            value={editedIssue.due_date || ''}
-                                            onChange={(e) => setEditedIssue({ ...editedIssue, due_date: e.target.value })}
-                                            className={inputClassName}
-                                        />
-                                    )}
-                                </div>
+                                <TextField
+                                    field={{ id: 'due_date', name: 'Due Date', fieldFormat: 'date' }}
+                                    value={editedIssue.due_date}
+                                    onChange={(val) => setEditedIssue({ ...editedIssue, due_date: String(val) })}
+                                    isEditMode={isEditMode}
+                                />
 
                                 {/* Fixed Version */}
-                                <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Target Version</label>
-                                    {!isEditMode ? (
-                                        <div className="font-medium text-gray-900 dark:text-white">{editedIssue.fixed_version?.name || '-'}</div>
-                                    ) : (
-                                        <select
-                                            value={editedIssue.fixed_version?.id || ''}
-                                            onChange={(e) => {
-                                                const version = MOCK_VERSIONS.find(v => v.id === Number(e.target.value));
-                                                setEditedIssue({ ...editedIssue, fixed_version: version });
-                                            }}
-                                            className={selectClassName}
-                                        >
-                                            <option value="">None</option>
-                                            {MOCK_VERSIONS.map(version => (
-                                                <option key={version.id} value={version.id}>{version.name}</option>
-                                            ))}
-                                        </select>
-                                    )}
-                                </div>
+                                <SelectField
+                                    field={{ id: 'fixed_version', name: 'Target Version', fieldFormat: 'list' }}
+                                    value={editedIssue.fixed_version?.id}
+                                    onChange={(val) => {
+                                        const version = MOCK_VERSIONS.find(v => v.id === Number(val));
+                                        setEditedIssue({ ...editedIssue, fixed_version: version });
+                                    }}
+                                    isEditMode={isEditMode}
+                                    options={[
+                                        { value: '', label: 'None' },
+                                        ...MOCK_VERSIONS.map(v => ({ value: v.id.toString(), label: v.name }))
+                                    ]}
+                                />
 
                                 {/* Done Ratio */}
-                                <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Done Ratio</label>
-                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.done_ratio}%</div>
-                                </div>
+                                <SelectField
+                                    field={{ id: 'done_ratio', name: 'Done Ratio', fieldFormat: 'list' }}
+                                    value={editedIssue.done_ratio}
+                                    onChange={(val) => setEditedIssue({ ...editedIssue, done_ratio: Number(val) })}
+                                    isEditMode={isEditMode}
+                                    options={DONE_RATIO_OPTIONS}
+                                />
 
                                 {/* Estimated Hours */}
-                                <div>
-                                    <label className="block text-sm text-gray-500 dark:text-gray-400 mb-1">Estimated Hours</label>
-                                    <div className="font-medium text-gray-900 dark:text-white">{editedIssue.estimated_hours || '-'}</div>
-                                </div>
+                                <TextField
+                                    field={{ id: 'estimated_hours', name: 'Estimated Hours', fieldFormat: 'float' }}
+                                    value={editedIssue.estimated_hours}
+                                    onChange={(val) => setEditedIssue({ ...editedIssue, estimated_hours: Number(val) })}
+                                    isEditMode={isEditMode}
+                                />
 
                                 {/* Spent Hours */}
                                 <div>
@@ -411,7 +373,7 @@ export function BaseIssueDetailModal({ issue, onClose, onSave, renderCustomField
                             </button>
                             <button
                                 onClick={handleSave}
-                                disabled={isSaving}
+                                disabled={isSaving || !hasChanges}
                                 className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
                             >
                                 {isSaving ? (

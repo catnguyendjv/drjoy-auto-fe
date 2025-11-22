@@ -480,7 +480,7 @@ export function KanbanBoard() {
 
     const handleClearFilters = () => {
         // Do not clear filterVersion as it's now a required field
-        setFilterTeam('');
+        // Keep team filter as requested
         setFilterAssignee('');
         setFilterIssueId('');
         setFilterRootIssueId('');
@@ -490,7 +490,7 @@ export function KanbanBoard() {
         setFilterDueDateTo('');
     };
 
-    const hasActiveFilters = !!(filterTeam || filterAssignee || filterIssueId || filterRootIssueId || filterStartDateFrom || filterStartDateTo || filterDueDateFrom || filterDueDateTo);
+    const hasActiveFilters = !!(filterAssignee || filterIssueId || filterRootIssueId || filterStartDateFrom || filterStartDateTo || filterDueDateFrom || filterDueDateTo);
 
     return (
         <>
