@@ -210,7 +210,6 @@ export function KanbanBoard() {
                         { id: ISSUE_STATUSES.NEW.id, name: ISSUE_STATUSES.NEW.name, is_closed: ISSUE_STATUSES.NEW.isClosed },
                         { id: ISSUE_STATUSES.IN_PROGRESS.id, name: ISSUE_STATUSES.IN_PROGRESS.name, is_closed: ISSUE_STATUSES.IN_PROGRESS.isClosed }, 
                         { id: ISSUE_STATUSES.RESOLVED.id, name: ISSUE_STATUSES.RESOLVED.name, is_closed: ISSUE_STATUSES.RESOLVED.isClosed },
-                        { id: ISSUE_STATUSES.VERIFIED.id, name: ISSUE_STATUSES.VERIFIED.name, is_closed: ISSUE_STATUSES.VERIFIED.isClosed },
                         { id: ISSUE_STATUSES.CLOSED.id, name: ISSUE_STATUSES.CLOSED.name, is_closed: ISSUE_STATUSES.CLOSED.isClosed },
                     ];
                     
@@ -493,19 +492,71 @@ export function KanbanBoard() {
                 try {
                     // Call batch update API
                     const batchRequest: BatchUpdateIssueRequest = {
-                        updates: issuesToUpdate.map(id => ({
-                            id,
-                            issue: {
-                                status_id: newStatusId!
+                        updates: issuesToUpdate.map(id => {
+                            const currentIssue = issues.find(i => i.id === id);
+                            const currentStatusId = currentIssue?.status.id;
+                            let done_ratio: number | undefined;
+
+                            // Logic for done_ratio based on status transitions
+                            // 1. New -> In Progress: set to 20%
+                            if (currentStatusId === ISSUE_STATUSES.NEW.id && newStatusId === ISSUE_STATUSES.IN_PROGRESS.id) {
+                                done_ratio = 20;
                             }
-                        }))
+                            // 2. Any status -> New: set to 0%
+                            else if (newStatusId === ISSUE_STATUSES.NEW.id) {
+                                done_ratio = 0;
+                            }
+                            // 3. Any status -> Resolved or Closed: set to 100%
+                            else if (
+                                newStatusId === ISSUE_STATUSES.RESOLVED.id || newStatusId === ISSUE_STATUSES.CLOSED.id
+                            ) {
+                                done_ratio = 100;
+                            }
+
+                            return {
+                                id,
+                                issue: {
+                                    status_id: newStatusId!,
+                                    ...(done_ratio !== undefined && { done_ratio })
+                                }
+                            };
+                        })
                     };
 
                     await redmineApi.batchUpdateIssues(batchRequest);
 
-                    // Update local state
+                    // Update local state for both status and done_ratio
                     issuesToUpdate.forEach(id => {
+                        const currentIssue = issues.find(i => i.id === id);
+                        const currentStatusId = currentIssue?.status.id;
+                        let done_ratio: number | undefined;
+
+                        // Apply same logic for local state update
+                        if (currentStatusId === ISSUE_STATUSES.NEW.id && newStatusId === ISSUE_STATUSES.IN_PROGRESS.id) {
+                            done_ratio = 20;
+                        } else if (newStatusId === ISSUE_STATUSES.NEW.id) {
+                            done_ratio = 0;
+                        } else if (
+                            newStatusId === ISSUE_STATUSES.RESOLVED.id || newStatusId === ISSUE_STATUSES.CLOSED.id
+                        ) {
+                            done_ratio = 100;
+                        }
+
+                        // Update status
                         dispatch(updateIssueStatus({ issueId: id, statusId: newStatusId!, statusName }));
+                        
+                        // Update done_ratio if needed
+                        if (done_ratio !== undefined && currentIssue) {
+                            dispatch(updateIssue({ 
+                                ...currentIssue, 
+                                status: { 
+                                    id: newStatusId!, 
+                                    name: statusName, 
+                                    is_closed: statuses.find(s => s.id === newStatusId)?.is_closed || false 
+                                },
+                                done_ratio 
+                            }));
+                        }
                     });
                     
                     if (issuesToUpdate.length === 1) {
