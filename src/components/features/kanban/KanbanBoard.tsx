@@ -14,7 +14,7 @@ import {
     DragEndEvent,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
-import { ChevronsDown, ChevronsRight } from 'lucide-react';
+import { ChevronsDown, ChevronsRight, PlusCircle } from 'lucide-react';
 import { KanbanColumn } from './KanbanColumn';
 import { KanbanCard } from './KanbanCard';
 import { IssueDetailModal } from '@/components/common/modals/IssueDetailModal';
@@ -28,6 +28,7 @@ import { LoadingOverlay } from '@/components/ui/LoadingSpinner';
 import { KanbanFilters } from '@/components/common/filters/KanbanFilters';
 import { redmineApi, RedmineIssue, BatchUpdateIssueRequest } from '@/lib/api/redmine.service';
 import { CUSTOM_FIELDS, ISSUE_STATUSES } from '@/lib/redmine-config';
+import { QuickIssueCreateModal } from '@/components/common/modals/QuickIssueCreateModal';
 
 export function KanbanBoard() {
     const dispatch = useAppDispatch();
@@ -46,6 +47,7 @@ export function KanbanBoard() {
     const [filterDueDateTo, setFilterDueDateTo] = useState<string>('');
     const [targetVersionId, setTargetVersionId] = useState<number | null>(null);
     const [collapsedParentIds, setCollapsedParentIds] = useState<Set<number>>(new Set());
+    const [isQuickCreateOpen, setIsQuickCreateOpen] = useState(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -478,6 +480,21 @@ export function KanbanBoard() {
         setSelectedIssue(null);
     }
 
+    const handleIssuesCreated = (newIssues: Issue[]) => {
+        const mergedIssues = [...issues];
+
+        newIssues.forEach((issue) => {
+            const existingIndex = mergedIssues.findIndex((item) => item.id === issue.id);
+            if (existingIndex >= 0) {
+                mergedIssues[existingIndex] = issue;
+            } else {
+                mergedIssues.push(issue);
+            }
+        });
+
+        dispatch(setIssues(mergedIssues));
+    };
+
     const handleClearFilters = () => {
         // Do not clear filterVersion as it's now a required field
         setFilterTeam('');
@@ -522,24 +539,34 @@ export function KanbanBoard() {
                         setFilterDueDateFrom={setFilterDueDateFrom}
                         filterDueDateTo={filterDueDateTo}
                         setFilterDueDateTo={setFilterDueDateTo}
-                        onClearFilters={handleClearFilters}
-                        hasActiveFilters={hasActiveFilters}
-                    />
+                    onClearFilters={handleClearFilters}
+                    hasActiveFilters={hasActiveFilters}
+                />
 
-                    <div className="flex justify-end gap-2 mb-4">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handleExpandAll}
+                                className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
+                            >
+                                <ChevronsDown className="w-4 h-4" />
+                                Expand All
+                            </button>
+                            <button
+                                onClick={handleCollapseAll}
+                                className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
+                            >
+                                <ChevronsRight className="w-4 h-4" />
+                                Collapse All
+                            </button>
+                        </div>
+
                         <button
-                            onClick={handleExpandAll}
-                            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
+                            onClick={() => setIsQuickCreateOpen(true)}
+                            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                         >
-                            <ChevronsDown className="w-4 h-4" />
-                            Expand All
-                        </button>
-                        <button
-                            onClick={handleCollapseAll}
-                            className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700 dark:text-gray-300 dark:hover:bg-zinc-700 transition-colors"
-                        >
-                            <ChevronsRight className="w-4 h-4" />
-                            Collapse All
+                            <PlusCircle className="w-4 h-4" />
+                            Quick Create Issues
                         </button>
                     </div>
 
@@ -602,6 +629,14 @@ export function KanbanBoard() {
                     ) : null}
                 </DragOverlay>
             </DndContext>
+
+            <QuickIssueCreateModal
+                isOpen={isQuickCreateOpen}
+                onClose={() => setIsQuickCreateOpen(false)}
+                defaultVersionId={targetVersionId}
+                defaultTeamName={filterTeam}
+                onCreated={handleIssuesCreated}
+            />
 
             {selectedIssue && (
                 <IssueDetailModal
