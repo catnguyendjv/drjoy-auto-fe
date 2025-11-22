@@ -1,5 +1,6 @@
 "use client";
 
+import { Switch } from "@heroui/react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import * as React from "react";
@@ -13,25 +14,18 @@ export function ThemeToggle() {
     }, []);
 
     if (!mounted) {
-        return (
-            <button className="rounded-md p-2 hover:bg-gray-100 dark:hover:bg-zinc-800">
-                <span className="sr-only">Toggle theme</span>
-                <div className="h-5 w-5" />
-            </button>
-        );
+        return <div className="h-8 w-14" />;
     }
 
     return (
-        <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="rounded-md p-2 hover:bg-gray-100 dark:hover:bg-zinc-800"
-        >
-            <span className="sr-only">Toggle theme</span>
-            {theme === "dark" ? (
-                <Moon className="h-5 w-5 text-gray-900 dark:text-white" />
-            ) : (
-                <Sun className="h-5 w-5 text-gray-900 dark:text-white" />
-            )}
-        </button>
+        <Switch
+            aria-label="Toggle theme"
+            isSelected={theme === "dark"}
+            size="sm"
+            color="primary"
+            startContent={<Sun className="h-4 w-4" />}
+            endContent={<Moon className="h-4 w-4" />}
+            onValueChange={(value) => setTheme(value ? "dark" : "light")}
+        />
     );
 }

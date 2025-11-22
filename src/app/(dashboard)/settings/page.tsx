@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Button, Card, CardBody, CardHeader, Divider, Input } from "@heroui/react";
 import { getRedmineApiKey, setRedmineApiKey, isValidRedmineApiKey, removeRedmineApiKey } from "@/lib/redmine-api-key";
 import { Eye, EyeOff, TestTube2, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -81,93 +82,79 @@ export default function SettingsPage() {
 
     return (
         <div className="max-w-2xl mx-auto">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Redmine Settings
-            </h1>
-            
-            <div className="bg-white dark:bg-zinc-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-zinc-700">
-                <div className="space-y-6">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Redmine Settings</h1>
+
+            <Card shadow="sm" className="border border-gray-200 dark:border-zinc-700">
+                <CardHeader className="flex flex-col items-start gap-1">
+                    <p className="text-small text-gray-500 dark:text-gray-400">Configuration</p>
+                    <h2 className="text-large font-semibold text-gray-900 dark:text-white">API access</h2>
+                </CardHeader>
+                <Divider />
+                <CardBody className="space-y-6">
                     {/* Base URL Display (read-only from env) */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                            Redmine Base URL
-                        </label>
-                        <div className="px-3 py-2 bg-gray-50 dark:bg-zinc-900 border border-gray-300 dark:border-zinc-600 rounded-lg text-gray-600 dark:text-gray-400 font-mono text-sm">
-                            {baseUrl}
-                        </div>
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            Configured from environment variables (read-only)
-                        </p>
-                    </div>
+                    <Input
+                        label="Redmine Base URL"
+                        value={baseUrl}
+                        readOnly
+                        variant="bordered"
+                        description="Configured from environment variables (read-only)"
+                    />
 
                     {/* API Key Setting */}
-                    <div>
-                        <label
-                            htmlFor="apiKey"
-                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                            Redmine API Key
-                        </label>
-                        <div className="relative">
-                            <input
-                                type={showApiKey ? "text" : "password"}
-                                id="apiKey"
-                                value={apiKey}
-                                onChange={(e) => {
-                                    setApiKey(e.target.value);
-                                    setValidationError("");
-                                }}
-                                className={`w-full px-3 py-2 pr-10 border rounded-lg bg-white dark:bg-zinc-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${
-                                    validationError 
-                                        ? 'border-red-500 dark:border-red-500' 
-                                        : 'border-gray-300 dark:border-zinc-600'
-                                }`}
-                                placeholder="Enter your Redmine API key (40 hex characters)"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowApiKey(!showApiKey)}
-                                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-                                title={showApiKey ? "Hide API key" : "Show API key"}
+                    <Input
+                        type={showApiKey ? "text" : "password"}
+                        label="Redmine API Key"
+                        labelPlacement="outside"
+                        value={apiKey}
+                        onChange={(e) => {
+                            setApiKey(e.target.value);
+                            setValidationError("");
+                        }}
+                        placeholder="Enter your Redmine API key (40 hex characters)"
+                        variant="bordered"
+                        isInvalid={Boolean(validationError)}
+                        errorMessage={validationError}
+                        description="Your API key is stored locally in your browser. Find it in: Redmine → My account → API access key"
+                        endContent={
+                            <Button
+                                isIconOnly
+                                variant="light"
+                                radius="full"
+                                onPress={() => setShowApiKey(!showApiKey)}
+                                aria-label={showApiKey ? "Hide API key" : "Show API key"}
+                                className="text-default-500"
                             >
                                 {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                            </button>
-                        </div>
-                        {validationError && (
-                            <p className="mt-1 text-xs text-red-600 dark:text-red-400">
-                                {validationError}
-                            </p>
-                        )}
-                        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            Your API key is stored locally in your browser. Find it in: Redmine → My account → API access key
-                        </p>
-                    </div>
+                            </Button>
+                        }
+                    />
 
                     {/* Actions */}
-                    <div className="flex items-center gap-3 pt-2 border-t border-gray-200 dark:border-zinc-700">
-                        <button
-                            onClick={handleSave}
-                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-                        >
+                    <div className="flex flex-wrap items-center gap-3 pt-2">
+                        <Button color="primary" onPress={handleSave} radius="md">
                             Save Settings
-                        </button>
-                        
-                        <button
-                            onClick={handleTestConnection}
-                            disabled={isTesting}
-                            className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors flex items-center gap-2"
-                        >
-                            <TestTube2 className="w-4 h-4" />
-                            {isTesting ? "Testing..." : "Test Connection"}
-                        </button>
+                        </Button>
 
-                        <button
-                            onClick={handleClearSettings}
-                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+                        <Button
+                            color="success"
+                            onPress={handleTestConnection}
+                            isDisabled={isTesting}
+                            isLoading={isTesting}
+                            startContent={<TestTube2 className="w-4 h-4" />}
+                            radius="md"
                         >
-                            <Trash2 className="w-4 h-4" />
+                            {isTesting ? "Testing..." : "Test Connection"}
+                        </Button>
+
+                        <Button
+                            color="danger"
+                            onPress={handleClearSettings}
+                            startContent={<Trash2 className="w-4 h-4" />}
+                            radius="md"
+                            variant="flat"
+                        >
                             Clear Settings
-                        </button>
+                        </Button>
 
                         {isSaved && (
                             <span className="text-sm text-green-600 dark:text-green-400 font-medium animate-fade-in">
@@ -175,8 +162,8 @@ export default function SettingsPage() {
                             </span>
                         )}
                     </div>
-                </div>
-            </div>
+                </CardBody>
+            </Card>
 
             {/* Info Section */}
             <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">

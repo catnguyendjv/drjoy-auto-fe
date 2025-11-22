@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Kanban, Settings, Home, Calendar, Clock, BarChart3, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button, Card, CardBody, CardHeader, Divider, Listbox, ListboxItem, Tooltip } from "@heroui/react";
 import { clsx } from "clsx";
-import { useState } from "react";
+import { Calendar, ChevronLeft, ChevronRight, Clock, Home, Kanban, Settings, BarChart3 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 
 const navigation = [
     { name: "Kanban", href: "/kanban", icon: Kanban },
@@ -16,71 +16,98 @@ const navigation = [
 
 export function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
     const [isCollapsed, setIsCollapsed] = useState(false);
 
+    const activeKey = useMemo(() => {
+        const current = navigation.find((item) => pathname.startsWith(item.href));
+        return current?.href ?? navigation[0].href;
+    }, [pathname]);
+
     return (
-        <div 
+        <Card
+            shadow="sm"
             className={clsx(
-                "flex h-full flex-col border-r bg-white dark:bg-black dark:border-zinc-800 transition-all duration-300",
-                isCollapsed ? "w-16" : "w-64"
+                "m-4 h-[calc(100vh-2rem)] border-1 border-default-100 bg-content1 transition-all duration-300",
+                isCollapsed ? "w-20" : "w-72"
             )}
         >
-            <div className={clsx(
-                "flex h-16 items-center border-b dark:border-zinc-800 transition-all duration-300",
-                isCollapsed ? "justify-center px-0" : "px-6"
+            <CardHeader className={clsx(
+                "flex items-center gap-3",
+                isCollapsed ? "justify-center" : "justify-start"
             )}>
-                <Home className="h-6 w-6 text-blue-600 flex-shrink-0" />
-                <span className={clsx(
-                    "text-lg font-bold text-gray-900 dark:text-white whitespace-nowrap overflow-hidden transition-all duration-300",
-                    isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100 ml-2"
-                )}>
-                    Redmine App
-                </span>
-            </div>
-            <nav className="flex-1 space-y-1 px-2 py-4">
-                {navigation.map((item) => {
-                    const isActive = pathname.startsWith(item.href);
-                    return (
-                        <Link
-                            key={item.name}
-                            href={item.href}
-                            title={isCollapsed ? item.name : undefined}
-                            className={clsx(
-                                "group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors",
-                                isActive
-                                    ? "bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400"
-                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-zinc-800 dark:hover:text-white",
-                                isCollapsed ? "justify-center" : ""
-                            )}
-                        >
-                            <item.icon
-                                className={clsx(
-                                    "h-5 w-5 flex-shrink-0 transition-all duration-300",
-                                    isActive
-                                        ? "text-blue-600 dark:text-blue-400"
-                                        : "text-gray-400 group-hover:text-gray-500 dark:text-gray-400 dark:group-hover:text-gray-300",
-                                    !isCollapsed && "mr-3"
-                                )}
-                            />
-                            <span className={clsx(
-                                "whitespace-nowrap overflow-hidden transition-all duration-300",
-                                isCollapsed ? "w-0 opacity-0" : "w-auto opacity-100"
-                            )}>
-                                {item.name}
-                            </span>
-                        </Link>
-                    );
-                })}
-            </nav>
-
-            <div className="p-4 border-t dark:border-zinc-800">
-                <button
-                    onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="flex w-full items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-zinc-800 dark:hover:text-white transition-colors"
+                <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Home className="h-5 w-5" />
+                    </div>
+                    <div className={clsx(
+                        "flex flex-col transition-all duration-300",
+                        isCollapsed ? "hidden" : ""
+                    )}>
+                        <p className="text-sm font-semibold">Redmine App</p>
+                        <p className="text-xs text-default-500">Workflow console</p>
+                    </div>
+                </div>
+            </CardHeader>
+            <Divider />
+            <CardBody className="flex flex-col gap-4 overflow-hidden p-3">
+                <Listbox
+                    aria-label="Main navigation"
+                    selectionMode="single"
+                    selectedKeys={new Set([activeKey])}
+                    onAction={(key) => router.push(String(key))}
+                    disallowEmptySelection
+                    hideSelectedIcon
+                    classNames={{
+                        base: "flex-1 overflow-y-auto", 
+                        list: "gap-1",
+                    }}
                 >
-                    {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-                </button>
-            </div>
-        </div>
+                    {navigation.map((item) => {
+                        const content = (
+                            <ListboxItem
+                                key={item.href}
+                                startContent={<item.icon className="h-5 w-5" />}
+                                classNames={{
+                                    base: clsx(
+                                        "rounded-lg border border-transparent px-3 py-3 text-foreground transition-colors",
+                                        pathname.startsWith(item.href)
+                                            ? "bg-primary/10 border-primary/40 text-primary"
+                                            : "hover:bg-default-100"
+                                    ),
+                                    title: clsx(
+                                        "text-sm font-medium",
+                                        isCollapsed && "sr-only"
+                                    ),
+                                }}
+                            >
+                                {item.name}
+                            </ListboxItem>
+                        );
+
+                        if (isCollapsed) {
+                            return (
+                                <Tooltip key={item.name} content={item.name} placement="right" offset={8}>
+                                    {content}
+                                </Tooltip>
+                            );
+                        }
+
+                        return content;
+                    })}
+                </Listbox>
+                <Divider />
+                <Button
+                    isIconOnly
+                    variant="flat"
+                    color="default"
+                    radius="full"
+                    onPress={() => setIsCollapsed(!isCollapsed)}
+                    className="self-center"
+                >
+                    {isCollapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+                </Button>
+            </CardBody>
+        </Card>
     );
 }

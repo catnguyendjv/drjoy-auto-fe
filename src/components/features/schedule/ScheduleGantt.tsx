@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Gantt, Task, ViewMode } from 'gantt-task-react';
+import { Button, ButtonGroup, Input } from "@heroui/react";
 import "gantt-task-react/dist/index.css";
 import '@/styles/gantt-dark.css';
 import { useAppDispatch, useAppSelector } from '@/lib/redux/hooks';
@@ -206,43 +207,38 @@ export function ScheduleGantt() {
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
                             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">From:</label>
-                            <input
+                            <Input
                                 type="date"
+                                size="sm"
+                                variant="bordered"
                                 value={filterStartDate}
                                 onChange={(e) => setFilterStartDate(e.target.value)}
-                                className="px-2 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                                className="w-36"
                             />
                         </div>
                         <div className="flex items-center space-x-2">
                             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">To:</label>
-                            <input
+                            <Input
                                 type="date"
+                                size="sm"
+                                variant="bordered"
                                 value={filterEndDate}
                                 onChange={(e) => setFilterEndDate(e.target.value)}
-                                className="px-2 py-1 border rounded text-sm bg-white dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                                className="w-36"
                             />
                         </div>
                     </div>
-                    <div className="flex space-x-2">
-                        <button
-                            onClick={() => setViewMode(ViewMode.Day)}
-                            className={`px-3 py-1 rounded ${viewMode === ViewMode.Day ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-zinc-800 dark:text-gray-200'}`}
-                        >
+                    <ButtonGroup variant="flat" color="primary" size="sm">
+                        <Button onPress={() => setViewMode(ViewMode.Day)} isDisabled={viewMode === ViewMode.Day}>
                             Day
-                        </button>
-                        <button
-                            onClick={() => setViewMode(ViewMode.Week)}
-                            className={`px-3 py-1 rounded ${viewMode === ViewMode.Week ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-zinc-800 dark:text-gray-200'}`}
-                        >
+                        </Button>
+                        <Button onPress={() => setViewMode(ViewMode.Week)} isDisabled={viewMode === ViewMode.Week}>
                             Week
-                        </button>
-                        <button
-                            onClick={() => setViewMode(ViewMode.Month)}
-                            className={`px-3 py-1 rounded ${viewMode === ViewMode.Month ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800 dark:bg-zinc-800 dark:text-gray-200'}`}
-                        >
+                        </Button>
+                        <Button onPress={() => setViewMode(ViewMode.Month)} isDisabled={viewMode === ViewMode.Month}>
                             Month
-                        </button>
-                    </div>
+                        </Button>
+                    </ButtonGroup>
                 </div>
 
                 {/* Second row: Version, Team, Assignee, and Issue ID filters */}
@@ -253,12 +249,9 @@ export function ScheduleGantt() {
                     <IssueIdFilter value={filterIssueId} onChange={setFilterIssueId} />
                     <IssueIdFilter value={filterRootIssueId} onChange={setFilterRootIssueId} label="Root Issue ID:" />
                     {hasActiveFilters && (
-                        <button
-                            onClick={handleClearFilters}
-                            className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                        >
+                        <Button size="sm" variant="light" color="primary" onPress={handleClearFilters}>
                             Clear All Filters
-                        </button>
+                        </Button>
                     )}
                 </div>
             </div>

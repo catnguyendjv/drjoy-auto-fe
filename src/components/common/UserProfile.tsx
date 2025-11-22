@@ -1,36 +1,38 @@
-"use client"
+"use client";
 
-import { useSession } from "next-auth/react"
-import Image from "next/image"
-import { handleSignOut } from "@/app/actions/auth"
+import { Button, User as HeroUser } from "@heroui/react";
+import { useSession } from "next-auth/react";
+import { handleSignOut } from "@/app/actions/auth";
 
 export function UserProfile() {
-  const { data: session } = useSession()
+    const { data: session } = useSession();
 
-  if (!session?.user) return null
+    if (!session?.user) return null;
 
-  return (
-    <div className="flex items-center gap-4">
-      <div className="flex items-center gap-2">
-        {session.user.image && (
-          <Image
-            src={session.user.image}
-            alt={session.user.name || "User"}
-            width={32}
-            height={32}
-            className="rounded-full"
-          />
-        )}
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-          {session.user.name}
-        </span>
-      </div>
-      <button
-        onClick={() => handleSignOut()}
-        className="text-sm text-red-600 hover:text-red-500 dark:text-red-400"
-      >
-        Sign out
-      </button>
-    </div>
-  )
+    return (
+        <div className="flex items-center gap-3">
+            <HeroUser
+                name={session.user.name || "User"}
+                description={session.user.email}
+                avatarProps={{
+                    src: session.user.image ?? undefined,
+                    size: "sm",
+                    radius: "full",
+                    showFallback: true,
+                }}
+                classNames={{
+                    name: "text-sm font-semibold",
+                    description: "text-xs text-default-500",
+                }}
+            />
+            <Button
+                size="sm"
+                color="danger"
+                variant="flat"
+                onPress={() => handleSignOut()}
+            >
+                Sign out
+            </Button>
+        </div>
+    );
 }

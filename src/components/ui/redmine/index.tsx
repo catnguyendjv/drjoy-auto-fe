@@ -22,6 +22,7 @@ import {
   isIssueClosed,
   getProgressPercentage,
 } from '@/lib/utils/redmine-helpers';
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@heroui/react";
 
 // ==================== Badge Components ====================
 
@@ -237,78 +238,60 @@ export function IssueTable({ issues, onIssueClick, className = '' }: IssueTableP
       </div>
     );
   }
-  
+
   return (
-    <div className={`overflow-x-auto ${className}`}>
-      <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-        <thead className="bg-gray-50 dark:bg-gray-800">
-          <tr>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Issue
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Tracker
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Status
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Priority
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Assignee
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Due Date
-            </th>
-            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Progress
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700">
-          {issues.map((issue) => (
-            <tr
-              key={issue.id}
-              className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer transition-colors"
-              onClick={() => onIssueClick?.(issue)}
-            >
-              <td className="px-4 py-3 whitespace-nowrap">
-                <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                  {formatIssueNumber(issue)}
-                </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  {truncateText(issue.subject, 50)}
-                </div>
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <TrackerBadge tracker={issue.tracker} />
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <StatusBadge status={issue.status} />
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <PriorityBadge priority={issue.priority} />
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                {issue.assigned_to?.name || '-'}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                {issue.due_date ? formatDate(issue.due_date) : '-'}
-              </td>
-              <td className="px-4 py-3 whitespace-nowrap">
-                <div className="flex items-center gap-2">
-                  <ProgressBar percentage={issue.done_ratio} showLabel={false} className="w-20" />
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {formatProgress(issue.done_ratio)}
-                  </span>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table aria-label="Issues" removeWrapper className={`px-2 ${className}`}>
+      <TableHeader>
+        <TableColumn>Issue</TableColumn>
+        <TableColumn>Tracker</TableColumn>
+        <TableColumn>Status</TableColumn>
+        <TableColumn>Priority</TableColumn>
+        <TableColumn>Assignee</TableColumn>
+        <TableColumn>Due Date</TableColumn>
+        <TableColumn>Progress</TableColumn>
+      </TableHeader>
+      <TableBody items={issues} emptyContent="No issues found">
+        {(issue) => (
+          <TableRow
+            key={issue.id}
+            className="cursor-pointer"
+            onClick={() => onIssueClick?.(issue)}
+          >
+            <TableCell>
+              <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                {formatIssueNumber(issue)}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {truncateText(issue.subject, 50)}
+              </div>
+            </TableCell>
+            <TableCell>
+              <TrackerBadge tracker={issue.tracker} />
+            </TableCell>
+            <TableCell>
+              <StatusBadge status={issue.status} />
+            </TableCell>
+            <TableCell>
+              <PriorityBadge priority={issue.priority} />
+            </TableCell>
+            <TableCell className="text-sm text-gray-500 dark:text-gray-400">
+              {issue.assigned_to?.name || '-'}
+            </TableCell>
+            <TableCell className="text-sm text-gray-500 dark:text-gray-400">
+              {issue.due_date ? formatDate(issue.due_date) : '-'}
+            </TableCell>
+            <TableCell>
+              <div className="flex items-center gap-2">
+                <ProgressBar percentage={issue.done_ratio} showLabel={false} className="w-20" />
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {formatProgress(issue.done_ratio)}
+                </span>
+              </div>
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
   );
 }
 
