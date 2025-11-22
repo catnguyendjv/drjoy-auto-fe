@@ -22,22 +22,22 @@ const CURRENT_USER_ID = 1;
 
 const STATUS_COLORS = {
     light: {
-        New: { backgroundColor: '#e0f2fe', backgroundSelectedColor: '#bae6fd', progressColor: '#0284c7', progressSelectedColor: '#0369a1' },
+        New: { backgroundColor: '#dbeafe', backgroundSelectedColor: '#bfdbfe', progressColor: '#0284c7', progressSelectedColor: '#0369a1' },
         'In Progress': { backgroundColor: '#dbeafe', backgroundSelectedColor: '#bfdbfe', progressColor: '#2563eb', progressSelectedColor: '#1d4ed8' },
         Resolved: { backgroundColor: '#dcfce7', backgroundSelectedColor: '#bbf7d0', progressColor: '#16a34a', progressSelectedColor: '#15803d' },
-        Feedback: { backgroundColor: '#fef9c3', backgroundSelectedColor: '#fef08a', progressColor: '#d97706', progressSelectedColor: '#b45309' },
+        Feedback: { backgroundColor: '#fef3c7', backgroundSelectedColor: '#fde68a', progressColor: '#d97706', progressSelectedColor: '#b45309' },
         Closed: { backgroundColor: '#e5e7eb', backgroundSelectedColor: '#d1d5db', progressColor: '#6b7280', progressSelectedColor: '#4b5563' },
-        Released: { backgroundColor: '#f1f5f9', backgroundSelectedColor: '#e2e8f0', progressColor: '#0ea5e9', progressSelectedColor: '#0284c7' },
+        Released: { backgroundColor: '#e0f2fe', backgroundSelectedColor: '#bae6fd', progressColor: '#0ea5e9', progressSelectedColor: '#0284c7' },
         Default: { backgroundColor: '#e2e8f0', backgroundSelectedColor: '#cbd5e1', progressColor: '#2563eb', progressSelectedColor: '#1d4ed8' },
     },
     dark: {
-        New: { backgroundColor: '#0ea5e925', backgroundSelectedColor: '#38bdf833', progressColor: '#67e8f9', progressSelectedColor: '#22d3ee' },
-        'In Progress': { backgroundColor: '#3b82f633', backgroundSelectedColor: '#2563eb44', progressColor: '#93c5fd', progressSelectedColor: '#60a5fa' },
-        Resolved: { backgroundColor: '#22c55e33', backgroundSelectedColor: '#16a34a44', progressColor: '#86efac', progressSelectedColor: '#4ade80' },
-        Feedback: { backgroundColor: '#facc1533', backgroundSelectedColor: '#eab30844', progressColor: '#fcd34d', progressSelectedColor: '#fbbf24' },
-        Closed: { backgroundColor: '#6b728033', backgroundSelectedColor: '#4b556344', progressColor: '#d1d5db', progressSelectedColor: '#9ca3af' },
-        Released: { backgroundColor: '#64748b33', backgroundSelectedColor: '#47556944', progressColor: '#bfdbfe', progressSelectedColor: '#93c5fd' },
-        Default: { backgroundColor: '#47556933', backgroundSelectedColor: '#33415544', progressColor: '#e4e4e7', progressSelectedColor: '#cbd5e1' },
+        New: { backgroundColor: 'rgba(14, 165, 233, 0.55)', backgroundSelectedColor: 'rgba(14, 165, 233, 0.75)', progressColor: '#67e8f9', progressSelectedColor: '#22d3ee' },
+        'In Progress': { backgroundColor: 'rgba(59, 130, 246, 0.55)', backgroundSelectedColor: 'rgba(59, 130, 246, 0.75)', progressColor: '#93c5fd', progressSelectedColor: '#60a5fa' },
+        Resolved: { backgroundColor: 'rgba(34, 197, 94, 0.55)', backgroundSelectedColor: 'rgba(34, 197, 94, 0.75)', progressColor: '#86efac', progressSelectedColor: '#4ade80' },
+        Feedback: { backgroundColor: 'rgba(250, 204, 21, 0.6)', backgroundSelectedColor: 'rgba(234, 179, 8, 0.75)', progressColor: '#fcd34d', progressSelectedColor: '#fbbf24' },
+        Closed: { backgroundColor: 'rgba(107, 114, 128, 0.55)', backgroundSelectedColor: 'rgba(75, 85, 99, 0.75)', progressColor: '#d1d5db', progressSelectedColor: '#9ca3af' },
+        Released: { backgroundColor: 'rgba(100, 116, 139, 0.55)', backgroundSelectedColor: 'rgba(71, 85, 105, 0.75)', progressColor: '#bfdbfe', progressSelectedColor: '#93c5fd' },
+        Default: { backgroundColor: 'rgba(71, 85, 105, 0.55)', backgroundSelectedColor: 'rgba(51, 65, 85, 0.75)', progressColor: '#e4e4e7', progressSelectedColor: '#cbd5e1' },
     },
 };
 
