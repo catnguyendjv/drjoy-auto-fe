@@ -100,6 +100,10 @@ export function SearchableSelect<T = string>({
       ...provided,
       color: isDark ? 'rgb(161 161 170)' : 'rgb(107 114 128)',
     }),
+    menuPortal: (provided) => ({
+      ...provided,
+      zIndex: 9999,
+    }),
   };
 
   return (
@@ -113,6 +117,7 @@ export function SearchableSelect<T = string>({
       className={className}
       isClearable={false}
       isSearchable
+      menuPortalTarget={document.body}
       {...restProps}
     />
   );
