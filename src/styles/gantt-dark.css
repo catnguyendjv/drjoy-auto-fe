@@ -2,26 +2,18 @@
 .dark ._3eULf {
   /* Main container */
   background-color: #18181b !important;
-  color: #e4e4e7 !important;
-}
-
-.dark ._3_ygE,
-.dark ._3ZbQT {
-  /* Outer table wrappers */
-  background-color: #18181b !important;
-  border-color: #3f3f46 !important;
+  color: #a1a1aa !important;
 }
 
 /* Task list header */
 .dark ._1nBOt {
-  background-color: #27272a !important;
-  border-bottom: 1px solid #3f3f46 !important;
-  color: #fafafa !important;
+  background-color: #3f3f46 !important;
+  border-bottom: 1px solid #52525b !important;
+  color: #ffffff !important;
 }
 
-.dark ._1nBOt ._WuQ0f,
-.dark ._1nBOt ._2QjE6 {
-  color: #fafafa !important;
+.dark ._1nBOt ._WuQ0f {
+  color: #ffffff !important;
 }
 
 .dark ._2eZzQ {
@@ -31,34 +23,28 @@
 
 /* Task list table */
 .dark ._2B2zv {
-  background-color: #1f1f23 !important;
-  border-color: #3f3f46 !important;
+  background-color: #27272a !important;
 }
 
 .dark ._34SS0 {
   /* Task list row */
-  color: #f4f4f5 !important;
-  border-bottom: 1px solid #2f2f34 !important;
-}
-
-.dark ._34SS0:nth-of-type(even) {
-  background-color: #242428 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #3f3f46 !important;
 }
 
 .dark ._34SS0:hover {
-  background-color: #323238 !important;
+  background-color: #3f3f46 !important;
 }
 
-.dark ._3lLk3,
-.dark ._2TfEi {
-  color: #e4e4e7 !important;
+.dark ._3lLk3 {
+  color: #ffffff !important;
 }
 
 /* Calendar header */
 .dark ._3rUKi {
   /* Calendar container */
-  background-color: #1f1f23 !important;
-  border-bottom: 1px solid #2f2f34 !important;
+  background-color: #27272a !important;
+  border-bottom: 1px solid #3f3f46 !important;
 }
 
 .dark ._3rUKi ._3w_5u,
@@ -67,87 +53,53 @@
 
 /* Bottom header */
   {
-  background-color: #27272a !important;
-  border-bottom: 1px solid #3f3f46 !important;
-  color: #fafafa !important;
+  background-color: #3f3f46 !important;
+  border-bottom: 1px solid #52525b !important;
+  color: #ffffff !important;
 }
 
 .dark ._3rUKi ._3w_5u div,
 .dark ._3rUKi ._2q1Kt div {
-  color: #e4e4e7 !important;
-  border-right: 1px solid #3f3f46 !important;
-}
-
-/* Task bars */
-.dark ._31ERP {
-  /* Add a subtle stroke so bar bodies stay visible on dark backgrounds */
-  stroke: rgba(255, 255, 255, 0.08) !important;
-}
-
-.dark ._35nLX {
-  /* Calendar header backgrounds */
-  fill: #27272a !important;
-  stroke: #3f3f46 !important;
+  color: #ffffff !important;
+  border-right: 1px solid #52525b !important;
 }
 
 .dark ._3rUKi ._1eT-t {
   /* Ticks */
   color: #a1a1aa !important;
-  border-right: 1px solid #2f2f34 !important;
+  border-right: 1px solid #3f3f46 !important;
 }
 
 /* Grid */
 .dark ._KxSXS {
   /* Grid container */
-  background-color: #1f1f23 !important;
+  background-color: #27272a !important;
 }
 
 .dark ._19jgW {
   /* Grid row lines */
-  stroke: #2f2f34 !important;
+  stroke: #3f3f46 !important;
 }
 
 .dark ._2k9Ys {
-  /* Bottom scroll */
+  /* Grid ticks */
   stroke: #3f3f46 !important;
-  background-color: #18181b !important;
-}
-
-.dark ._2dZTy {
-  /* Calendar stripes */
-  fill: #1f1f23 !important;
-}
-
-.dark ._2dZTy:nth-child(even) {
-  fill: #242428 !important;
 }
 
 /* Today line */
 .dark ._9w8d5 {
   /* Today line */
   stroke: #3b82f6 !important;
-  fill: #e4e4e7 !important;
-}
-
-.dark ._2q1Kt {
-  fill: #fafafa !important;
-}
-
-.dark .today rect {
-  /* Today background highlight */
-  fill: rgba(59, 130, 246, 0.16) !important;
-  stroke: rgba(59, 130, 246, 0.35) !important;
 }
 
 /* Arrows */
 .dark ._3KcaM {
   /* Arrow */
-  stroke: #a1a1aa !important;
-  fill: #a1a1aa !important;
+  stroke: #71717a !important;
 }
 
 .dark ._3KcaM path {
-  fill: #a1a1aa !important;
+  fill: #71717a !important;
 }
 
 /* Task Bars - using inline styles from library, but we can try to override */
@@ -156,45 +108,47 @@
   /* The library sets fill via inline style, !important might be needed if CSS doesn't override */
 }
 
-/* Tooltip */
-.dark ._3T42e,
-.dark .gantt-tooltip {
-  background-color: #1f1f23 !important;
-  border: 1px solid #2f2f34 !important;
-  color: #fafafa !important;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.25) !important;
-}
-
-.dark ._29NTg,
-.dark .gantt-tooltip .tooltip-details {
-  color: #a1a1aa !important;
-}
-
 /* Scrollbar styling for dark mode */
-.dark ._3eULf::-webkit-scrollbar,
-.dark ._2k9Ys::-webkit-scrollbar {
+.dark ._3eULf::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
 
-.dark ._3eULf::-webkit-scrollbar-track,
-.dark ._2k9Ys::-webkit-scrollbar-track {
+.dark ._3eULf::-webkit-scrollbar-track {
   background: #27272a;
 }
 
-.dark ._3eULf::-webkit-scrollbar-thumb,
-.dark ._2k9Ys::-webkit-scrollbar-thumb {
+.dark ._3eULf::-webkit-scrollbar-thumb {
   background: #52525b;
   border-radius: 5px;
 }
 
-.dark ._3eULf::-webkit-scrollbar-thumb:hover,
-.dark ._2k9Ys::-webkit-scrollbar-thumb:hover {
+.dark ._3eULf::-webkit-scrollbar-thumb:hover {
   background: #71717a;
 }
 
 /* Horizontal scroll */
 .dark ._3zRJQ {
-  /* Horizontal scroll text */
-  fill: #e4e4e7 !important;
+  /* Horizontal scroll container */
+  background-color: #27272a !important;
+}
+
+.dark ._3zRJQ::-webkit-scrollbar-track {
+  background: #27272a;
+}
+
+.dark ._3zRJQ::-webkit-scrollbar-thumb {
+  background: #52525b;
+}
+
+/* Tooltip */
+.dark .gantt-tooltip {
+  background-color: #27272a !important;
+  border: 1px solid #3f3f46 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dark .gantt-tooltip .tooltip-details {
+  color: #a1a1aa !important;
 }

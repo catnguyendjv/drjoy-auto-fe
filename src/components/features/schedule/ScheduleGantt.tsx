@@ -20,32 +20,7 @@ import { IssueIdFilter } from '@/components/common/filters/IssueIdFilter';
 // Mock current user ID
 const CURRENT_USER_ID = 1;
 
-const STATUS_COLORS = {
-    light: {
-        New: { backgroundColor: '#dbeafe', backgroundSelectedColor: '#bfdbfe', progressColor: '#0284c7', progressSelectedColor: '#0369a1' },
-        'In Progress': { backgroundColor: '#dbeafe', backgroundSelectedColor: '#bfdbfe', progressColor: '#2563eb', progressSelectedColor: '#1d4ed8' },
-        Resolved: { backgroundColor: '#dcfce7', backgroundSelectedColor: '#bbf7d0', progressColor: '#16a34a', progressSelectedColor: '#15803d' },
-        Feedback: { backgroundColor: '#fef3c7', backgroundSelectedColor: '#fde68a', progressColor: '#d97706', progressSelectedColor: '#b45309' },
-        Closed: { backgroundColor: '#e5e7eb', backgroundSelectedColor: '#d1d5db', progressColor: '#6b7280', progressSelectedColor: '#4b5563' },
-        Released: { backgroundColor: '#e0f2fe', backgroundSelectedColor: '#bae6fd', progressColor: '#0ea5e9', progressSelectedColor: '#0284c7' },
-        Default: { backgroundColor: '#e2e8f0', backgroundSelectedColor: '#cbd5e1', progressColor: '#2563eb', progressSelectedColor: '#1d4ed8' },
-    },
-    dark: {
-        New: { backgroundColor: 'rgba(14, 165, 233, 0.55)', backgroundSelectedColor: 'rgba(14, 165, 233, 0.75)', progressColor: '#67e8f9', progressSelectedColor: '#22d3ee' },
-        'In Progress': { backgroundColor: 'rgba(59, 130, 246, 0.55)', backgroundSelectedColor: 'rgba(59, 130, 246, 0.75)', progressColor: '#93c5fd', progressSelectedColor: '#60a5fa' },
-        Resolved: { backgroundColor: 'rgba(34, 197, 94, 0.55)', backgroundSelectedColor: 'rgba(34, 197, 94, 0.75)', progressColor: '#86efac', progressSelectedColor: '#4ade80' },
-        Feedback: { backgroundColor: 'rgba(250, 204, 21, 0.6)', backgroundSelectedColor: 'rgba(234, 179, 8, 0.75)', progressColor: '#fcd34d', progressSelectedColor: '#fbbf24' },
-        Closed: { backgroundColor: 'rgba(107, 114, 128, 0.55)', backgroundSelectedColor: 'rgba(75, 85, 99, 0.75)', progressColor: '#d1d5db', progressSelectedColor: '#9ca3af' },
-        Released: { backgroundColor: 'rgba(100, 116, 139, 0.55)', backgroundSelectedColor: 'rgba(71, 85, 105, 0.75)', progressColor: '#bfdbfe', progressSelectedColor: '#93c5fd' },
-        Default: { backgroundColor: 'rgba(71, 85, 105, 0.55)', backgroundSelectedColor: 'rgba(51, 65, 85, 0.75)', progressColor: '#e4e4e7', progressSelectedColor: '#cbd5e1' },
-    },
-};
-
-const getTaskStyles = (statusName: string | undefined, theme: string | undefined) => {
-    const palette = theme === 'dark' ? STATUS_COLORS.dark : STATUS_COLORS.light;
-    const styles = (statusName && palette[statusName as keyof typeof palette]) || palette.Default;
-    return styles;
-};
+const TASK_STYLES = { progressColor: '#2563eb', progressSelectedColor: '#1d4ed8' };
 
 export function ScheduleGantt() {
     const dispatch = useAppDispatch();
@@ -84,19 +59,13 @@ export function ScheduleGantt() {
         return issues
             .filter(issue => {
                 // Filter by assignee
-                if (filterAssignee && issue.assigned_to?.id?.toString() !== filterAssignee) return false;
+                if (filterAssignee && issue.assigned_to?.name !== filterAssignee) return false;
 
                 // Filter by Issue ID
                 if (filterIssueId && !issue.id.toString().includes(filterIssueId)) return false;
 
                 // Filter by Root Issue ID (parent_id)
-                if (filterRootIssueId) {
-                    if (issue.parent_id) {
-                        if (!issue.parent_id.toString().includes(filterRootIssueId)) return false;
-                    } else {
-                        if (!issue.id.toString().includes(filterRootIssueId)) return false;
-                    }
-                }
+                if (filterRootIssueId && !issue.parent_id?.toString().includes(filterRootIssueId)) return false;
 
                 // Filter by version
                 if (filterVersion && issue.fixed_version?.name !== filterVersion) return false;
@@ -140,7 +109,6 @@ export function ScheduleGantt() {
 
                 const statusObj = statuses.find(s => s.id === issue.status.id);
                 const isClosed = statusObj?.is_closed || false;
-                const taskStyles = getTaskStyles(statusObj?.name, resolvedTheme);
 
                 return {
                     start,
@@ -150,10 +118,10 @@ export function ScheduleGantt() {
                     type: 'task',
                     progress: isClosed ? 100 : 0, // Simple progress based on closed status
                     isDisabled: false,
-                    styles: taskStyles,
+                    styles: TASK_STYLES,
                 };
             });
-    }, [issues, statuses, filterStartDate, filterEndDate, filterVersion, filterTeam, filterAssignee, filterIssueId, filterRootIssueId, resolvedTheme]);
+    }, [issues, statuses, filterStartDate, filterEndDate, filterVersion, filterTeam, filterAssignee, filterIssueId, filterRootIssueId]);
 
     const handleTaskChange = useCallback((task: Task) => {
         const issueId = parseInt(task.id);
@@ -223,7 +191,6 @@ export function ScheduleGantt() {
 
     // Generate a unique key for the Gantt component based on issue dates to force remount on updates
     const ganttKey = issues.map(i => `${i.id}:${i.start_date}:${i.due_date}`).join('|');
-    const todayColor = resolvedTheme === 'dark' ? 'rgba(59, 130, 246, 0.16)' : 'rgba(59, 130, 246, 0.1)';
 
     return (
         <div className="h-full flex flex-col">
@@ -301,7 +268,6 @@ export function ScheduleGantt() {
                         onExpanderClick={handleExpanderClick}
                         listCellWidth="155px"
                         columnWidth={viewMode === ViewMode.Month ? 300 : 65}
-                        todayColor={todayColor}
                     />
                 ) : (
                     <div className="flex items-center justify-center h-full text-gray-500">
