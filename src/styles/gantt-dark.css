@@ -127,6 +127,12 @@
   fill: #fafafa !important;
 }
 
+.dark .today rect {
+  /* Today background highlight */
+  fill: rgba(59, 130, 246, 0.16) !important;
+  stroke: rgba(59, 130, 246, 0.35) !important;
+}
+
 /* Arrows */
 .dark ._3KcaM {
   /* Arrow */
